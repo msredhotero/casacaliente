@@ -89,7 +89,7 @@
     color: #E91E63 !important; }
 
 .theme-purple .navbar {
-  background-color: #115A7E; }
+  background-color: #9C27B0; }
 
 .theme-purple .navbar-brand {
   color: #fff; }
@@ -120,7 +120,7 @@
 .theme-purple .sidebar .menu .list li.active {
   background-color: transparent; }
   .theme-purple .sidebar .menu .list li.active > :first-child i, .theme-purple .sidebar .menu .list li.active > :first-child span {
-    color: #115A7E; }
+    color: #9C27B0; }
 
 .theme-purple .sidebar .menu .list .toggled {
   background-color: transparent; }
@@ -131,7 +131,7 @@
 .theme-purple .sidebar .legal {
   background-color: #fff; }
   .theme-purple .sidebar .legal .copyright a {
-    color: #115A7E !important; }
+    color: #9C27B0 !important; }
 
 .theme-deep-purple .navbar {
   background-color: #673AB7; }
@@ -897,3 +897,4 @@
   background-color: #fff; }
   .theme-black .sidebar .legal .copyright a {
     color: #000 !important; }
+

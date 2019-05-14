@@ -36,31 +36,28 @@ function query($sql,$accion) {
 
 
 $tablasAr	= array('clientes' => 'dbclientes',
-							'facturas' => 'dbfacturas',
-							'tipofacturas' => 'tbtipofacturas',
-							'estados' => 'tbestados',
-							'meses' => 'tbmeses',
-							'tipodocumentos' => 'tbtipodocumentos',
-							'subidas' => 'dbsubidas');
+							'periodos' => 'dbperiodos',
+							'tarifas' => 'dbtarifas',
+							'ubicaciones' => 'dbubicaciones',
+							'formaspagos' => 'tbformaspagos',
+							'tipoubicacion' => 'tbtipoubicacion');
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 
 	$tablasArAux2	= array('clientes' => 'dbclientes',
-									'facturas' => 'dbfacturas',
-									'tipofacturas' => 'tbtipofacturas',
-									'estados' => 'tbestados',
-									'meses' => 'tbmeses',
-									'tipodocumentos' => 'tbtipodocumentos',
-									'subidas' => 'dbsubidas');
+								'periodos' => 'dbperiodos',
+								'tarifas' => 'dbtarifas',
+								'ubicaciones' => 'dbubicaciones',
+								'formaspagos' => 'tbformaspagos',
+								'tipoubicacion' => 'tbtipoubicacion');
 
 	$tablasArAux	= array('clientes' => 1,
-									'facturas' => 3,
-									'tipofacturas' => 1,
-									'estados' => 1,
-									'meses' => 1,
-									'tipodocumentos' => 1,
-									'subidas' => 1);
+								'periodos' => 1,
+								'tarifas' => 3,
+								'ubicaciones' => 2,
+								'formaspagos' => 1,
+								'tipoubicacion' => 1);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
@@ -90,7 +87,7 @@ $ajaxFuncionesController = '';
 
 $servicios	= "Referencias";
 
-$sqlMapaer	= "SHOW FULL TABLES FROM riderz";
+$sqlMapaer	= "SHOW FULL TABLES FROM casacaliente";
 $resMapeo 	=	query($sqlMapaer,0);
 
 $aliasTablaMadre = '';

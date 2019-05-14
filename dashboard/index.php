@@ -49,64 +49,9 @@ $insertar = "";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
 if ($_SESSION['idroll_sahilices'] == 1) {
-	$singular = "Factura";
 
-	$plural = "Facturas";
-
-	$eliminar = "eliminarFacturas";
-
-	$insertar = "insertarFacturas";
-
-	$modificar = "modificarFacturas";
-
-	/////////////////////// Opciones para la creacion del formulario  /////////////////////
-	$tabla 			= "dbfacturas";
-
-	$lblCambio	 	= array('refclientes','refmeses','refestados','reftipofacturas','iva','irff','fechaingreso','fechasubido','total','anio');
-	$lblreemplazo	= array('Cliente','Trimestre','Estado','Tipo Factura','IVA','IRPF','Fecha Ingreso','Fecha Subido','Importe Total','Año');
-
-
-	$resVar1 = $serviciosReferencias->traerMeses();
-	$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
-
-	$resVar2 = $serviciosReferencias->traerTipofacturas();
-	$cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
-
-	$resVar3 = $serviciosReferencias->traerClientes();
-	$cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-	$resVar4 = $serviciosReferencias->traerEstadosPorId(1);
-	$cadRef4 	= $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
-	//die(var_dump(mysql_result($resVar4,0,0)));
-
-	$refdescripcion = array(0 => $cadRef1, 1 => $cadRef2, 2 => $cadRef3, 3 => $cadRef4);
-	$refCampo 	=  array('refmeses','reftipofacturas','refclientes','refestados');
-
-	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-	//////////////////////////////////////////////  FIN de los opciones //////////////////////////
 } else {
-	$resTrimestres = $serviciosReferencias->traerMeses();
-	$resTrimestreActual = $serviciosReferencias->traerMesesPorMes(date('m'));
 
-	$cadTrimestre 	= $serviciosFunciones->devolverSelectBox($resTrimestres,array(1),'');
-
-	$resAniosFacturados = $serviciosReferencias->traerAniosFacturadosPorCliente($_SESSION['idcliente']);
-	$cadAnios 	= $serviciosFunciones->devolverSelectBox($resAniosFacturados,array(0),'');
-   //$cadAnios 	= '<option value="2019">2019</option><option value="2018">2018</option>';
-	//($campos,$idestado='', $idtipofactura='', $idcliente='', $idmes='', $anio='', $fecha='',$limit='')
-	$campos = 'f.concepto, f.total, f.fechaingreso, est.estado';
-	$idtipofactura = 1;
-	$idcliente = $_SESSION['idcliente'];
-	$limit = 'limit 10';
-	$resIngresos = $serviciosReferencias->traerFacturasPorGeneral($campos,$idestado='', $idtipofactura, $idcliente, $idmes='', $anio='', $fecha='',$limit);
-
-	//die(var_dump($resIngresos));
-
-	$campos = 'f.concepto, f.total, f.fechaingreso, est.estado';
-	$idtipofactura = 2;
-	$idcliente = $_SESSION['idcliente'];
-	$limit = 'limit 10';
-	$resGastos = $serviciosReferencias->traerFacturasPorGeneral($campos,$idestado='', $idtipofactura, $idcliente, $idmes='', $anio='', $fecha='',$limit);
 
 }
 
@@ -160,7 +105,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 </head>
 
-<body class="theme-purple">
+<body class="theme-red">
 
     <!-- Page Loader -->
     <div class="page-loader-wrapper">
@@ -203,7 +148,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 		<div class="container-fluid">
 			<!-- Widgets -->
 			<div class="row clearfix">
-				<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-riderz">
@@ -228,31 +173,13 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Tipo</th>
-												<th>Estado</th>
-												<th>Concepto</th>
-												<th>Importe Base</th>
-												<th>IVA</th>
-												<th>IRPF</th>
-												<th>Importe Total</th>
-												<th>Fecha</th>
-												<th>Subido el</th>
-												<th>Cliente</th>
+
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Tipo</th>
-												<th>Estado</th>
-												<th>Concepto</th>
-												<th>Importe Base</th>
-												<th>IVA</th>
-												<th>IRPF</th>
-												<th>Importe Total</th>
-												<th>Fecha</th>
-												<th>Subido el</th>
-												<th>Cliente</th>
+
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -262,110 +189,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 						</div>
 					</div>
 				</div>
-				<?php } else { ?>
-				<div class="row">
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-
-
-
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<div class="info-box bg-green hover-expand-effect">
-							<div class="icon">
-								<i class="material-icons">euro_symbol</i>
-							</div>
-							<div class="content">
-								<div class="text">INGRESOS</div>
-								<div class="number">€ <span class="lblTotalIngresos"></span></div>
-							</div>
-						</div>
-					</div>
-
-
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<div class="info-box bg-orange hover-expand-effect">
-							<div class="icon">
-								<i class="material-icons">assignment_returned</i>
-							</div>
-							<div class="content">
-								<div class="text">GASTOS</div>
-								<div class="number">€ <span class="lblTotalGastos"></span></div>
-							</div>
-						</div>
-					</div>
-
-					</div>
-				</div>
-				<hr>
-				<div class="row">
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<select class="form-control show-tick" name="trimestre" id="trimestre">
-							<?php echo $cadTrimestre; ?>
-						</select>
-					</div>
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<select class="form-control show-tick" name="anio" id="anio">
-							<?php echo $cadAnios; ?>
-						</select>
-					</div>
-				</div>
-				<hr>
-				<div class="row">
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="card">
-                        <div class="header bg-riderz">
-                           <h2 style="color:white;">
-                              <span class="lblTrimestre"></span> del <span class="lblAnio"></span> <small style="color:white;">Últimas Facturas de Ingresos</small>
-                           </h2>
-
-                        </div>
-                        <div class="body">
-									<table id="example1" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Concepto</th>
-												<th>Importe Total</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-											</tr>
-										</thead>
-										<tbody id="lstIngresos">
-
-										</tbody>
-									</table>
-                        </div>
-                  </div>
-               </div>
-
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                  <div class="card">
-                        <div class="header bg-riderz">
-                           <h2 style="color:white;">
-                              <span class="lblTrimestre"></span> del <span class="lblAnio"></span>  <small style="color:white;">Últimas Facturas de Gastos</small>
-                           </h2>
-
-                        </div>
-                        <div class="body">
-									<table id="example2" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Concepto</th>
-												<th>Importe Total</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-											</tr>
-										</thead>
-										<tbody id="lstGastos">
-
-										</tbody>
-									</table>
-                        </div>
-                  </div>
-               </div>
-
-				</div>
-
-			<?php } ?>
 			</div>
 		</div>
 
@@ -412,100 +236,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 	<script>
 		$(document).ready(function(){
 
-			<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
-			$('.lblTrimestre').html($('#trimestre option:selected').text());
-			$('.lblAnio').html($('#anio').val());
-
-			function traerTotales(tipo, anio, trimestre, contenedor) {
-				$.ajax({
-					url: '../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: {
-						accion: 'traerTotalPorClienteAnioTrimestre',
-						id: <?php echo $idcliente; ?>,
-						tipo: tipo,
-						anio: anio,
-						trimestre: trimestre
-					},
-					//mientras enviamos el archivo
-					beforeSend: function(){
-						$('.' + contenedor).html('');
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						$('.' + contenedor).html(data);
-
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-
-
-			function traerUltimasFacturas(tipo, anio, trimestre, contenedor) {
-				$.ajax({
-					url: '../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: {
-						accion: 'traerUltimasFacturas',
-						tipo: tipo,
-						anio: anio,
-						trimestre: trimestre
-					},
-					//mientras enviamos el archivo
-					beforeSend: function(){
-						$('.' + contenedor).html('');
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						$('#' + contenedor).html(data);
-
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-
-			traerTotales(1, $('#anio').val(), $('#trimestre').val(), 'lblTotalIngresos');
-			traerTotales(2, $('#anio').val(), $('#trimestre').val(), 'lblTotalGastos');
-
-			traerUltimasFacturas(1, $('#anio').val(), $('#trimestre').val(), 'lstIngresos');
-			traerUltimasFacturas(2, $('#anio').val(), $('#trimestre').val(), 'lstGastos');
-
-			$('#anio').change(function() {
-				traerTotales(1, $(this).val(), $('#trimestre').val(), 'lblTotalIngresos');
-				traerTotales(2, $(this).val(), $('#trimestre').val(), 'lblTotalGastos');
-
-				traerUltimasFacturas(1, $(this).val(), $('#trimestre').val(), 'lstIngresos');
-				traerUltimasFacturas(2, $(this).val(), $('#trimestre').val(), 'lstGastos');
-
-				$('.lblTrimestre').html($('#trimestre option:selected').text());
-				$('.lblAnio').html($('#anio').val());
-			});
-
-			$('#trimestre').change(function() {
-				traerTotales(1, $('#anio').val(), $(this).val(), 'lblTotalIngresos');
-				traerTotales(2, $('#anio').val(), $(this).val(), 'lblTotalGastos');
-
-				traerUltimasFacturas(1, $('#anio').val(), $(this).val(), 'lstIngresos');
-				traerUltimasFacturas(2, $('#anio').val(), $(this).val(), 'lstGastos');
-
-				$('.lblTrimestre').html($('#trimestre option:selected').text());
-				$('.lblAnio').html($('#anio').val());
-			});
-			<?php } else { ?>
+/*
 				var table = $('#example').DataTable({
 					"bProcessing": true,
 					"bServerSide": true,
@@ -534,14 +265,14 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 						}
 					}
 				});
-
+*/
 				function frmAjaxModificar(id) {
 					$.ajax({
 						url: '../ajax/ajax.php',
 						type: 'POST',
 						// Form data
 						//datos del formulario
-						data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+						data: {accion: 'frmAjaxModificar',tabla: 'db', id: id},
 						//mientras enviamos el archivo
 						beforeSend: function(){
 							$('.frmAjaxModificar').html('');
@@ -654,7 +385,6 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 				});
 
-			<?php } ?>
 
 		});
 	</script>
