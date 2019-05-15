@@ -11,6 +11,347 @@ class ServiciosReferencias {
 
 
 
+/* PARA Clientes */
+
+function traerClientesajax($length, $start, $busqueda) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or td.pais like '%".$busqueda."%' or td.telefon like '%".$busqueda."%' or td.email like '%".$busqueda."%' or td.comentaris like '%".$busqueda."%' or td.telefon2 like '%".$busqueda."%' or td.email2 like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+   c.idcliente,
+   c.cognom,
+   c.nom,
+   c.nif,
+   c.carrer,
+   c.codipostal,
+   c.ciutat,
+   c.pais,
+   c.telefon,
+   c.email,
+   c.comentaris,
+   c.telefon2,
+   c.email2
+   from dbclientes c
+	".$where."
+	order by c.cognom, c.nom
+	limit ".$start.",".$length;
+
+	$res = $this->query($sql,0);
+	return $res;
+}
+
+function insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
+$sql = "insert into dbclientes(idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2)
+values ('','".($cognom)."','".($nom)."','".($nif)."','".($carrer)."','".($codipostal)."','".($ciutat)."','".($pais)."','".($telefon)."','".($email)."','".($comentaris)."','".($telefon2)."','".($email2)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
+$sql = "update dbclientes
+set
+cognom = '".($cognom)."',nom = '".($nom)."',nif = '".($nif)."',carrer = '".($carrer)."',codipostal = '".($codipostal)."',ciutat = '".($ciutat)."',pais = '".($pais)."',telefon = '".($telefon)."',email = '".($email)."',comentaris = '".($comentaris)."',telefon2 = '".($telefon2)."',email2 = '".($email2)."'
+where idcliente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarClientes($id) {
+$sql = "delete from dbclientes where idcliente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerClientes() {
+$sql = "select
+c.idcliente,
+c.cognom,
+c.nom,
+c.nif,
+c.carrer,
+c.codipostal,
+c.ciutat,
+c.pais,
+c.telefon,
+c.email,
+c.comentaris,
+c.telefon2,
+c.email2
+from dbclientes c
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerClientesPorId($id) {
+$sql = "select idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2 from dbclientes where idcliente =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbclientes*/
+
+
+/* PARA Periodos */
+
+function insertarPeriodos($nomperiode,$desdeperiode,$finsaperiode,$any) {
+$sql = "insert into dbperiodos(idperiodo,nomperiode,desdeperiode,finsaperiode,any)
+values ('','".($nomperiode)."','".($desdeperiode)."','".($finsaperiode)."',".$any.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarPeriodos($id,$nomperiode,$desdeperiode,$finsaperiode,$any) {
+$sql = "update dbperiodos
+set
+nomperiode = '".($nomperiode)."',desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."',any = ".$any."
+where idperiodo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarPeriodos($id) {
+$sql = "delete from dbperiodos where idperiodo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPeriodos() {
+$sql = "select
+p.idperiodo,
+p.nomperiode,
+p.desdeperiode,
+p.finsaperiode,
+p.any
+from dbperiodos p
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPeriodosPorId($id) {
+$sql = "select idperiodo,nomperiode,desdeperiode,finsaperiode,any from dbperiodos where idperiodo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbperiodos*/
+
+
+/* PARA Tarifas */
+
+function insertarTarifas($tarifa,$reftipoubicacion,$refperiodos) {
+$sql = "insert into dbtarifas(idtarifa,tarifa,reftipoubicacion,refperiodos)
+values ('',".$tarifa.",".$reftipoubicacion.",".$refperiodos.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarTarifas($id,$tarifa,$reftipoubicacion,$refperiodos) {
+$sql = "update dbtarifas
+set
+tarifa = ".$tarifa.",reftipoubicacion = ".$reftipoubicacion.",refperiodos = ".$refperiodos."
+where idtarifa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarTarifas($id) {
+$sql = "delete from dbtarifas where idtarifa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTarifas() {
+$sql = "select
+t.idtarifa,
+t.tarifa,
+t.reftipoubicacion,
+t.refperiodos
+from dbtarifas t
+inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
+inner join dbperiodos per ON per.idperiodo = t.refperiodos
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTarifasPorId($id) {
+$sql = "select idtarifa,tarifa,reftipoubicacion,refperiodos from dbtarifas where idtarifa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbtarifas*/
+
+
+/* PARA Ubicaciones */
+
+function insertarUbicaciones($dormitorio,$color,$reftipoubicacion,$codapartament,$hutg) {
+$sql = "insert into dbubicaciones(idubicacion,dormitorio,color,reftipoubicacion,codapartament,hutg)
+values ('',".$dormitorio.",'".($color)."',".$reftipoubicacion.",'".($codapartament)."','".($hutg)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarUbicaciones($id,$dormitorio,$color,$reftipoubicacion,$codapartament,$hutg) {
+$sql = "update dbubicaciones
+set
+dormitorio = ".$dormitorio.",color = '".($color)."',reftipoubicacion = ".$reftipoubicacion.",codapartament = '".($codapartament)."',hutg = '".($hutg)."'
+where idubicacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarUbicaciones($id) {
+$sql = "delete from dbubicaciones where idubicacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerUbicaciones() {
+$sql = "select
+u.idubicacion,
+u.dormitorio,
+u.color,
+u.reftipoubicacion,
+u.codapartament,
+u.hutg
+from dbubicaciones u
+inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerUbicacionesPorId($id) {
+$sql = "select idubicacion,dormitorio,color,reftipoubicacion,codapartament,hutg from dbubicaciones where idubicacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbubicaciones*/
+
+/* PARA Formaspagos */
+
+function insertarFormaspagos($formapago,$abreviatura) {
+$sql = "insert into tbformaspagos(idformapago,formapago,abreviatura)
+values ('','".($formapago)."','".($abreviatura)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarFormaspagos($id,$formapago,$abreviatura) {
+$sql = "update tbformaspagos
+set
+formapago = '".($formapago)."',abreviatura = '".($abreviatura)."'
+where idformapago =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarFormaspagos($id) {
+$sql = "delete from tbformaspagos where idformapago =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerFormaspagos() {
+$sql = "select
+f.idformapago,
+f.formapago,
+f.abreviatura
+from tbformaspagos f
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerFormaspagosPorId($id) {
+$sql = "select idformapago,formapago,abreviatura from tbformaspagos where idformapago =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbformaspagos*/
+
+
+/* PARA Tipoubicacion */
+
+function insertarTipoubicacion($tipoubicacion) {
+$sql = "insert into tbtipoubicacion(idtipoubicacion,tipoubicacion)
+values ('','".($tipoubicacion)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarTipoubicacion($id,$tipoubicacion) {
+$sql = "update tbtipoubicacion
+set
+tipoubicacion = '".($tipoubicacion)."'
+where idtipoubicacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarTipoubicacion($id) {
+$sql = "delete from tbtipoubicacion where idtipoubicacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTipoubicacion() {
+$sql = "select
+t.idtipoubicacion,
+t.tipoubicacion
+from tbtipoubicacion t
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTipoubicacionPorId($id) {
+$sql = "select idtipoubicacion,tipoubicacion from tbtipoubicacion where idtipoubicacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbtipoubicacion*/
 
    function GUID()
    {

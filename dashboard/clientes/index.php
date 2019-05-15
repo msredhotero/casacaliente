@@ -55,8 +55,8 @@ $modificar = "modificarClientes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array('telefono','celular','aceptaterminos','cuit');
-$lblreemplazo	= array('Tel. Fijo','Tel. Movil','Acepta Terminos y condiciones','DNI');
+$lblCambio	 	= array('codipostal','telefon2','email2');
+$lblreemplazo	= array('Cod Postal','Tel. 2','Email 2');
 
 
 $cadRef 	= '';
@@ -117,7 +117,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 
-<body class="theme-purple">
+<body class="theme-red">
 
 <!-- Page Loader -->
 <div class="page-loader-wrapper">
@@ -165,8 +165,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
-						<div class="header bg-riderz">
-							<h2 style="color:white;">
+						<div class="header bg-blue">
+							<h2>
 								<?php echo strtoupper($plural); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
@@ -181,40 +181,54 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="frmView">
+							<form class="form" id="formCountry">
 
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<div class="button-demo">
+											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">add</i>
+												<span>NUEVO</span>
+											</button>
 
+										</div>
+									</div>
+								</div>
 
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Tipo Doc.</th>
-												<th>Apellido</th>
-												<th>Nombre</th>
-												<th>DNI</th>
-												<th>Tel. Fijo</th>
-												<th>Tel. Movil</th>
-												<th>Email</th>
-												<th>Acepta Ter.</th>
-												<th>Subscripcion</th>
-												<th>Activo</th>
+												<th>cognom</th>
+												<th>nom</th>
+												<th>nif</th>
+												<th>carrer</th>
+												<th>codipostal</th>
+												<th>ciutat</th>
+												<th>pais</th>
+												<th>telefon</th>
+												<th>email</th>
+												<th>comentaris</th>
+												<th>telefon2</th>
+												<th>email2</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Tipo Doc.</th>
-												<th>Apellido</th>
-												<th>Nombre</th>
-												<th>DNI</th>
-												<th>Tel. Fijo</th>
-												<th>Tel. Movil</th>
-												<th>Email</th>
-												<th>Acepta Ter.</th>
-												<th>Subscripcion</th>
-												<th>Activo</th>
+												<th>cognom</th>
+												<th>nom</th>
+												<th>nif</th>
+												<th>carrer</th>
+												<th>codipostal</th>
+												<th>ciutat</th>
+												<th>pais</th>
+												<th>telefon</th>
+												<th>email</th>
+												<th>comentaris</th>
+												<th>telefon2</th>
+												<th>email2</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -239,24 +253,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	               <div class="modal-header">
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
-	               <div class="modal-body demo-masked-input">
+	               <div class="modal-body">
 							<div class="row">
-	                  <?php echo $frmUnidadNegocios; ?>
+								<?php echo $frmUnidadNegocios; ?>	
 							</div>
-							<div class="row">
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-									<label class="form-label">Password</label>
-									<div class="form-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="pass" name="pass" required/>
 
-										</div>
-									</div>
-								</div>
-							</div>
 	               </div>
 	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect">GUARDAR</button>
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
 	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 	               </div>
 	           </div>
@@ -266,7 +270,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	</form>
 
 	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_inModificar">
+		<form class="formulario" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
@@ -274,10 +278,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
 		               <div class="modal-body">
-								<div class="row">
-									<div class="frmAjaxModificar demo-masked-input">
+								<div class="row frmAjaxModificar">
 
-									</div>
 								</div>
 		               </div>
 		               <div class="modal-footer">
@@ -292,7 +294,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_inEliminar">
+		<form class="formulario" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
@@ -363,20 +365,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			}
 		});
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
+		$("#sign_in").submit(function(e){
+			e.preventDefault();
 		});
-
-		var $demoMaskedInput = $('.demo-masked-input');
 
 		$('#activo').prop('checked',true);
 
@@ -396,11 +387,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
-						var $demoMaskedInput = $('.demo-masked-input');
-
-		 	  			$demoMaskedInput.find('#fechanacimiento').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
-
-		 				$demoMaskedInput.find('#iban').inputmask('aa99 9999 9999 9999 9999 99', { placeholder: '____ ____ ____ ____ ____ __'});
 					} else {
 						swal("Error!", data, "warning");
 
@@ -477,88 +463,65 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			frmAjaxEliminar($('#ideliminar').val());
 		});
 
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			url = "archivos.php?id=" + idTable;
-			$(location).attr('href',url);
-		});
-
-		$("#example").on("click",'.btnFoto', function(){
-			idTable =  $(this).attr("id");
-			url = "documentos.php?id=" + idTable;
-			$(location).attr('href',url);
-		});
-
-		$("#example").on("click",'.btnSubidas', function(){
-			idTable =  $(this).attr("id");
-			url = "subidas.php?id=" + idTable;
-			$(location).attr('href',url);
-		});
-
-
-
-
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
-		$('#sign_in').submit(function(e){
+		$('.nuevo').click(function(){
 
-			e.preventDefault();
+			//información del formulario
+			var formData = new FormData($(".formulario")[0]);
+			var message = "";
+			//hacemos la petición ajax
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
 
-			if ($('#sign_in')[0].checkValidity()) {
-				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
+				},
+				//una vez finalizado correctamente
+				success: function(data){
 
-					},
-					//una vez finalizado correctamente
-					success: function(data){
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Creado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
 
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Creado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
+						$('#lgmNuevo').modal('hide');
+						$('#unidadnegocio').val('');
+						table.ajax.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2500,
+								showConfirmButton: false
+						});
 
 
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
 					}
-				});
-			}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
 		});
 
 

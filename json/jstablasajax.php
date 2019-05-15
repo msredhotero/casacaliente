@@ -46,114 +46,15 @@ function armarAcciones($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
-	case 'subidas':
-		$resAjax = $serviciosReferencias->traerSubidasPorClienteajax($idcliente,$length, $start, $busqueda);
-		$res = $serviciosReferencias->traerSubidasPorCliente($idcliente);
-		if ($_SESSION['idroll_sahilices'] == 1) {
-			$label = array('btnDescargarSubidas','btnEliminar');
-			$class = array('bg-green','bg-red');
-			$icon = array('file_download','delete');
-		} else {
-			$label = array('btnDescargarSubidas');
-			$class = array('bg-green');
-			$icon = array('file_download');
-		}
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 2;
-
-		break;
-	case 'facturas':
-		$resAjax = $serviciosReferencias->traerFacturasPorClienteajax($idcliente,$length, $start, $busqueda);
-		$res = $serviciosReferencias->traerFacturasPorCliente($idcliente);
-		$label = array('btnDescargar');
-		$class = array('bg-green');
-		$icon = array('file_download');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 9;
-
-		break;
-	case 'facturasingresos':
-		$resAjax = $serviciosReferencias->traerFacturasPorClienteTipoajax($idcliente,1,$length, $start, $busqueda);
-		$res = $serviciosReferencias->traerFacturasPorClienteTipo($idcliente,1);
-		$label = array('btnDescargar');
-		$class = array('bg-green');
-		$icon = array('file_download');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 3;
-
-		break;
-	case 'facturasgastos':
-		$resAjax = $serviciosReferencias->traerFacturasPorClienteTipoajax($idcliente,2,$length, $start, $busqueda);
-		$res = $serviciosReferencias->traerFacturasPorClienteTipo($idcliente,2);
-		$label = array('btnDescargar');
-		$class = array('bg-green');
-		$icon = array('file_download');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 3;
-
-		break;
-	case 'facturastodas':
-		$resAjax = $serviciosReferencias->traerFacturasajax($length, $start, $busqueda);
-		$res = $serviciosReferencias->traerFacturas();
-		$label = array('btnDescargar','btnModificar');
-		$class = array('bg-green','bg-orange');
-		$icon = array('file_download','edit');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 10;
-
-		break;
 	case 'clientes':
 		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda);
 		$res = $serviciosReferencias->traerClientes();
-		$label = array('btnVer','btnModificar','btnEliminar','btnFoto','btnSubidas');
-		$class = array('bg-riderz','bg-amber','bg-red','bg-green','bg-blue');
-		$icon = array('backup','create','delete','assignment_ind','cloud_download');
+		$label = array('btnVer','btnModificar','btnEliminar');
+		$class = array('bg-riderz','bg-amber','bg-red');
+		$icon = array('backup','create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 10;
-
-		break;
-	case 'usuarios':
-		$resAjax = $serviciosUsuarios->traerUsuariosajax($length, $start, $busqueda);
-		$res = $serviciosUsuarios->traerUsuarios();
-		$label = array('btnModificar','btnEliminar','btnEnviar');
-		$class = array('bg-amber','bg-red','bg-blue-grey');
-		$icon = array('create','delete','vpn_key');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 5;
-		break;
-	case 'archivos':
-		$resAjax = $serviciosReferencias->traerArchivosPorClienteajax($idcliente,$length, $start, $busqueda);
-		$res = $serviciosReferencias->traerArchivosPorCliente($idcliente);
-		if ($_SESSION['idroll_sahilices'] == 1) {
-			$label = array('btnDescargar','btnEliminar');
-			$class = array('bg-green','bg-red');
-			$icon = array('file_download','delete');
-		} else {
-			$label = array('btnDescargar');
-			$class = array('bg-green');
-			$icon = array('file_download');
-		}
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 2;
-
-		break;
-	case 'categorias':
-		$resAjax = $serviciosReferencias->traerCategoriasajax($length, $start, $busqueda);
-		$res = $serviciosReferencias->traerCategorias();
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-orange','bg-red');
-		$icon = array('edit','delete');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 1;
+		$termina = 12;
 
 		break;
 
