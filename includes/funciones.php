@@ -1040,31 +1040,7 @@ class Servicios {
 	function camposTablaModificar($id,$lblid,$accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
 
 		switch ($tabla) {
-			case 'dbclientes':
-				$sqlMod = "select
-								idcliente,
-								apellido,
-								nombre,
-								nrodocumento,
-								telefono,
-								celular,
-								email,
-								(case when aceptaterminos = 1 then 'Si' else 'No' end) as aceptaterminos,
-								(case when subscripcion = 1 then 'Si' else 'No' end) as subscripcion,
-								(case when activo = 1 then 'Si' else 'No' end) as activo,
-								ciudad,
-								fechanacimiento,
-								domicilio,
-								codigopostal,
-								municipio,
-								iban,
-								nroseguro,
-								fotofrente,
-								fotodorsal,
-								codigoreferencia
-									from ".$tabla." where ".$lblid." = ".$id;
-				$resMod = $this->query($sqlMod,0);
-				break;
+			
 			case 'dbusuarios':
 				$sqlMod = "select
 								idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refclientes
@@ -1135,7 +1111,7 @@ class Servicios {
 				} else {
 					$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","idusuario","imagen");
 				}
-				
+
 			}
 
 		}

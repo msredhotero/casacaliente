@@ -146,7 +146,9 @@ case 'traerTipoubicacionPorId':
 traerTipoubicacionPorId($serviciosReferencias);
 break;
 
-
+case 'frmAjaxModificar':
+frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
+break;
 /* Fin */
 
 }
@@ -223,22 +225,20 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          break;
 
       case 'dbclientes':
-         $resultado = $serviciosReferencias->traerClientesPorId($id);
 
          $modificar = "modificarClientes";
          $idTabla = "idcliente";
 
-         $lblCambio	 	= array('reftipodocumentos','nrodocumento','telefono','celular','aceptaterminos','fechanacimiento','codigopostal','nroseguro','codigoreferencia');
-         $lblreemplazo	= array('Tipo Documento','Nro. Doc.','Tel. Fijo','Tel. Movil','Acepta Ter. Y Cond.','Fecha de Nacimiento','Cod. Postal','Nro de Seguro','Cod. de Referencia');
+         $lblCambio	 	= array('codipostal','telefon2','email2');
+         $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2');
 
 
-         $resVar1 = $serviciosReferencias->traerTipodocumentosPorId(mysql_result($resultado,0,'reftipodocumentos'));
-         $cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+         $cadRef 	= '';
 
-         //die(var_dump(mysql_result($resVar4,0,0)));
+         $refdescripcion = array();
+         $refCampo 	=  array();
 
-         $refdescripcion = array(0 => $cadRef1);
-         $refCampo 	=  array('reftipodocumentos');
+
          break;
       case 'dbusuarios':
          $resultado = $serviciosReferencias->traerUsuariosPorId($id);
@@ -476,7 +476,7 @@ function eliminarTipoubicacion($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarTipoubicacion($id);
 echo $res;
-} 
+}
 ////////////////////////// FIN DE TRAER DATOS ////////////////////////////////////////////////////////////
 
 //////////////////////////  BASICO  /////////////////////////////////////////////////////////////////////////
