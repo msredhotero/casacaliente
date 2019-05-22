@@ -156,50 +156,60 @@ break;
 
 
 function insertarClientes($serviciosReferencias) {
-$cognom = $_POST['cognom'];
-$nom = $_POST['nom'];
-$nif = $_POST['nif'];
-$carrer = $_POST['carrer'];
-$codipostal = $_POST['codipostal'];
-$ciutat = $_POST['ciutat'];
-$pais = $_POST['pais'];
-$telefon = $_POST['telefon'];
-$email = $_POST['email'];
-$comentaris = $_POST['comentaris'];
-$telefon2 = $_POST['telefon2'];
-$email2 = $_POST['email2'];
-$res = $serviciosReferencias->insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
+   $cognom = $_POST['cognom'];
+   $nom = $_POST['nom'];
+   $nif = $_POST['nif'];
+   $carrer = $_POST['carrer'];
+   $codipostal = $_POST['codipostal'];
+   $ciutat = $_POST['ciutat'];
+   $pais = $_POST['pais'];
+   $telefon = $_POST['telefon'];
+   $email = $_POST['email'];
+   $comentaris = $_POST['comentaris'];
+   $telefon2 = $_POST['telefon2'];
+   $email2 = $_POST['email2'];
+
+   $res = $serviciosReferencias->insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Huvo un error al insertar datos';
+   }
 }
-}
+
 function modificarClientes($serviciosReferencias) {
-$id = $_POST['id'];
-$cognom = $_POST['cognom'];
-$nom = $_POST['nom'];
-$nif = $_POST['nif'];
-$carrer = $_POST['carrer'];
-$codipostal = $_POST['codipostal'];
-$ciutat = $_POST['ciutat'];
-$pais = $_POST['pais'];
-$telefon = $_POST['telefon'];
-$email = $_POST['email'];
-$comentaris = $_POST['comentaris'];
-$telefon2 = $_POST['telefon2'];
-$email2 = $_POST['email2'];
-$res = $serviciosReferencias->modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
+   $id = $_POST['id'];
+   $cognom = $_POST['cognom'];
+   $nom = $_POST['nom'];
+   $nif = $_POST['nif'];
+   $carrer = $_POST['carrer'];
+   $codipostal = $_POST['codipostal'];
+   $ciutat = $_POST['ciutat'];
+   $pais = $_POST['pais'];
+   $telefon = $_POST['telefon'];
+   $email = $_POST['email'];
+   $comentaris = $_POST['comentaris'];
+   $telefon2 = $_POST['telefon2'];
+   $email2 = $_POST['email2'];
+
+   $res = $serviciosReferencias->modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Huvo un error al modificar datos';
+   }
 }
-}
+
 function eliminarClientes($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarClientes($id);
-echo $res;
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarClientes($id);
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Huvo un error al modificar datos';
+   }
 }
 
 
@@ -211,9 +221,9 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
-      case 'tbcategorias':
-         $modificar = "modificarCategorias";
-         $idTabla = "idcategoria";
+      case 'tbtipoubicacion':
+         $modificar = "modificarTipoubicacion";
+         $idTabla = "idtipoubicacion";
 
          $lblCambio	 	= array();
          $lblreemplazo	= array();
@@ -222,7 +232,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $refdescripcion = array();
          $refCampo 	=  array();
-         break;
+      break;
 
       case 'dbclientes':
 
@@ -239,7 +249,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $refCampo 	=  array();
 
 
-         break;
+      break;
       case 'dbusuarios':
          $resultado = $serviciosReferencias->traerUsuariosPorId($id);
 
@@ -262,31 +272,36 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $refdescripcion = array(0 => $cadRef, 1=>$cadRef2);
          $refCampo 	=  array("refroles","refclientes");
          break;
-      case 'dbfacturas':
-         $resultado = $serviciosReferencias->traerFacturasPorId($id);
+      case 'dbubicaciones':
+         $resultado = $serviciosReferencias->traerUbicacionesPorId($id);
 
-         $modificar = "modificarFacturas";
-         $idTabla = "idfactura";
+         $modificar = "modificarUbicaciones";
+         $idTabla = "idubicacion";
 
-         $lblCambio	 	= array('refclientes','refmeses','refestados','reftipofacturas','iva','irff','fechaingreso','fechasubido','total','anio');
-         $lblreemplazo	= array('Cliente','Trimestre','Estado','Tipo Factura','IVA','IRPF','Fecha Ingreso','Fecha Subido','Importe Total','Año');
+         $lblCambio	 	= array('reftipoubicacion','codapartament');
+         $lblreemplazo	= array('Tipo Ubicaciones','Cod. Apart.');
 
-         $resVar1 = $serviciosReferencias->traerMeses();
-         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'refmeses'));
+         $resVar1 = $serviciosReferencias->traerTipoubicacion();
+         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
 
-         $resVar2 = $serviciosReferencias->traerTipofacturas();
-         $cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'reftipofacturas'));
+         $refdescripcion = array(0 => $cadRef1);
+         $refCampo 	=  array('reftipoubicacion');
+      break;
+      case 'dbtarifas':
+         $resultado = $serviciosReferencias->traerTarifasPorId($id);
 
-         $resVar3 = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
-         $cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(2,3),' ');
+         $modificar = "modificarTarifas";
+         $idTabla = "idtarifa";
 
-         $resVar4 = $serviciosReferencias->traerEstados();
-         $cadRef4 	= $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestados'));
-         //die(var_dump(mysql_result($resVar4,0,0)));
+         $lblCambio	 	= array('reftipoubicacion','desdeperiode','finsaperiode');
+         $lblreemplazo	= array('Tipo Ubicaciones','Perio. Desde','Perio. Finsa');
 
-         $refdescripcion = array(0 => $cadRef1, 1 => $cadRef2, 2 => $cadRef3, 3 => $cadRef4);
-         $refCampo 	=  array('refmeses','reftipofacturas','refclientes','refestados');
-         break;
+         $resVar1 = $serviciosReferencias->traerTipoubicacion();
+         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
+
+         $refdescripcion = array(0 => $cadRef1);
+         $refCampo 	=  array('reftipoubicacion');
+      break;
 
 
       default:
@@ -363,67 +378,93 @@ $res = $serviciosReferencias->eliminarPeriodos($id);
 echo $res;
 }
 
-function insertarTarifas($serviciosReferencias) {
-$tarifa = $_POST['tarifa'];
-$reftipoubicacion = $_POST['reftipoubicacion'];
-$refperiodos = $_POST['refperiodos'];
-$res = $serviciosReferencias->insertarTarifas($tarifa,$reftipoubicacion,$refperiodos);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
-}
-}
-function modificarTarifas($serviciosReferencias) {
-$id = $_POST['id'];
-$tarifa = $_POST['tarifa'];
-$reftipoubicacion = $_POST['reftipoubicacion'];
-$refperiodos = $_POST['refperiodos'];
-$res = $serviciosReferencias->modificarTarifas($id,$tarifa,$reftipoubicacion,$refperiodos);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
-}
-}
-function eliminarTarifas($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarTarifas($id);
-echo $res;
-}
+   function insertarTarifas($serviciosReferencias) {
+      $tarifa = $_POST['tarifa'];
+      $reftipoubicacion = $_POST['reftipoubicacion'];
+      $desdeperiode = $_POST['desdeperiode'];
+      $finsaperiode = $_POST['finsaperiode'];
 
-function insertarUbicaciones($serviciosReferencias) {
-$dormitorio = $_POST['dormitorio'];
-$color = $_POST['color'];
-$reftipoubicacion = $_POST['reftipoubicacion'];
-$codapartament = $_POST['codapartament'];
-$hutg = $_POST['hutg'];
-$res = $serviciosReferencias->insertarUbicaciones($dormitorio,$color,$reftipoubicacion,$codapartament,$hutg);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
-}
-}
-function modificarUbicaciones($serviciosReferencias) {
-$id = $_POST['id'];
-$dormitorio = $_POST['dormitorio'];
-$color = $_POST['color'];
-$reftipoubicacion = $_POST['reftipoubicacion'];
-$codapartament = $_POST['codapartament'];
-$hutg = $_POST['hutg'];
-$res = $serviciosReferencias->modificarUbicaciones($id,$dormitorio,$color,$reftipoubicacion,$codapartament,$hutg);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
-}
-}
-function eliminarUbicaciones($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarUbicaciones($id);
-echo $res;
-}
+      $res = $serviciosReferencias->insertarTarifas($tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Huvo un error al insertar datos';
+      }
+   }
+
+   function modificarTarifas($serviciosReferencias) {
+      $id = $_POST['id'];
+      $tarifa = $_POST['tarifa'];
+      $reftipoubicacion = $_POST['reftipoubicacion'];
+      $desdeperiode = $_POST['desdeperiode'];
+      $finsaperiode = $_POST['finsaperiode'];
+
+      $res = $serviciosReferencias->modificarTarifas($id,$tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
+
+   function eliminarTarifas($serviciosReferencias) {
+      $id = $_POST['id'];
+
+      $res = $serviciosReferencias->eliminarTarifas($id);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
+
+   function insertarUbicaciones($serviciosReferencias) {
+      $dormitorio = $_POST['dormitorio'];
+      $color = $_POST['color'];
+      $reftipoubicacion = $_POST['reftipoubicacion'];
+      $codapartament = $_POST['codapartament'];
+      $hutg = $_POST['hutg'];
+
+      $res = $serviciosReferencias->insertarUbicaciones($dormitorio,$color,$reftipoubicacion,$codapartament,$hutg);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Huvo un error al insertar datos';
+      }
+   }
+
+   function modificarUbicaciones($serviciosReferencias) {
+      $id = $_POST['id'];
+      $dormitorio = $_POST['dormitorio'];
+      $color = $_POST['color'];
+      $reftipoubicacion = $_POST['reftipoubicacion'];
+      $codapartament = $_POST['codapartament'];
+      $hutg = $_POST['hutg'];
+
+      $res = $serviciosReferencias->modificarUbicaciones($id,$dormitorio,$color,$reftipoubicacion,$codapartament,$hutg);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
+
+   function eliminarUbicaciones($serviciosReferencias) {
+      $id = $_POST['id'];
+
+      $res = $serviciosReferencias->eliminarUbicaciones($id);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
 
 
 function insertarFormaspagos($serviciosReferencias) {
@@ -453,30 +494,42 @@ $res = $serviciosReferencias->eliminarFormaspagos($id);
 echo $res;
 }
 
-function insertarTipoubicacion($serviciosReferencias) {
-$tipoubicacion = $_POST['tipoubicacion'];
-$res = $serviciosReferencias->insertarTipoubicacion($tipoubicacion);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
-}
-}
-function modificarTipoubicacion($serviciosReferencias) {
-$id = $_POST['id'];
-$tipoubicacion = $_POST['tipoubicacion'];
-$res = $serviciosReferencias->modificarTipoubicacion($id,$tipoubicacion);
-if ($res == true) {
-echo '';
-} else {
-echo 'Huvo un error al modificar datos';
-}
-}
-function eliminarTipoubicacion($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarTipoubicacion($id);
-echo $res;
-}
+   function insertarTipoubicacion($serviciosReferencias) {
+      $tipoubicacion = $_POST['tipoubicacion'];
+
+      $res = $serviciosReferencias->insertarTipoubicacion($tipoubicacion);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Huvo un error al insertar datos';
+      }
+   }
+
+   function modificarTipoubicacion($serviciosReferencias) {
+      $id = $_POST['id'];
+      $tipoubicacion = $_POST['tipoubicacion'];
+
+      $res = $serviciosReferencias->modificarTipoubicacion($id,$tipoubicacion);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
+
+   function eliminarTipoubicacion($serviciosReferencias) {
+      $id = $_POST['id'];
+
+      $res = $serviciosReferencias->eliminarTipoubicacion($id);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
 ////////////////////////// FIN DE TRAER DATOS ////////////////////////////////////////////////////////////
 
 //////////////////////////  BASICO  /////////////////////////////////////////////////////////////////////////

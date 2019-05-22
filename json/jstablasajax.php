@@ -33,6 +33,9 @@ if (isset($_GET['referencia1'])) {
 	$referencia1 = 0;
 }
 
+$colSort = (integer)$_GET['iSortCol_0'] + 2;
+$colSortDir = $_GET['sSortDir_0'];
+
 function armarAcciones($id,$label='',$class,$icon) {
 	$cad = "";
 
@@ -47,16 +50,49 @@ function armarAcciones($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 	case 'clientes':
-		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda);
+		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerClientes();
 		$label = array('btnVer','btnModificar','btnEliminar');
-		$class = array('bg-riderz','bg-amber','bg-red');
-		$icon = array('backup','create','delete');
+		$class = array('bg-green','bg-amber','bg-red');
+		$icon = array('search','create','delete');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 12;
 
 		break;
+	case 'tipoubicacion':
+		$resAjax = $serviciosReferencias->traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerTipoubicacion();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 1;
+
+	break;
+	case 'ubicaciones':
+		$resAjax = $serviciosReferencias->traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerUbicaciones();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+
+	break;
+	case 'tarifes':
+		$resAjax = $serviciosReferencias->traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerTarifas();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+
+	break;
 
 	default:
 		// code...

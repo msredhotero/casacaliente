@@ -504,6 +504,7 @@ class Servicios {
 								$form	=	$form.'
 
 								<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+									<div class="form-line">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 									<div class="input-group col-md-12">
 
@@ -515,6 +516,7 @@ class Servicios {
 
 								$form	=	$form.'		</select>
 									</div>
+									</div>
 								</div>
 
 								';
@@ -523,6 +525,7 @@ class Servicios {
 								$form	=	$form.'
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+								<div class="form-line">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 									<select class="form-control show-tick" id="'.strtolower($campo).'" name="'.strtolower($campo).'">
 
@@ -531,7 +534,7 @@ class Servicios {
 								$form	=	$form.$option;
 
 								$form	=	$form.'</select>
-
+								</div>
 								</div>
 
 								';
@@ -563,7 +566,7 @@ class Servicios {
 
 									/*if (($row[0] == "fechabaja2") || ($row[0] == "fechaalta2")){*/
 										$form	=	$form.'
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
                                   <b>'.$label.'</b>
                                   <div class="input-group">
                                       <span class="input-group-addon">
@@ -1040,7 +1043,7 @@ class Servicios {
 	function camposTablaModificar($id,$lblid,$accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
 
 		switch ($tabla) {
-			
+
 			case 'dbusuarios':
 				$sqlMod = "select
 								idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refclientes

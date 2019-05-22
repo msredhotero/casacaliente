@@ -13,7 +13,7 @@ class ServiciosReferencias {
 
 /* PARA Clientes */
 
-function traerClientesajax($length, $start, $busqueda) {
+function traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 	$where = '';
 
@@ -38,7 +38,7 @@ function traerClientesajax($length, $start, $busqueda) {
    c.email2
    from dbclientes c
 	".$where."
-	order by c.cognom, c.nom
+	ORDER BY ".$colSort." ".$colSortDir."
 	limit ".$start.",".$length;
 
 	$res = $this->query($sql,0);
@@ -47,7 +47,7 @@ function traerClientesajax($length, $start, $busqueda) {
 
 function insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
 $sql = "insert into dbclientes(idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2)
-values ('','".($cognom)."','".($nom)."','".($nif)."','".($carrer)."','".($codipostal)."','".($ciutat)."','".($pais)."','".($telefon)."','".($email)."','".($comentaris)."','".($telefon2)."','".($email2)."')";
+values ('','".$cognom."','".$nom."','".$nif."','".$carrer."','".$codipostal."','".$ciutat."','".$pais."','".$telefon."','".$email."','".$comentaris."','".$telefon2."','".$email2."')";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -56,7 +56,7 @@ return $res;
 function modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
 $sql = "update dbclientes
 set
-cognom = '".($cognom)."',nom = '".($nom)."',nif = '".($nif)."',carrer = '".($carrer)."',codipostal = '".($codipostal)."',ciutat = '".($ciutat)."',pais = '".($pais)."',telefon = '".($telefon)."',email = '".($email)."',comentaris = '".($comentaris)."',telefon2 = '".($telefon2)."',email2 = '".($email2)."'
+cognom = '".$cognom."',nom = '".$nom."',nif = '".$nif."',carrer = '".$carrer."',codipostal = '".$codipostal."',ciutat = '".$ciutat."',pais = '".$pais."',telefon = '".$telefon."',email = '".$email."',comentaris = '".$comentaris."',telefon2 = '".$telefon2."',email2 = '".$email2."'
 where idcliente =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -106,7 +106,7 @@ return $res;
 
 function insertarPeriodos($nomperiode,$desdeperiode,$finsaperiode,$any) {
 $sql = "insert into dbperiodos(idperiodo,nomperiode,desdeperiode,finsaperiode,any)
-values ('','".($nomperiode)."','".($desdeperiode)."','".($finsaperiode)."',".$any.")";
+values ('','".$nomperiode."','".$desdeperiode."','".$finsaperiode."',".$any.")";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -115,7 +115,7 @@ return $res;
 function modificarPeriodos($id,$nomperiode,$desdeperiode,$finsaperiode,$any) {
 $sql = "update dbperiodos
 set
-nomperiode = '".($nomperiode)."',desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."',any = ".$any."
+nomperiode = '".$nomperiode."',desdeperiode = '".$desdeperiode."',finsaperiode = '".$finsaperiode."',any = ".$any."
 where idperiodo =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -150,23 +150,23 @@ return $res;
 }
 
 /* Fin */
-/* /* Fin de la Tabla: dbperiodos*/
+/* Fin de la Tabla: dbperiodos*/
 
 
 /* PARA Tarifas */
 
-function insertarTarifas($tarifa,$reftipoubicacion,$refperiodos) {
-$sql = "insert into dbtarifas(idtarifa,tarifa,reftipoubicacion,refperiodos)
-values ('',".$tarifa.",".$reftipoubicacion.",".$refperiodos.")";
+function insertarTarifas($tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode) {
+$sql = "insert into dbtarifas(idtarifa,tarifa,reftipoubicacion,desdeperiode,finsaperiode)
+values ('',".$tarifa.",".$reftipoubicacion.",'".($desdeperiode)."','".($finsaperiode)."')";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarTarifas($id,$tarifa,$reftipoubicacion,$refperiodos) {
+function modificarTarifas($id,$tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode) {
 $sql = "update dbtarifas
 set
-tarifa = ".$tarifa.",reftipoubicacion = ".$reftipoubicacion.",refperiodos = ".$refperiodos."
+tarifa = ".$tarifa.",reftipoubicacion = ".$reftipoubicacion.",desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."'
 where idtarifa =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -180,15 +180,43 @@ return $res;
 }
 
 
+function traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " where t.tarifa like '%".$busqueda."%' or t.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or t.finsaperiode like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+	t.idtarifa,
+	t.tarifa,
+	tip.tipoubicacion,
+	t.desdeperiode,
+	t.finsaperiode,
+	t.reftipoubicacion
+	from dbtarifas t
+	inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
+	".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+	return $res;
+}
+
+
 function traerTarifas() {
 $sql = "select
 t.idtarifa,
 t.tarifa,
 t.reftipoubicacion,
-t.refperiodos
+t.desdeperiode,
+t.finsaperiode
 from dbtarifas t
 inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
-inner join dbperiodos per ON per.idperiodo = t.refperiodos
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -196,20 +224,20 @@ return $res;
 
 
 function traerTarifasPorId($id) {
-$sql = "select idtarifa,tarifa,reftipoubicacion,refperiodos from dbtarifas where idtarifa =".$id;
+$sql = "select idtarifa,tarifa,reftipoubicacion,desdeperiode,finsaperiode from dbtarifas where idtarifa =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
 
 /* Fin */
-/* /* Fin de la Tabla: dbtarifas*/
+/* Fin de la Tabla: dbtarifas */
 
 
 /* PARA Ubicaciones */
 
 function insertarUbicaciones($dormitorio,$color,$reftipoubicacion,$codapartament,$hutg) {
 $sql = "insert into dbubicaciones(idubicacion,dormitorio,color,reftipoubicacion,codapartament,hutg)
-values ('',".$dormitorio.",'".($color)."',".$reftipoubicacion.",'".($codapartament)."','".($hutg)."')";
+values ('',".$dormitorio.",'".$color."',".$reftipoubicacion.",'".$codapartament."','".$hutg."')";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -218,7 +246,7 @@ return $res;
 function modificarUbicaciones($id,$dormitorio,$color,$reftipoubicacion,$codapartament,$hutg) {
 $sql = "update dbubicaciones
 set
-dormitorio = ".$dormitorio.",color = '".($color)."',reftipoubicacion = ".$reftipoubicacion.",codapartament = '".($codapartament)."',hutg = '".($hutg)."'
+dormitorio = ".$dormitorio.",color = '".$color."',reftipoubicacion = ".$reftipoubicacion.",codapartament = '".$codapartament."',hutg = '".$hutg."'
 where idubicacion =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -231,6 +259,33 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " where u.dormitorio like '%".$busqueda."%' or u.color like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or u.codapartament like '%".$busqueda."%' or u.hutg like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+	u.idubicacion,
+	u.dormitorio,
+	u.color,
+	tip.tipoubicacion,
+	u.codapartament,
+	u.hutg,
+	u.reftipoubicacion
+	from dbubicaciones u
+	inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+	".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+	return $res;
+}
 
 function traerUbicaciones() {
 $sql = "select
@@ -261,7 +316,7 @@ return $res;
 
 function insertarFormaspagos($formapago,$abreviatura) {
 $sql = "insert into tbformaspagos(idformapago,formapago,abreviatura)
-values ('','".($formapago)."','".($abreviatura)."')";
+values ('','".$formapago."','".$abreviatura."')";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -270,7 +325,7 @@ return $res;
 function modificarFormaspagos($id,$formapago,$abreviatura) {
 $sql = "update tbformaspagos
 set
-formapago = '".($formapago)."',abreviatura = '".($abreviatura)."'
+formapago = '".$formapago."',abreviatura = '".$abreviatura."'
 where idformapago =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -310,7 +365,7 @@ return $res;
 
 function insertarTipoubicacion($tipoubicacion) {
 $sql = "insert into tbtipoubicacion(idtipoubicacion,tipoubicacion)
-values ('','".($tipoubicacion)."')";
+values ('','".$tipoubicacion."')";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -319,7 +374,7 @@ return $res;
 function modificarTipoubicacion($id,$tipoubicacion) {
 $sql = "update tbtipoubicacion
 set
-tipoubicacion = '".($tipoubicacion)."'
+tipoubicacion = '".$tipoubicacion."'
 where idtipoubicacion =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -332,6 +387,28 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+
+function traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " where t.tipoubicacion like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+	t.idtipoubicacion,
+	t.tipoubicacion
+	from tbtipoubicacion t
+	".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+	return $res;
+}
 
 function traerTipoubicacion() {
 $sql = "select
@@ -351,7 +428,7 @@ return $res;
 }
 
 /* Fin */
-/* /* Fin de la Tabla: tbtipoubicacion*/
+/* Fin de la Tabla: tbtipoubicacion */
 
    function GUID()
    {
@@ -667,7 +744,7 @@ return $res;
 
    function insertarEstados($estado,$color,$icono) {
    $sql = "insert into tbestados(idestado,estado,color,icono)
-   values (null,'".($estado)."','".($color)."','".($icono)."')";
+   values (null,'".$estado."','".$color."','".$icono."')";
    $res = $this->query($sql,1);
    return $res;
    }
@@ -676,7 +753,7 @@ return $res;
    function modificarEstados($id,$estado,$color,$icono) {
    $sql = "update tbestados
    set
-   estado = '".($estado)."',color = '".($color)."',icono = '".($icono)."'
+   estado = '".$estado."',color = '".$color."',icono = '".$icono."'
    where idestado =".$id;
    $res = $this->query($sql,0);
    return $res;
@@ -716,7 +793,7 @@ return $res;
 
    function insertarMeses($meses,$desde,$hasta) {
    $sql = "insert into tbmeses(idmes,meses,desde,hasta)
-   values (null,'".($meses)."',".$desde.",".$hasta.")";
+   values (null,'".$meses."',".$desde.",".$hasta.")";
    $res = $this->query($sql,1);
    return $res;
    }
@@ -725,7 +802,7 @@ return $res;
    function modificarMeses($id,$meses,$desde,$hasta) {
    $sql = "update tbmeses
    set
-   meses = '".($meses)."',desde = ".$desde.",hasta = ".$hasta."
+   meses = '".$meses."',desde = ".$desde.",hasta = ".$hasta."
    where idmes =".$id;
    $res = $this->query($sql,0);
    return $res;
@@ -800,7 +877,7 @@ return $res;
 
    function insertarUsuarios($usuario,$password,$refroles,$email,$nombrecompleto,$activo,$refclientes) {
    $sql = "insert into dbusuarios(idusuario,usuario,password,refroles,email,nombrecompleto,activo,refclientes)
-   values (null,'".($usuario)."','".($password)."',".$refroles.",'".($email)."','".($nombrecompleto)."',".$activo.",".$refclientes.")";
+   values (null,'".$usuario."','".$password."',".$refroles.",'".$email."','".$nombrecompleto."',".$activo.",".$refclientes.")";
    $res = $this->query($sql,1);
    return $res;
    }
@@ -809,7 +886,7 @@ return $res;
    function modificarUsuarios($id,$usuario,$password,$refroles,$email,$nombrecompleto,$activo,$refclientes) {
    $sql = "update dbusuarios
    set
-   usuario = '".($usuario)."',password = '".($password)."',refroles = ".$refroles.",email = '".($email)."',nombrecompleto = '".($nombrecompleto)."',activo = ".$activo." ,refclientes = ".($refclientes)."
+   usuario = '".$usuario."',password = '".$password."',refroles = ".$refroles.",email = '".$email."',nombrecompleto = '".$nombrecompleto."',activo = ".$activo." ,refclientes = ".($refclientes)."
    where idusuario =".$id;
    $res = $this->query($sql,0);
    return $res;
@@ -856,7 +933,7 @@ return $res;
 
    function insertarPredio_menu($url,$icono,$nombre,$Orden,$hover,$permiso) {
    $sql = "insert into predio_menu(idmenu,url,icono,nombre,Orden,hover,permiso)
-   values (null,'".($url)."','".($icono)."','".($nombre)."',".$Orden.",'".($hover)."','".($permiso)."')";
+   values (null,'".$url."','".$icono."','".$nombre."',".$Orden.",'".$hover."','".$permiso."')";
    $res = $this->query($sql,1);
    return $res;
    }
@@ -865,7 +942,7 @@ return $res;
    function modificarPredio_menu($id,$url,$icono,$nombre,$Orden,$hover,$permiso) {
    $sql = "update predio_menu
    set
-   url = '".($url)."',icono = '".($icono)."',nombre = '".($nombre)."',Orden = ".$Orden.",hover = '".($hover)."',permiso = '".($permiso)."'
+   url = '".$url."',icono = '".$icono."',nombre = '".$nombre."',Orden = ".$Orden.",hover = '".$hover."',permiso = '".$permiso."'
    where idmenu =".$id;
    $res = $this->query($sql,0);
    return $res;
@@ -910,7 +987,7 @@ return $res;
 
    function insertarRoles($descripcion,$activo) {
    $sql = "insert into tbroles(idrol,descripcion,activo)
-   values (null,'".($descripcion)."',".$activo.")";
+   values (null,'".$descripcion."',".$activo.")";
    $res = $this->query($sql,1);
    return $res;
    }
@@ -919,7 +996,7 @@ return $res;
    function modificarRoles($id,$descripcion,$activo) {
    $sql = "update tbroles
    set
-   descripcion = '".($descripcion)."',activo = ".$activo."
+   descripcion = '".$descripcion."',activo = ".$activo."
    where idrol =".$id;
    $res = $this->query($sql,0);
    return $res;
@@ -961,7 +1038,7 @@ return $res;
 
    function insertarConfiguracion($razonsocial,$empresa,$sistema,$direccion,$telefono,$email) {
    $sql = "insert into tbconfiguracion(idconfiguracion,razonsocial,empresa,sistema,direccion,telefono,email)
-   values (null,'".($razonsocial)."','".($empresa)."','".($sistema)."','".($direccion)."','".($telefono)."','".($email)."')";
+   values (null,'".$razonsocial."','".$empresa."','".$sistema."','".$direccion."','".$telefono."','".$email."')";
    $res = $this->query($sql,1);
    return $res;
    }
@@ -970,7 +1047,7 @@ return $res;
    function modificarConfiguracion($id,$razonsocial,$empresa,$sistema,$direccion,$telefono,$email) {
    $sql = "update tbconfiguracion
    set
-   razonsocial = '".($razonsocial)."',empresa = '".($empresa)."',sistema = '".($sistema)."',direccion = '".($direccion)."',telefono = '".($telefono)."',email = '".($email)."'
+   razonsocial = '".$razonsocial."',empresa = '".$empresa."',sistema = '".$sistema."',direccion = '".$direccion."',telefono = '".$telefono."',email = '".$email."'
    where idconfiguracion =".$id;
    $res = $this->query($sql,0);
    return $res;
