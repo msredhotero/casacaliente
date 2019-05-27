@@ -155,7 +155,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <!-- #Top Bar -->
 <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../'); ?>
 
-<section class="content" style="margin-top:-15px;">
+<section class="content" style="margin-top:-75px;">
 
 	<div class="container-fluid">
 		<div class="row clearfix">
@@ -255,7 +255,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>	
+								<?php echo $frmUnidadNegocios; ?>
 							</div>
 
 	               </div>
@@ -467,6 +467,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+		$("#example").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
 		});//fin del boton modificar
 
 		$('.nuevo').click(function(){

@@ -1774,15 +1774,7 @@ class Servicios {
 
 
 		switch ($tabla) {
-			case 'dbclientes':
-				$sqlMod = "select idcliente,reftipodocumentos,apellido,nombre,nrodocumento,telefono,celular,email,
-				(case when aceptaterminos = 1 then 'Si' else 'No' end) as aceptaterminos,
-				(case when subscripcion = 1 then 'Si' else 'No' end) as subscripcion,
-				(case when activo = 1 then 'Si' else 'No' end) as activo, ciudad, fechanacimiento, domicilio, codigopostal,
-				municipio,iban,nroseguro,fotofrente, fotodorsal, codigoreferencia
-									from ".$tabla." where ".$lblid." = ".$id;
-				$resMod = $this->query($sqlMod,0);
-				break;
+
 			case 'tbtipostrabajos':
 				$sqlMod = "select idtipotrabajo,
 													tipotrabajo,
