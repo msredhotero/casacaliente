@@ -9,7 +9,55 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	/* PARA Periodos */
 
+	function insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode) {
+	$sql = "insert into dbperiodos(idperiodo,periodo,any,desdeperiode,finsaperiode)
+	values ('','".($periodo)."',".$any.",'".($desdeperiode)."','".($finsaperiode)."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode) {
+	$sql = "update dbperiodos
+	set
+	periodo = '".($periodo)."',any = ".$any.",desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."'
+	where idperiodo =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarPeriodos($id) {
+	$sql = "delete from dbperiodos where idperiodo =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerPeriodos() {
+	$sql = "select
+	p.idperiodo,
+	p.periodo,
+	p.any,
+	p.desdeperiode,
+	p.finsaperiode
+	from dbperiodos p
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerPeriodosPorId($id) {
+	$sql = "select idperiodo,periodo,any,desdeperiode,finsaperiode from dbperiodos where idperiodo =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbperiodos*/
 
 /* PARA Clientes */
 
@@ -102,75 +150,25 @@ return $res;
 /* /* Fin de la Tabla: dbclientes*/
 
 
-/* PARA Periodos */
-
-function insertarPeriodos($nomperiode,$desdeperiode,$finsaperiode,$any) {
-$sql = "insert into dbperiodos(idperiodo,nomperiode,desdeperiode,finsaperiode,any)
-values ('','".$nomperiode."','".$desdeperiode."','".$finsaperiode."',".$any.")";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarPeriodos($id,$nomperiode,$desdeperiode,$finsaperiode,$any) {
-$sql = "update dbperiodos
-set
-nomperiode = '".$nomperiode."',desdeperiode = '".$desdeperiode."',finsaperiode = '".$finsaperiode."',any = ".$any."
-where idperiodo =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarPeriodos($id) {
-$sql = "delete from dbperiodos where idperiodo =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerPeriodos() {
-$sql = "select
-p.idperiodo,
-p.nomperiode,
-p.desdeperiode,
-p.finsaperiode,
-p.any
-from dbperiodos p
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerPeriodosPorId($id) {
-$sql = "select idperiodo,nomperiode,desdeperiode,finsaperiode,any from dbperiodos where idperiodo =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-/* Fin */
-/* Fin de la Tabla: dbperiodos*/
-
 
 /* PARA Tarifas */
 
-function insertarTarifas($tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode) {
-$sql = "insert into dbtarifas(idtarifa,tarifa,reftipoubicacion,desdeperiode,finsaperiode)
-values ('',".$tarifa.",".$reftipoubicacion.",'".($desdeperiode)."','".($finsaperiode)."')";
+function insertarTarifas($reftipoubicacion,$refperiodos) {
+$sql = "insert into dbtarifas(idtarifa,reftipoubicacion,refperiodos)
+values ('',".$reftipoubicacion.",".$refperiodos.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarTarifas($id,$tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode) {
+function modificarTarifas($id,$reftipoubicacion,$refperiodos) {
 $sql = "update dbtarifas
 set
-tarifa = ".$tarifa.",reftipoubicacion = ".$reftipoubicacion.",desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."'
+reftipoubicacion = ".$reftipoubicacion.",refperiodos = ".$refperiodos."
 where idtarifa =".$id;
 $res = $this->query($sql,0);
 return $res;
-}
+} 
 
 
 function eliminarTarifas($id) {
