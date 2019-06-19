@@ -93,6 +93,17 @@ switch ($tabla) {
 		$termina = 4;
 
 	break;
+	case 'periodes':
+		$resAjax = $serviciosReferencias->traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerPeriodos();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+
+	break;
 
 	default:
 		// code...

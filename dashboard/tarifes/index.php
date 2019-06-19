@@ -55,15 +55,21 @@ $modificar = "modificarTarifas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbtarifas";
 
-$lblCambio	 	= array('reftipoubicacion','desdeperiode','finsaperiode');
-$lblreemplazo	= array('Tipo Ubicacion','Perio. Desde','Perio. Finsa');
+$lblCambio	 	= array('reftipoubicacion','refperiodos');
+$lblreemplazo	= array('Tipo Ubicacion','Periode');
 
 
 $resVar1 = $serviciosReferencias->traerTipoubicacion();
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
-$refdescripcion = array(0 => $cadRef1);
-$refCampo 	=  array('reftipoubicacion');
+$resVar2 = $serviciosReferencias->traerPeriodos();
+$cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+
+$cadAny = '<option value="'.date('Y').'">'.date('Y').'</option><option value="'.(date('Y') + 1).'">'.(date('Y') + 1).'</option><option value="'.(date('Y') - 1).'">'.(date('Y') - 1).'</option><option value="'.(date('Y') - 2).'">'.(date('Y') - 2).'</option>';
+
+
+$refdescripcion = array(0 => $cadRef1,1=>$cadRef2);
+$refCampo 	=  array('reftipoubicacion','refperiodos');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -89,13 +95,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link href="../../plugins/waitme/waitMe.css" rel="stylesheet" />
 	<link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
-	<!-- VUE JS -->
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-	<!-- axios -->
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-	<script src="https://unpkg.com/vue-swal"></script>
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
@@ -195,7 +194,28 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</div>
 									</div>
 								</div>
+								<div class="row" style="padding: 5px 20px;">
+									<div class="col-lg-12 col-md-12">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label">Seleccione un Any</label>
+											<div class="form-group">
+												<div class="form-line">
+													<select type="text" class="form-control show-tick" id="any" name="any" >
+														<?php echo $cadAny; ?>
+													</select>
 
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row" style="padding: 5px 20px;">
+									<div class="col-lg-12 col-md-12">
+										<div class="tablaTarifas">
+
+										</div>
+									</div>
+								</div>
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
@@ -232,7 +252,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <!-- NUEVO -->
 	<form class="formulario" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
+	   <div class="modal fade" id="lgmNuevoTarifa" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
@@ -325,6 +345,27 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$('#desdeperiode').val('<?php echo date('Y-m-d'); ?>');
 		$('#finsaperiode').val('<?php echo date('Y-m-d'); ?>');
 
+
+		$(".tablaTarifas").on("blur",'.txtTarifa', function(){
+			idtarifa =  $(this).attr("id");
+			//alert(idtarifa);
+		});
+
+		$(".tablaTarifas").on("click",'.btnNuevoTarifa', function(){
+			idperiodo =  $(this).attr("data-periodo");
+			idtipo =  $(this).attr("data-tipo");
+
+			$("#refperiodos option[value="+ idperiodo +"]").attr("selected",true);
+			$("#reftipoubicacion option[value="+ idtipo +"]").attr("selected",true);
+
+			$('#refperiodos').selectpicker('refresh');
+			$('#reftipoubicacion').selectpicker('refresh');
+
+			//$('.btnNuevoTarifa').modal();
+
+		});
+
+
 		var $demoMaskedInput = $('.demo-masked-input');
 
 		$('#desdeperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
@@ -364,6 +405,38 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});
 
 		$('#activo').prop('checked',true);
+
+		armarTablaTarifas($('#any').val());
+
+		function armarTablaTarifas(any) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'armarTablaTarifas',any: any},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.tablaTarifas').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.tablaTarifas').html(data);
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -498,6 +571,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('#lgmNuevo').modal('hide');
 						$('#unidadnegocio').val('');
 						table.ajax.reload();
+						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",

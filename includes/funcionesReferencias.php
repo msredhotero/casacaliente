@@ -35,6 +35,29 @@ class ServiciosReferencias {
 	return $res;
 	}
 
+	function traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where p.periodo like '%".$busqueda."%' or p.any like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+		p.idperiodo,
+		p.periodo,
+		p.any,
+		p.desdeperiode,
+		p.finsaperiode
+		from dbperiodos p
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
 
 	function traerPeriodos() {
 	$sql = "select
@@ -47,6 +70,20 @@ class ServiciosReferencias {
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
+	}
+
+	function traerPeriodosPorOrdenPorAny($any) {
+		$sql = "select
+		p.idperiodo,
+		p.periodo,
+		p.any,
+		p.desdeperiode,
+		p.finsaperiode
+		from dbperiodos p
+		where p.any = ".$any."
+		order by 2";
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 
@@ -153,22 +190,22 @@ return $res;
 
 /* PARA Tarifas */
 
-function insertarTarifas($reftipoubicacion,$refperiodos) {
-$sql = "insert into dbtarifas(idtarifa,reftipoubicacion,refperiodos)
-values ('',".$reftipoubicacion.",".$refperiodos.")";
+function insertarTarifas($tarifa,$reftipoubicacion,$refperiodos) {
+$sql = "insert into dbtarifas(idtarifa,reftipoubicacion,refperiodos,tarifa)
+values ('',".$reftipoubicacion.",".$refperiodos.",".$tarifa.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarTarifas($id,$reftipoubicacion,$refperiodos) {
+function modificarTarifas($id,$tarifa,$reftipoubicacion,$refperiodos) {
 $sql = "update dbtarifas
 set
-reftipoubicacion = ".$reftipoubicacion.",refperiodos = ".$refperiodos."
+reftipoubicacion = ".$reftipoubicacion.",refperiodos = ".$refperiodos.",tarifa = ".$tarifa."
 where idtarifa =".$id;
 $res = $this->query($sql,0);
 return $res;
-} 
+}
 
 
 function eliminarTarifas($id) {
@@ -184,18 +221,20 @@ function traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 	$busqueda = str_replace("'","",$busqueda);
 	if ($busqueda != '') {
-		$where = " where t.tarifa like '%".$busqueda."%' or t.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or t.finsaperiode like '%".$busqueda."%'";
+		$where = " where t.tarifa like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
 	}
 
 	$sql = "select
 	t.idtarifa,
 	t.tarifa,
 	tip.tipoubicacion,
-	t.desdeperiode,
-	t.finsaperiode,
-	t.reftipoubicacion
+	p.desdeperiode,
+	p.finsaperiode,
+	t.reftipoubicacion,
+	t.refperiodos
 	from dbtarifas t
 	inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
+	inner join dbperiodos p ON p.idperiodo = t.refperiodos
 	".$where."
 	ORDER BY ".$colSort." ".$colSortDir."
 	limit ".$start.",".$length;
@@ -211,8 +250,7 @@ $sql = "select
 t.idtarifa,
 t.tarifa,
 t.reftipoubicacion,
-t.desdeperiode,
-t.finsaperiode
+t.refperiodos
 from dbtarifas t
 inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
 order by 1";
@@ -222,7 +260,13 @@ return $res;
 
 
 function traerTarifasPorId($id) {
-$sql = "select idtarifa,tarifa,reftipoubicacion,desdeperiode,finsaperiode from dbtarifas where idtarifa =".$id;
+$sql = "select idtarifa,tarifa,reftipoubicacion,refperiodos from dbtarifas where idtarifa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTarifasPorPeriodoTipoUbicacion($idperiodo, $idtipoubicacion) {
+$sql = "select idtarifa,tarifa from dbtarifas where refperiodos =".$idperiodo." and reftipoubicacion = ".$idtipoubicacion;
 $res = $this->query($sql,0);
 return $res;
 }

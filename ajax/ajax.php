@@ -149,11 +149,56 @@ break;
 case 'frmAjaxModificar':
 frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
 break;
+
+case 'armarTablaTarifas':
+   armarTablaTarifas($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
 
+function armarTablaTarifas($serviciosReferencias) {
+   $any = $_POST['any'];
+
+   $resPeriodos = $serviciosReferencias->traerPeriodosPorOrdenPorAny($any);
+   $resTipo =     $serviciosReferencias->traerTipoubicacion();
+
+
+   $cad = "<table class='table table-striped' id='tblTarifas'>
+            <thead>
+               <th>Periode</th>
+               <th>".$any."</th>";
+   while ($rowY = mysql_fetch_array($resTipo)) {
+      $cad .= "<th>".$rowY['tipoubicacion']."</th>";
+   }
+   $cad .= "</thead><tbody>";
+
+   while ($rowX = mysql_fetch_array($resPeriodos)) {
+      $cad .= "<tr>";
+      $cad .= "<td>".$rowX['periodo']."</td>";
+      $cad .= "<td>".$rowX['desdeperiode'].' - '.$rowX['finsaperiode']."</td>";
+      $resTipoAux =    $serviciosReferencias->traerTipoubicacion();
+      while ($rowY = mysql_fetch_array($resTipoAux)) {
+         $resTarifa = $serviciosReferencias->traerTarifasPorPeriodoTipoUbicacion($rowX[0],$rowY[0]);
+
+         //$cad .= "<td>asd</td>";
+         if (mysql_num_rows($resTarifa)>0) {
+            $cad .= "<td><input type='number' class='form-control txtTarifa' name='tarifa' id='".mysql_result($resTarifa,0,'idtarifa')."' value='".mysql_result($resTarifa,0,'tarifa')."'/></td>";
+         } else {
+            $cad .= '<td><button type="button" class="btn bg-light-green waves-effect btnNuevoTarifa" data-toggle="modal" data-target="#lgmNuevoTarifa" data-tipo="'.$rowY[0].'" data-periodo="'.$rowX[0].'">
+               <i class="material-icons">add</i>
+            </button></td>';
+         }
+
+      }
+      $cad .= "</tr>";
+   }
+
+   $cad .= "</tbody></table>";
+
+   echo $cad;
+}
 
 function insertarClientes($serviciosReferencias) {
    $cognom = $_POST['cognom'];
@@ -302,6 +347,18 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $refdescripcion = array(0 => $cadRef1);
          $refCampo 	=  array('reftipoubicacion');
       break;
+      case 'dbperiodos':
+         $resultado = $serviciosReferencias->traerPeriodosPorId($id);
+
+         $modificar = "modificarPeriodos";
+         $idTabla = "idperiodo";
+
+         $lblCambio	 	= array('desdeperiode','finsaperiode');
+         $lblreemplazo	= array('Perio. Desde','Perio. Finsa');
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+      break;
 
 
       default:
@@ -348,11 +405,11 @@ function frmAjaxNuevo($serviciosFunciones, $serviciosReferencias) {
 
 
 function insertarPeriodos($serviciosReferencias) {
-$nomperiode = $_POST['nomperiode'];
+$periodo = $_POST['periodo'];
 $desdeperiode = $_POST['desdeperiode'];
 $finsaperiode = $_POST['finsaperiode'];
 $any = $_POST['any'];
-$res = $serviciosReferencias->insertarPeriodos($nomperiode,$desdeperiode,$finsaperiode,$any);
+$res = $serviciosReferencias->insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode);
 if ((integer)$res > 0) {
 echo '';
 } else {
@@ -361,11 +418,11 @@ echo 'Huvo un error al insertar datos';
 }
 function modificarPeriodos($serviciosReferencias) {
 $id = $_POST['id'];
-$nomperiode = $_POST['nomperiode'];
+$periodo = $_POST['periodo'];
 $desdeperiode = $_POST['desdeperiode'];
 $finsaperiode = $_POST['finsaperiode'];
 $any = $_POST['any'];
-$res = $serviciosReferencias->modificarPeriodos($id,$nomperiode,$desdeperiode,$finsaperiode,$any);
+$res = $serviciosReferencias->modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode);
 if ($res == true) {
 echo '';
 } else {
@@ -375,16 +432,20 @@ echo 'Huvo un error al modificar datos';
 function eliminarPeriodos($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarPeriodos($id);
-echo $res;
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
 }
 
    function insertarTarifas($serviciosReferencias) {
       $tarifa = $_POST['tarifa'];
       $reftipoubicacion = $_POST['reftipoubicacion'];
-      $desdeperiode = $_POST['desdeperiode'];
-      $finsaperiode = $_POST['finsaperiode'];
+      $refperiodos = $_POST['refperiodos'];
 
-      $res = $serviciosReferencias->insertarTarifas($tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode);
+
+      $res = $serviciosReferencias->insertarTarifas($tarifa,$reftipoubicacion,$refperiodos);
 
       if ((integer)$res > 0) {
          echo '';
@@ -397,10 +458,9 @@ echo $res;
       $id = $_POST['id'];
       $tarifa = $_POST['tarifa'];
       $reftipoubicacion = $_POST['reftipoubicacion'];
-      $desdeperiode = $_POST['desdeperiode'];
-      $finsaperiode = $_POST['finsaperiode'];
+      $refperiodos = $_POST['refperiodos'];
 
-      $res = $serviciosReferencias->modificarTarifas($id,$tarifa,$reftipoubicacion,$desdeperiode,$finsaperiode);
+      $res = $serviciosReferencias->modificarTarifas($id,$tarifa,$reftipoubicacion,$refperiodos);
 
       if ($res == true) {
          echo '';

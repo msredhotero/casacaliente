@@ -4,7 +4,7 @@
  * @author Saupurein Marcos
  * @copyright 2018
  */
-date_default_timezone_set('America/Buenos_Aires');
+date_default_timezone_set('Europe/Madrid');
 
 class Servicios {
 
@@ -388,6 +388,9 @@ class Servicios {
 			case 'dbarchivos':
 				$ocultar = array("fechacreacion","type","reftipoarchivos","token","anio","mes","refclientes","refcategorias");
 				break;
+			case 'dbtarifas':
+				$ocultar = array("refperiodos","reftipoubicacion");
+			break;
 
 			default:
 				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","idusuario","refestados");

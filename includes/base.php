@@ -4,7 +4,7 @@
  * @author Saupurein Marcos
  * @copyright 2018
  */
-date_default_timezone_set('America/Buenos_Aires');
+date_default_timezone_set('Europe/Madrid');
 
 class BaseHTML {
 
