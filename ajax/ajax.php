@@ -157,10 +157,68 @@ case 'armarTablaTarifas':
    armarTablaTarifas($serviciosReferencias);
 break;
 
+case 'insertarLloguers':
+   insertarLloguers($serviciosReferencias);
+break;
+case 'modificarLloguers':
+   modificarLloguers($serviciosReferencias);
+break;
+case 'eliminarLloguers':
+   eliminarLloguers($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function insertarLloguers($serviciosReferencias) {
+   $refclientes = $_POST['refclientes'];
+   $refubicaciones = $_POST['refubicaciones'];
+   $datalloguer = $_POST['datalloguer'];
+   $entrada = $_POST['entrada'];
+   $sortida = $_POST['sortida'];
+   $total = $_POST['total'];
+   $numpertax = $_POST['numpertax'];
+   $persset = $_POST['persset'];
+   $taxa = $_POST['taxa'];
+   $maxtaxa = $_POST['maxtaxa'];
+
+   $res = $serviciosReferencias->insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Huvo un error al insertar datos';
+   } 
+}
+
+function modificarLloguers($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refclientes = $_POST['refclientes'];
+   $refubicaciones = $_POST['refubicaciones'];
+   $datalloguer = $_POST['datalloguer'];
+   $entrada = $_POST['entrada'];
+   $sortida = $_POST['sortida'];
+   $total = $_POST['total'];
+   $numpertax = $_POST['numpertax'];
+   $persset = $_POST['persset'];
+   $taxa = $_POST['taxa'];
+   $maxtaxa = $_POST['maxtaxa'];
+
+   $res = $serviciosReferencias->modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Huvo un error al modificar datos';
+   }
+}
+
+function eliminarLloguers($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarLloguers($id);
+   echo $res;
+}
 
 function armarTablaTarifas($serviciosReferencias) {
    $any = $_POST['any'];

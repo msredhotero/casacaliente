@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../periodes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../lloguers/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Periodes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Lloguers",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,28 +39,34 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Periode";
+$singular = "Lloguer";
 
-$plural = "Periodes";
+$plural = "Lloguers";
 
-$eliminar = "eliminarPeriodos";
+$eliminar = "eliminarLloguers";
 
-$insertar = "insertarPeriodos";
+$insertar = "insertarLloguers";
 
-$modificar = "modificarPeriodos";
+$modificar = "modificarLloguers";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbperiodos";
+$tabla 			= "dblloguers";
 
-$lblCambio	 	= array('desdeperiode','finsaperiode');
-$lblreemplazo	= array('Perio. Desde','Perio. Finsa');
+$lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa');
+$lblreemplazo	= array('Clientes','Ubicaciones','Data Contracte','N° Pers Taxa','Preu Pers Set','Max Taxa');
 
 
-$refdescripcion = array();
-$refCampo 	=  array();
+$resVar1 = $serviciosReferencias->traerClientes();
+$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+
+$resVar2 = $serviciosReferencias->traerUbicaciones();
+$cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(4,1,2),' - ');
+
+$refdescripcion = array(0 => $cadRef1,1=>$cadRef2);
+$refCampo 	=  array('refclientes','refubicaciones');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -86,13 +92,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link href="../../plugins/waitme/waitMe.css" rel="stylesheet" />
 	<link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
-	<!-- VUE JS -->
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-	<!-- axios -->
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-	<script src="https://unpkg.com/vue-swal"></script>
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
@@ -198,19 +197,27 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
+												<th>Cliente</th>
+												<th>Ubicacion</th>
+												<th>Entrada</th>
+												<th>Sortida</th>
 												<th>Tarifa</th>
-												<th>Tipo Ubicacion</th>
-												<th>Desde</th>
-												<th>Finsa</th>
+												<th>Dias</th>
+												<th>Preu</th>
+												<th>Pers</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
+												<th>Cliente</th>
+												<th>Ubicacion</th>
+												<th>Entrada</th>
+												<th>Sortida</th>
 												<th>Tarifa</th>
-												<th>Tipo Ubicacion</th>
-												<th>Desde</th>
-												<th>Finsa</th>
+												<th>Dias</th>
+												<th>Preu</th>
+												<th>Pers</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -275,6 +282,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		</form>
 
 
+
 	<!-- ELIMINAR -->
 		<form class="formulario" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
@@ -318,9 +326,15 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+		<?php $date = date('Y-m-d'); ?>
 
-		$('#desdeperiode').val('<?php echo date('Y-m-d'); ?>');
-		$('#finsaperiode').val('<?php echo date('Y-m-d'); ?>');
+		$('#datalloguer').val('<?php echo date('Y-m-d'); ?>');
+		$('#entrada').val('<?php echo date('Y-m-d'); ?>');
+		$('#sortida').val('<?php echo date('Y-m-d', strtotime($date.' + 7 days')); ?>');
+
+
+
+
 
 		var $demoMaskedInput = $('.demo-masked-input');
 
@@ -330,7 +344,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=periodes",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=lloguers",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -361,6 +375,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});
 
 		$('#activo').prop('checked',true);
+
+
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -418,6 +434,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
+						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -495,6 +512,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('#lgmNuevo').modal('hide');
 						$('#unidadnegocio').val('');
 						table.ajax.reload();
+						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -550,6 +568,63 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$('#lgmModificar').modal('hide');
 						table.ajax.reload();
+						armarTablaTarifas($('#any').val());
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2500,
+								showConfirmButton: false
+						});
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
+
+
+		$('.modificarTarifa').click(function(){
+
+			//información del formulario
+			var formData = new FormData($(".formulario")[2]);
+			var message = "";
+			//hacemos la petición ajax
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Modificado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+
+						$('#lgmModificarTarifa').modal('hide');
+						table.ajax.reload();
+						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",

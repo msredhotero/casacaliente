@@ -9,6 +9,66 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	/* PARA Lloguers */
+
+	function insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa) {
+		$sql = "insert into dblloguers(idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa)
+		values ('',".$refclientes.",".$refubicaciones.",'".($datalloguer)."','".($entrada)."','".($sortida)."',".$total.",".$numpertax.",".$persset.",".$taxa.",".$maxtaxa.")";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa) {
+	$sql = "update dblloguers
+	set
+	refclientes = ".$refclientes.",refubicaciones = ".$refubicaciones.",datalloguer = '".($datalloguer)."',entrada = '".($entrada)."',sortida = '".($sortida)."',total = ".$total.",numpertax = ".$numpertax.",persset = ".$persset.",taxa = ".$taxa.",maxtaxa = ".$maxtaxa."
+	where idlloguer =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarLloguers($id) {
+	$sql = "delete from dblloguers where idlloguer =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerLloguers() {
+	$sql = "select
+	l.idlloguer,
+	l.refclientes,
+	l.refubicaciones,
+	l.datalloguer,
+	l.entrada,
+	l.sortida,
+	l.total,
+	l.numpertax,
+	l.persset,
+	l.taxa,
+	l.maxtaxa
+	from dblloguers l
+	inner join dbclientes cli ON cli.idcliente = l.refclientes
+	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
+	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerLloguersPorId($id) {
+	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa from dblloguers where idlloguer =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: dblloguers*/
+
 	/* PARA Periodos */
 
 	function insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode) {
