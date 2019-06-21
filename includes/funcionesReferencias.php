@@ -207,6 +207,15 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function modificarTarifaSola($id,$tarifa) {
+$sql = "update dbtarifas
+set
+tarifa = ".$tarifa."
+where idtarifa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function eliminarTarifas($id) {
 $sql = "delete from dbtarifas where idtarifa =".$id;

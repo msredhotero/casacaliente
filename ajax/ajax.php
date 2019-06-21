@@ -90,6 +90,9 @@ break;
 case 'modificarTarifas':
 modificarTarifas($serviciosReferencias);
 break;
+case 'modificarTarifaSola':
+   modificarTarifaSola($serviciosReferencias);
+break;
 case 'eliminarTarifas':
 eliminarTarifas($serviciosReferencias);
 break;
@@ -153,6 +156,7 @@ break;
 case 'armarTablaTarifas':
    armarTablaTarifas($serviciosReferencias);
 break;
+
 /* Fin */
 
 }
@@ -338,14 +342,17 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarTarifas";
          $idTabla = "idtarifa";
 
-         $lblCambio	 	= array('reftipoubicacion','desdeperiode','finsaperiode');
-         $lblreemplazo	= array('Tipo Ubicaciones','Perio. Desde','Perio. Finsa');
+         $lblCambio	 	= array('reftipoubicacion','refperiodos');
+         $lblreemplazo	= array('Tipo Ubicaciones','Periodes');
 
          $resVar1 = $serviciosReferencias->traerTipoubicacion();
          $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
 
-         $refdescripcion = array(0 => $cadRef1);
-         $refCampo 	=  array('reftipoubicacion');
+         $resVar2 = $serviciosReferencias->traerPeriodos();
+         $cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1,3,4),' - ',mysql_result($resultado,0,'refperiodos'));
+
+         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2);
+         $refCampo 	=  array('reftipoubicacion','refperiodos');
       break;
       case 'dbperiodos':
          $resultado = $serviciosReferencias->traerPeriodosPorId($id);
@@ -468,6 +475,21 @@ echo 'Huvo un error al modificar datos';
          echo 'Huvo un error al modificar datos';
       }
    }
+
+   function modificarTarifaSola($serviciosReferencias) {
+      $id = $_POST['idtarifamod'];
+      $tarifa = $_POST['tarifamod'];
+
+      $res = $serviciosReferencias->modificarTarifaSola($id,$tarifa);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Huvo un error al modificar datos';
+      }
+   }
+
+
 
    function eliminarTarifas($serviciosReferencias) {
       $id = $_POST['id'];

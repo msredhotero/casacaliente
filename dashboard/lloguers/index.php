@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../tarifes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../periodes/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Tarifes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Periodes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,37 +39,28 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Tarifa";
+$singular = "Periode";
 
-$plural = "Tarifes";
+$plural = "Periodes";
 
-$eliminar = "eliminarTarifas";
+$eliminar = "eliminarPeriodos";
 
-$insertar = "insertarTarifas";
+$insertar = "insertarPeriodos";
 
-$modificar = "modificarTarifas";
+$modificar = "modificarPeriodos";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbtarifas";
+$tabla 			= "dbperiodos";
 
-$lblCambio	 	= array('reftipoubicacion','refperiodos');
-$lblreemplazo	= array('Tipo Ubicacion','Periode');
-
-
-$resVar1 = $serviciosReferencias->traerTipoubicacion();
-$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
-
-$resVar2 = $serviciosReferencias->traerPeriodos();
-$cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(1,2,3),' - ');
-
-$cadAny = '<option value="'.date('Y').'">'.date('Y').'</option><option value="'.(date('Y') + 1).'">'.(date('Y') + 1).'</option><option value="'.(date('Y') - 1).'">'.(date('Y') - 1).'</option><option value="'.(date('Y') - 2).'">'.(date('Y') - 2).'</option>';
+$lblCambio	 	= array('desdeperiode','finsaperiode');
+$lblreemplazo	= array('Perio. Desde','Perio. Finsa');
 
 
-$refdescripcion = array(0 => $cadRef1,1=>$cadRef2);
-$refCampo 	=  array('reftipoubicacion','refperiodos');
+$refdescripcion = array();
+$refCampo 	=  array();
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -95,6 +86,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link href="../../plugins/waitme/waitMe.css" rel="stylesheet" />
 	<link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
+	<!-- VUE JS -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+	<!-- axios -->
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<script src="https://unpkg.com/vue-swal"></script>
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
@@ -165,7 +163,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
-						<div class="header bg-blue">
+						<div class="header bg-red">
 							<h2>
 								<?php echo strtoupper($plural); ?>
 							</h2>
@@ -194,28 +192,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</div>
 									</div>
 								</div>
-								<div class="row" style="padding: 5px 20px;">
-									<div class="col-lg-12 col-md-12">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-											<label class="form-label">Seleccione un Any</label>
-											<div class="form-group">
-												<div class="form-line">
-													<select type="text" class="form-control show-tick" id="any" name="any" >
-														<?php echo $cadAny; ?>
-													</select>
 
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="row" style="padding: 5px 20px;">
-									<div class="col-lg-12 col-md-12">
-										<div class="tablaTarifas">
-
-										</div>
-									</div>
-								</div>
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
@@ -252,7 +229,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <!-- NUEVO -->
 	<form class="formulario" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevoTarifa" tabindex="-1" role="dialog">
+	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
@@ -296,31 +273,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		   </div>
 			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
 		</form>
-
-		<!-- MODIFICAR -->
-			<form class="formulario" role="form" id="sign_in">
-			   <div class="modal fade" id="lgmModificarTarifa" tabindex="-1" role="dialog">
-			       <div class="modal-dialog modal-lg" role="document">
-			           <div class="modal-content">
-			               <div class="modal-header">
-			                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-			               </div>
-			               <div class="modal-body">
-									<div class="row frmAjaxModificarTarifa">
-										<h3>Esteu segur que voleu modificar la tarifa a: <span class="modTarifa"></span> ?</h3>
-									</div>
-			               </div>
-			               <div class="modal-footer">
-									<input type="hidden" name="idtarifamod" id="idtarifamod" value="0" />
-									<input type="hidden" name="tarifamod" id="tarifamod" value="0" />
-			                   <button type="button" class="btn btn-warning waves-effect modificarTarifa">MODIFICAR</button>
-			                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-			               </div>
-			           </div>
-			       </div>
-			   </div>
-				<input type="hidden" id="accion" name="accion" value="modificarTarifaSola"/>
-			</form>
 
 
 	<!-- ELIMINAR -->
@@ -370,32 +322,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$('#desdeperiode').val('<?php echo date('Y-m-d'); ?>');
 		$('#finsaperiode').val('<?php echo date('Y-m-d'); ?>');
 
-
-		$(".tablaTarifas").on("blur",'.txtTarifa', function(){
-			idtarifa =  $(this).attr("id");
-
-			$('.modTarifa').html($('#'+idtarifa).val());
-			$('#tarifamod').val($('#'+idtarifa).val());
-			$('#idtarifamod').val(idtarifa);
-			$('#lgmModificarTarifa').modal();
-			//alert(idtarifa);
-		});
-
-		$(".tablaTarifas").on("click",'.btnNuevoTarifa', function(){
-			idperiodo =  $(this).attr("data-periodo");
-			idtipo =  $(this).attr("data-tipo");
-
-			$("#refperiodos option[value="+ idperiodo +"]").attr("selected",true);
-			$("#reftipoubicacion option[value="+ idtipo +"]").attr("selected",true);
-
-			$('#refperiodos').selectpicker('refresh');
-			$('#reftipoubicacion').selectpicker('refresh');
-
-			//$('.btnNuevoTarifa').modal();
-
-		});
-
-
 		var $demoMaskedInput = $('.demo-masked-input');
 
 		$('#desdeperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
@@ -404,7 +330,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=tarifes",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=periodes",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -435,42 +361,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});
 
 		$('#activo').prop('checked',true);
-
-		armarTablaTarifas($('#any').val());
-
-		$('#any').change(function() {
-			armarTablaTarifas($(this).val());
-		});
-
-		function armarTablaTarifas(any) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'armarTablaTarifas',any: any},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.tablaTarifas').html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$('.tablaTarifas').html(data);
-					} else {
-						swal("Error!", data, "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -528,7 +418,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -606,7 +495,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('#lgmNuevo').modal('hide');
 						$('#unidadnegocio').val('');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -662,63 +550,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$('#lgmModificar').modal('hide');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
-
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		});
-
-
-		$('.modificarTarifa').click(function(){
-
-			//información del formulario
-			var formData = new FormData($(".formulario")[2]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-
-						$('#lgmModificarTarifa').modal('hide');
-						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",
