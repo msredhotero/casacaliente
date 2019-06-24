@@ -9,6 +9,52 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	function s_datediff( $str_interval, $dt_menor, $dt_maior, $relative=false){
+
+       if( is_string( $dt_menor)) $dt_menor = date_create( $dt_menor);
+       if( is_string( $dt_maior)) $dt_maior = date_create( $dt_maior);
+
+       $diff = date_diff( $dt_menor, $dt_maior, ! $relative);
+
+       switch( $str_interval){
+           case "y":
+               $total = $diff->y + $diff->m / 12 + $diff->d / 365.25; break;
+           case "m":
+               $total= $diff->y * 12 + $diff->m + $diff->d/30 + $diff->h / 24;
+               break;
+           case "d":
+               $total = $diff->y * 365.25 + $diff->m * 30 + $diff->d + $diff->h/24 + $diff->i / 60;
+               break;
+           case "h":
+               $total = ($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h + $diff->i/60;
+               break;
+           case "i":
+               $total = (($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i + $diff->s/60;
+               break;
+           case "s":
+               $total = ((($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i)*60 + $diff->s;
+               break;
+          }
+       if( $diff->invert)
+               return -1 * $total;
+       else    return $total;
+   }
+
+
+	/* calculos para el alquiler */
+	function calcularTarifa($idubicacion, $fechadesde, $fechahasta, $personas) {
+		$resTaxa = $this->traerTaxa();
+
+		$taxaPer = mysql_result($resTaxa,0,1);
+		$taxaTur = mysql_result($resTaxa,0,2);
+
+		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
+
+		return $dias;
+
+	}
+	/* fin alquileres */
+
 	/* PARA Lloguers */
 
 	function insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa) {
@@ -1197,6 +1243,53 @@ return $res;
    /* Fin */
    /* /* Fin de la Tabla: tbconfiguracion*/
 
+	/* PARA Taxa */
+
+	function insertarTaxa($taxaper,$taxaturistico) {
+	$sql = "insert into tbtaxa(idtaxa,taxaper,taxaturistico)
+	values ('',".$taxaper.",".$taxaturistico.")";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarTaxa($id,$taxaper,$taxaturistico) {
+	$sql = "update tbtaxa
+	set
+	taxaper = ".$taxaper.",taxaturistico = ".$taxaturistico."
+	where idtaxa =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarTaxa($id) {
+	$sql = "delete from tbtaxa where idtaxa =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTaxa() {
+	$sql = "select
+	t.idtaxa,
+	t.taxaper,
+	t.taxaturistico
+	from tbtaxa t
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTaxaPorId($id) {
+	$sql = "select idtaxa,taxaper,taxaturistico from tbtaxa where idtaxa =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtaxa*/
 
 
 function query($sql,$accion) {

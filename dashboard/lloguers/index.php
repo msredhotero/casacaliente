@@ -8,7 +8,6 @@ if (!isset($_SESSION['usua_sahilices']))
 	header('Location: ../../error.php');
 } else {
 
-
 include ('../../includes/funciones.php');
 include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
