@@ -40,9 +40,31 @@ class ServiciosReferencias {
        else    return $total;
    }
 
+	function calcularCoeficienteTarifa($idubicacion, $fecha) {
+		$sql = "SELECT
+					    t.tarifa / 7
+					FROM
+					    dbtarifas t
+					        INNER JOIN
+					    dbperiodos p ON t.refperiodos = p.idperiodo
+					where ('".$fecha."' between p.desdeperiode and p.finsaperiode)
+					and t.reftipoubicacion = ".$idubicacion."
+					and p.desdeperiode <> '".$fecha."'";
+		$res = $this->query($sql,0);
+
+		//die(var_dump($sql));
+		if (mysql_num_rows($res)>0) {
+			return mysql_result($res,0,0);
+		}
+
+		return 0;
+	}
 
 	/* calculos para el alquiler */
 	function calcularTarifa($idubicacion, $fechadesde, $fechahasta, $personas) {
+		$resUbicacion = $this->traerUbicacionesPorId($idubicacion);
+		$idtipoubicacion = mysql_result($resUbicacion,0,'reftipoubicacion');
+
 		$resTaxa = $this->traerTaxa();
 
 		$taxaPer = mysql_result($resTaxa,0,1);
@@ -50,7 +72,25 @@ class ServiciosReferencias {
 
 		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
 
-		return $dias;
+		$fechaInicio	=	strtotime($fechadesde);
+		$fechaFin		=	strtotime($fechahasta);
+
+		$totalTaxaPersona = 0;
+		$totalTaxaTuristica = $personas * $dias * $taxaTur;
+		$totalTarifa = 0;
+
+		// si es menos de una semana
+		if ($dias < 7) {
+			$totalTaxaPersona = $personas * 1 * $taxaPer;
+		} else {
+			$totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+		}
+
+		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
+		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i));
+		}
+
+		return $totalTarifa + $totalTaxaPersona + $totalTaxaTuristica;
 
 	}
 	/* fin alquileres */
@@ -103,6 +143,36 @@ class ServiciosReferencias {
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
+	}
+
+	function traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or l.entrada like '%".$busqueda."%' or l.sortida like '%".$busqueda."%' or l.persset like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+		l.idlloguer,
+		concat(cli.cognom, ' ', cli.nom) as cliente,
+		ti.tipoubicacion,
+		l.entrada,
+		l.sortida,
+		datediff(l.sortida, l.entrada) as dias,
+		l.total,
+		l.numpertax,
+		l.persset
+		from dblloguers l
+		inner join dbclientes cli ON cli.idcliente = l.refclientes
+		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
+		inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 

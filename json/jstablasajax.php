@@ -49,6 +49,16 @@ function armarAcciones($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'lloguers':
+		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerLloguers();
+		$label = array('btnCliente','btnModificar','btnEliminar','btnPagos','btnPagar','btnContratos');
+		$class = array('bg-blue','bg-amber','bg-red','bg-deep-purple','bg-light-green','bg-brown');
+		$icon = array('perm_identity','create','delete','monetization_on','attach_money','attachment');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
 	case 'clientes':
 		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerClientes();

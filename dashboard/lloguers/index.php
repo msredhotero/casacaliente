@@ -26,6 +26,9 @@ $serviciosSeguridad = new ServiciosSeguridad();
 $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../lloguers/');
 //*** FIN  ****/
 
+//$dias = $serviciosReferencias->calcularTarifa(25,'2019-06-26','2019-06-30',3);
+//die(var_dump($dias));
+
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
@@ -69,6 +72,11 @@ $refCampo 	=  array('refclientes','refubicaciones');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resTaxa = $serviciosReferencias->traerTaxa();
+
+$taxaPer = mysql_result($resTaxa,0,1);
+$taxaTur = mysql_result($resTaxa,0,2);
 
 ?>
 
@@ -184,7 +192,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NUEVO</span>
+												<span>NOU</span>
+											</button>
+											<button type="button" class="btn bg-teal waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">date_range</i>
+												<span>DISPONIBILITAT</span>
 											</button>
 
 										</div>
@@ -200,10 +212,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Ubicacion</th>
 												<th>Entrada</th>
 												<th>Sortida</th>
-												<th>Tarifa</th>
 												<th>Dias</th>
 												<th>Preu</th>
-												<th>Pers</th>
+												<th>majors d'edat</th>
+												<th>Total Per.</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -213,10 +225,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Ubicacion</th>
 												<th>Entrada</th>
 												<th>Sortida</th>
-												<th>Tarifa</th>
 												<th>Dias</th>
 												<th>Preu</th>
-												<th>Pers</th>
+												<th>majors d'edat</th>
+												<th>Total Per.</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -306,6 +318,30 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		</form>
 
 
+
+		<!-- ver -->
+			<form class="formulario" role="form" id="sign_in">
+			   <div class="modal fade" id="lgmVer" tabindex="-1" role="dialog">
+			       <div class="modal-dialog modal-lg" role="document">
+			           <div class="modal-content">
+			               <div class="modal-header">
+			                   <h4 class="modal-title" id="largeModalLabelVer"></h4>
+			               </div>
+			               <div class="modal-body">
+									<div class="row modalVer">
+
+									</div>
+
+			               </div>
+			               <div class="modal-footer">
+			                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+			               </div>
+			           </div>
+			       </div>
+			   </div>
+				<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+			</form>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -331,9 +367,43 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$('#entrada').val('<?php echo date('Y-m-d'); ?>');
 		$('#sortida').val('<?php echo date('Y-m-d', strtotime($date.' + 7 days')); ?>');
 
+		$('#numpertax').val(2);
+		$('#persset').val(2);
 
+		$('#maxtaxa').val(<?php echo $taxaTur; ?>);
+		$('#taxa').val(<?php echo $taxaPer; ?>);
 
+		function devolverTarifa(refubicaciones, entrada, sortida, personas) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'devolverTarifa',
+					refubicaciones: refubicaciones,
+					entrada: entrada,
+					sortida: sortida,
+					personas: personas
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#total').val(0);
+				},
+				//una vez finalizado correctamente
+				success: function(data){
 
+					$('#total').val(data);
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
 
 		var $demoMaskedInput = $('.demo-masked-input');
 
@@ -407,6 +477,47 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			});
 
 		}
+
+
+		function frmAjaxVer(id,tabla) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'frmAjaxVer',tabla: tabla, id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.modalVer').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.modalVer').html(data);
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
+		$("#example").on("click",'.btnCliente', function(){
+			$('.largeModalLabelVer').html('CLIENT');
+			idTable =  $(this).attr("id");
+
+			frmAjaxVer(idTable,'dbclientes');
+			$('#lgmVer').modal();
+
+		});
 
 
 		function frmAjaxEliminar(id) {

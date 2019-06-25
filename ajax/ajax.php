@@ -152,6 +152,9 @@ break;
 case 'frmAjaxModificar':
 frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
 break;
+case 'frmAjaxVer':
+frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
+break;
 
 case 'armarTablaTarifas':
    armarTablaTarifas($serviciosReferencias);
@@ -166,10 +169,24 @@ break;
 case 'eliminarLloguers':
    eliminarLloguers($serviciosReferencias);
 break;
+case 'devolverTarifa':
+   devolverTarifa($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function devolverTarifa($serviciosReferencias) {
+   $refubicaciones    =  $_POST['refubicaciones'];
+   $desdeperiode        =  $_POST['entrada'];
+   $finsaperiode        =  $_POST['sortida'];
+   $personas            =  $_POST['personas'];
+
+   $tarifa = $serviciosReferencias->calcularTarifa($refubicaciones,$desdeperiode,$finsaperiode,$personas);
+
+   echo round($tarifa,2);
+}
 
 function insertarLloguers($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
@@ -189,7 +206,7 @@ function insertarLloguers($serviciosReferencias) {
       echo '';
    } else {
       echo 'Huvo un error al insertar datos';
-   } 
+   }
 }
 
 function modificarLloguers($serviciosReferencias) {
@@ -317,6 +334,41 @@ function eliminarClientes($serviciosReferencias) {
    } else {
    echo 'Huvo un error al modificar datos';
    }
+}
+
+
+function frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios) {
+   $tabla = $_POST['tabla'];
+   $id = $_POST['id'];
+
+   session_start();
+
+   switch ($tabla) {
+      case 'dbclientes':
+
+         $idTabla = "idcliente";
+
+         $lblCambio	 	= array('codipostal','telefon2','email2');
+         $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2');
+
+
+         $cadRef 	= '';
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+
+
+      break;
+
+      default:
+         // code...
+         break;
+   }
+
+   //$formulario = $serviciosFunciones->camposTablaViejo($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+   $formulario = $serviciosFunciones->camposTablaVer($id,$idTabla,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+   echo $formulario;
 }
 
 
