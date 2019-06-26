@@ -126,10 +126,12 @@ $taxaTur = mysql_result($resTaxa,0,2);
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 	</style>
+
 
 
 </head>
@@ -363,29 +365,106 @@ $taxaTur = mysql_result($resTaxa,0,2);
 				<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
 			</form>
 
-			<!-- NUEVO -->
-				<form class="formulario" role="form" id="sign_in">
-					<div class="modal fade" id="lgmNuevoCliente" tabindex="-1" role="dialog">
-						 <div class="modal-dialog modal-lg" role="document">
-							  <div class="modal-content">
-									<div class="modal-header">
-										 <h4 class="modal-title" id="largeModalLabel">NOU CLIENT</h4>
+		<!-- NUEVO -->
+			<form class="formulario" role="form" id="sign_in">
+				<div class="modal fade" id="lgmNuevoCliente" tabindex="-1" role="dialog">
+					 <div class="modal-dialog modal-lg" role="document">
+						  <div class="modal-content">
+								<div class="modal-header">
+									 <h4 class="modal-title" id="largeModalLabel">NOU CLIENT</h4>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+										<?php echo $frmCliente; ?>
 									</div>
-									<div class="modal-body">
-										<div class="row">
-											<?php echo $frmCliente; ?>
+
+								</div>
+								<div class="modal-footer">
+									 <button type="button" class="btn btn-primary waves-effect nuevoCliente">GUARDAR</button>
+									 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+								</div>
+						  </div>
+					 </div>
+				</div>
+				<input type="hidden" id="accion" name="accion" value="insertarClientes"/>
+			</form>
+
+
+		<!-- Pagos -->
+			<form class="formulario" role="form" id="sign_in">
+				<div class="modal fade" id="lgmNuevoPago" tabindex="-1" role="dialog">
+					 <div class="modal-dialog modal-lg" role="document">
+						  <div class="modal-content">
+								<div class="modal-header">
+									 <h4 class="modal-title" id="largeModalLabel">PAGAMENTS</h4>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+											<div class="row">
+												<label class="form-label">Total a Pagar</label>
+												<div class="form-line">
+													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="totalapagar" name="totalapagar" required />
+												</div>
+											</div>
+											<div class="row">
+												<label class="form-label">Falta Pagar</label>
+												<div class="form-line">
+													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="faltapagar" name="faltapagar" required />
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+											<div class="row">
+												<label class="form-label">Valor Pago 1°</label>
+												<div class="form-line">
+													<input value="0" style="width:200px;" type="text" class="form-control" id="valorpago1" name="valorpago1" required />
+												</div>
+											</div>
+											<div class="row">
+												<label class="form-label">Valor Pago 2°</label>
+												<div class="form-line">
+													<input value="0" style="width:200px;" type="text" class="form-control" id="valorpago2" name="valorpago2" required />
+												</div>
+											</div>
+											<div class="row">
+												<label class="form-label">Taxa</label>
+												<div class="form-line">
+													<input value="0" style="width:200px;" type="text" class="form-control" id="pagotaxa" name="pagotaxa" required />
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+											<div class="row">
+												<label class="form-label">Fecha Pago 1°</label>
+												<div class="form-line">
+													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="fechapago1" name="fechapago1" required />
+												</div>
+											</div>
+											<div class="row">
+												<label class="form-label">Fecha Pago 2°</label>
+												<div class="form-line">
+													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="fechapago2" name="fechapago2" required />
+												</div>
+											</div>
 										</div>
 
 									</div>
-									<div class="modal-footer">
-										 <button type="button" class="btn btn-primary waves-effect nuevoCliente">GUARDAR</button>
-										 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-									</div>
-							  </div>
-						 </div>
-					</div>
-					<input type="hidden" id="accion" name="accion" value="insertarClientes"/>
-				</form>
+
+
+								</div>
+								<div class="modal-footer">
+									 <button type="button" class="btn btn-primary waves-effect nuevoPagare">GUARDAR</button>
+									 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+								</div>
+						  </div>
+					 </div>
+				</div>
+				<input type="hidden" id="accion" name="accion" value="insertarPagare"/>
+				<input type="hidden" id="idlloguerpagare" name="idlloguerpagare" value="0"/>
+			</form>
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -398,15 +477,25 @@ $taxaTur = mysql_result($resTaxa,0,2);
 
 <script src="../../js/pages/examples/sign-in.js"></script>
 
+
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
-
-
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="../../js/datepicker-es.js"></script>
 <script>
 	$(document).ready(function(){
 		<?php $date = date('Y-m-d'); ?>
+
+		$( "#fechapago1" ).datepicker({ dateFormat: 'yy-mm-dd' });
+		$( "#fechapago1" ).val('<?php echo date('Y-m-d'); ?>');
+		$( "#fechapago2" ).datepicker({ dateFormat: 'yy-mm-dd' });
+		$( "#fechapago2" ).val('<?php echo date('Y-m-d'); ?>');
+
+		$('#valorpago1').number(true,2,'.','');
+		$('#valorpago2').number(true,2,'.','');
+		$('#pagotaxa').number(true,2,'.','');
 
 		$('#datalloguer').val('<?php echo date('Y-m-d'); ?>');
 		$('#entrada').val('<?php echo date('Y-m-d'); ?>');
@@ -434,6 +523,38 @@ $taxaTur = mysql_result($resTaxa,0,2);
 			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
 			$('#persset').val($('#numpertax').val());
 		});
+
+
+		function devolverTarifaArray(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'devolverTarifaArray',
+					id: id
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#total').val(0);
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					$('#totalapagar').val(data.datos.total);
+					$('#faltapagar').val(data.datos.falta);
+					$('#valorpago1').val(data.datos.tarifa / 2);
+					$('#valorpago2').val(data.datos.tarifa / 2);
+					$('#pagotaxa').val(data.datos.taxapersona + data.datos.taxaturistica);
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
 		function devolverTarifa(refubicaciones, entrada, sortida, personas) {
 			$.ajax({
@@ -578,7 +699,16 @@ $taxaTur = mysql_result($resTaxa,0,2);
 
 			frmAjaxVer(idTable,'dbclientes');
 			$('#lgmVer').modal();
+		});
 
+		$("#example").on("click",'.btnPagos', function(){
+
+			idTable =  $(this).attr("id");
+
+			$('#idlloguerpagare').val(idTable);
+
+			devolverTarifaArray(idTable);
+			$('#lgmNuevoPago').modal();
 		});
 
 
@@ -870,6 +1000,65 @@ $taxaTur = mysql_result($resTaxa,0,2);
 				}
 			});
 		});
+
+
+		$('.nuevoPagare').click(function(){
+
+			//información del formulario
+			var formData = new FormData($(".formulario")[5]);
+			var message = "";
+			//hacemos la petición ajax
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Creado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+
+						$('#lgmNuevo').modal('hide');
+						location.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2500,
+								showConfirmButton: false
+						});
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
+
+
+
+
 	});
 </script>
 

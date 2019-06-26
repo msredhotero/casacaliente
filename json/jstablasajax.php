@@ -53,7 +53,7 @@ switch ($tabla) {
 		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerLloguers();
 		$label = array('btnCliente','btnModificar','btnEliminar','btnPagos','btnPagar','btnContratos');
-		$class = array('bg-blue','bg-amber','bg-red','bg-deep-orange','bg-green','bg-brown');
+		$class = array('bg-blue','bg-amber','bg-red','bg-grey','bg-green','bg-brown');
 		$icon = array('perm_identity','create','delete','view_agenda','attach_money','attachment');
 		$indiceID = 0;
 		$empieza = 1;

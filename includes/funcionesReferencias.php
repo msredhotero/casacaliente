@@ -9,6 +9,104 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	/* PARA Pagos */
+
+	function insertarPagos($reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
+		$sql = "insert into dbpagos(idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado)
+		values ('',".$reflloguers.",".$refformaspagos.",".$cuota.",".$monto.",".$taxa.",'".($fecha)."','".($fechapago)."','".($usuario)."',".$cancelado.")";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarPagos($id,$reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
+		$sql = "update dbpagos
+		set
+		reflloguers = ".$reflloguers.",refformaspagos = ".$refformaspagos.",cuota = ".$cuota.",monto = ".$monto.",taxa = ".$taxa.",fecha = '".($fecha)."',fechapago = '".($fechapago)."',usuario = '".($usuario)."',cancelado = ".$cancelado."
+		where idpago =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarPagos($id) {
+		$sql = "delete from dbpagos where idpago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPagos() {
+		$sql = "select
+		p.idpago,
+		p.reflloguers,
+		p.refformaspagos,
+		p.cuota,
+		p.monto,
+		p.taxa,
+		p.fecha,
+		p.fechapago,
+		p.usuario,
+		p.cancelado
+		from dbpagos p
+		inner join dblloguers llo ON llo.idlloguer = p.reflloguers
+		inner join dbclientes cl ON cl.idcliente = llo.refclientes
+		inner join dbubicaciones ub ON ub.idubicacion = llo.refubicaciones
+		inner join tbformaspagos fo ON fo.idformapago = p.refformaspagos
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPagosPorLloguers($idlloguer) {
+		$sql = "select
+		p.idpago,
+		p.reflloguers,
+		p.refformaspagos,
+		p.cuota,
+		p.monto,
+		p.taxa,
+		p.fecha,
+		p.fechapago,
+		p.usuario,
+		p.cancelado
+		from dbpagos p
+		inner join dblloguers llo ON llo.idlloguer = p.reflloguers
+		inner join dbclientes cl ON cl.idcliente = llo.refclientes
+		inner join dbubicaciones ub ON ub.idubicacion = llo.refubicaciones
+		left join tbformaspagos fo ON fo.idformapago = p.refformaspagos
+		where p.reflloguers = ".$idlloguer."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function faltaPagar($idlloguer) {
+		$sql = "SELECT
+				    l.total, COALESCE(l.total - SUM(p.monto), l.total) AS falta
+				FROM
+				    dblloguers l
+				        LEFT JOIN
+				    dbpagos p ON l.idlloguer = p.reflloguers
+				where l.idlloguer = ".$idlloguer."
+				GROUP BY l.total";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPagosPorId($id) {
+		$sql = "select idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado from dbpagos where idpago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbpagos*/
+
 	function s_datediff( $str_interval, $dt_menor, $dt_maior, $relative=false){
 
        if( is_string( $dt_menor)) $dt_menor = date_create( $dt_menor);
@@ -40,6 +138,8 @@ class ServiciosReferencias {
        else    return $total;
    }
 
+
+	/* calculos para el alquiler */
 	function calcularCoeficienteTarifa($idubicacion, $fecha) {
 		$sql = "SELECT
 					    t.tarifa / 7
@@ -60,7 +160,7 @@ class ServiciosReferencias {
 		return 0;
 	}
 
-	/* calculos para el alquiler */
+
 	function calcularTarifa($idubicacion, $fechadesde, $fechahasta, $personas) {
 		$resUbicacion = $this->traerUbicacionesPorId($idubicacion);
 		$idtipoubicacion = mysql_result($resUbicacion,0,'reftipoubicacion');
@@ -91,6 +191,40 @@ class ServiciosReferencias {
 		}
 
 		return $totalTarifa + $totalTaxaPersona + $totalTaxaTuristica;
+
+	}
+
+
+	function calcularTarifaArray($idubicacion, $fechadesde, $fechahasta, $personas,$total,$falta) {
+		$resUbicacion = $this->traerUbicacionesPorId($idubicacion);
+		$idtipoubicacion = mysql_result($resUbicacion,0,'reftipoubicacion');
+
+		$resTaxa = $this->traerTaxa();
+
+		$taxaPer = mysql_result($resTaxa,0,1);
+		$taxaTur = mysql_result($resTaxa,0,2);
+
+		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
+
+		$fechaInicio	=	strtotime($fechadesde);
+		$fechaFin		=	strtotime($fechahasta);
+
+		$totalTaxaPersona = 0;
+		$totalTaxaTuristica = $personas * $dias * $taxaTur;
+		$totalTarifa = 0;
+
+		// si es menos de una semana
+		if ($dias < 7) {
+			$totalTaxaPersona = $personas * 1 * $taxaPer;
+		} else {
+			$totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+		}
+
+		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
+		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i));
+		}
+
+		return array('tarifa'=> $totalTarifa, 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta);
 
 	}
 	/* fin alquileres */

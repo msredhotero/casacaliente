@@ -172,10 +172,70 @@ break;
 case 'devolverTarifa':
    devolverTarifa($serviciosReferencias);
 break;
+case 'devolverTarifaArray';
+   devolverTarifaArray($serviciosReferencias);
+break;
+case 'insertarPagare':
+   insertarPagare($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function insertarPagare($serviciosReferencias) {
+   session_start();
+
+   $reflloguers =  $_POST['idlloguerpagare'];
+   $refformaspagos = 0;
+   $monto1 = $_POST['valorpago1'];
+   $monto2 = $_POST['valorpago2'];
+   $taxa = $_POST['pagotaxa'];
+   $fecha1 = $_POST['fechapago1'];
+   $fecha2 = $_POST['fechapago2'];
+   $usuario = $_SESSION['usua_sahilices'];
+
+   $error = '';
+
+   $res1 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto1,0,0,'00/00/0000',$fecha1,$usuario,0);
+
+   if ((integer)$res1 > 0) {
+      $error = '';
+   } else {
+      $error .= 'Huvo un error al insertar datos ';
+   }
+
+   $res2 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto2,0,$taxa,'00/00/0000',$fecha2,$usuario,0);
+   if ((integer)$res2 > 0) {
+      $error .= '';
+   } else {
+      $error .= ' - Huvo un error al insertar datos';
+   }
+
+   echo $error;
+}
+
+
+function devolverTarifaArray($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $resLloguer = $serviciosReferencias->traerLloguersPorId($id);
+
+   $refubicaciones      =  mysql_result($resLloguer,0,'refubicaciones');
+   $desdeperiode        =  mysql_result($resLloguer,0,'entrada');
+   $finsaperiode        =  mysql_result($resLloguer,0,'sortida');
+   $personas            =  mysql_result($resLloguer,0,'numpertax');
+   $total               =  mysql_result($resLloguer,0,'total');
+
+   $resFaltaPagar       =  $serviciosReferencias->faltaPagar($id);
+
+   $falta               =  mysql_result($resFaltaPagar,0,'falta');
+
+   $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta);
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function devolverTarifa($serviciosReferencias) {
    $refubicaciones    =  $_POST['refubicaciones'];

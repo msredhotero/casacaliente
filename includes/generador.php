@@ -43,7 +43,8 @@ $tablasAr	= array('clientes' => 'dbclientes',
 							'tipoubicacion' => 'tbtipoubicacion',
 							'periodos' => 'dbperiodos',
 							'lloguers' => 'dblloguers',
-							'taxa' => 'tbtaxa');
+							'taxa' => 'tbtaxa',
+							'pagos' => 'dbpagos');
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
@@ -56,7 +57,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tipoubicacion' => 'tbtipoubicacion',
 								'periodos' => 'dbperiodos',
 								'lloguers' => 'dblloguers',
-								'taxa' => 'tbtaxa');
+								'taxa' => 'tbtaxa',
+								'pagos' => 'dbpagos');
 
 	$tablasArAux	= array('clientes' => 1,
 								'periodos' => 1,
@@ -66,7 +68,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tipoubicacion' => 1,
 								'periodos' => 1,
 								'lloguers' => 3,
-								'taxa' => 1);
+								'taxa' => 1,
+								'pagos' => 3);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
