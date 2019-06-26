@@ -426,6 +426,10 @@ $taxaTur = mysql_result($resTaxa,0,2);
 			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
 		});
 
+		$('#refubicaciones').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		});
+
 		$('#numpertax').change(function() {
 			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
 			$('#persset').val($('#numpertax').val());
