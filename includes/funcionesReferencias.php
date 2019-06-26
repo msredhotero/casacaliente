@@ -257,7 +257,7 @@ class ServiciosReferencias {
 		p.finsaperiode
 		from dbperiodos p
 		where p.any = ".$any."
-		order by 2";
+		order by 2,4,5,1";
 		$res = $this->query($sql,0);
 		return $res;
 	}

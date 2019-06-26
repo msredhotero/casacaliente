@@ -58,11 +58,11 @@ $modificar = "modificarLloguers";
 $tabla 			= "dblloguers";
 
 $lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa');
-$lblreemplazo	= array('Clientes','Ubicaciones','Data Contracte','N° Pers Taxa','Preu Pers Set','Max Taxa');
+$lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa');
 
 
 $resVar1 = $serviciosReferencias->traerClientes();
-$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
 
 $resVar2 = $serviciosReferencias->traerUbicaciones();
 $cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(4,1,2),' - ');
@@ -71,6 +71,21 @@ $refdescripcion = array(0 => $cadRef1,1=>$cadRef2);
 $refCampo 	=  array('refclientes','refubicaciones');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+/////////////////////// Opciones para la creacion del formulario  /////////////////////
+$tablaCliente 			= "dbclientes";
+
+$lblCambioCliente	 	= array('codipostal','telefon2','email2');
+$lblreemplazoCliente	= array('Cod Postal','Tel. 2','Email 2');
+
+
+$cadRefCliente 	= '';
+
+$refdescripcionCliente = array();
+$refCampoCliente 	=  array();
+
+$frmCliente 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tablaCliente,$lblCambioCliente,$lblreemplazoCliente,$refdescripcionCliente,$refCampoCliente);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 $resTaxa = $serviciosReferencias->traerTaxa();
@@ -198,6 +213,10 @@ $taxaTur = mysql_result($resTaxa,0,2);
 												<i class="material-icons">date_range</i>
 												<span>DISPONIBILITAT</span>
 											</button>
+											<button type="button" class="btn bg-green waves-effect btnNuevoCliente" data-toggle="modal" data-target="#lgmNuevoCliente">
+												<i class="material-icons">add</i>
+												<span>NOU CLIENT</span>
+											</button>
 
 										</div>
 									</div>
@@ -251,7 +270,7 @@ $taxaTur = mysql_result($resTaxa,0,2);
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
+	                   <h4 class="modal-title" id="largeModalLabel">NOU <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
@@ -268,6 +287,8 @@ $taxaTur = mysql_result($resTaxa,0,2);
 	   </div>
 		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
 	</form>
+
+
 
 	<!-- MODIFICAR -->
 		<form class="formulario" role="form" id="sign_in">
@@ -342,6 +363,30 @@ $taxaTur = mysql_result($resTaxa,0,2);
 				<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
 			</form>
 
+			<!-- NUEVO -->
+				<form class="formulario" role="form" id="sign_in">
+					<div class="modal fade" id="lgmNuevoCliente" tabindex="-1" role="dialog">
+						 <div class="modal-dialog modal-lg" role="document">
+							  <div class="modal-content">
+									<div class="modal-header">
+										 <h4 class="modal-title" id="largeModalLabel">NOU CLIENT</h4>
+									</div>
+									<div class="modal-body">
+										<div class="row">
+											<?php echo $frmCliente; ?>
+										</div>
+
+									</div>
+									<div class="modal-footer">
+										 <button type="button" class="btn btn-primary waves-effect nuevoCliente">GUARDAR</button>
+										 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+									</div>
+							  </div>
+						 </div>
+					</div>
+					<input type="hidden" id="accion" name="accion" value="insertarClientes"/>
+				</form>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -372,6 +417,19 @@ $taxaTur = mysql_result($resTaxa,0,2);
 
 		$('#maxtaxa').val(<?php echo $taxaTur; ?>);
 		$('#taxa').val(<?php echo $taxaPer; ?>);
+
+		$('#sortida').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		});
+
+		$('#entrada').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		});
+
+		$('#numpertax').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+			$('#persset').val($('#numpertax').val());
+		});
 
 		function devolverTarifa(refubicaciones, entrada, sortida, personas) {
 			$.ajax({
@@ -735,6 +793,60 @@ $taxaTur = mysql_result($resTaxa,0,2);
 						$('#lgmModificarTarifa').modal('hide');
 						table.ajax.reload();
 						armarTablaTarifas($('#any').val());
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2500,
+								showConfirmButton: false
+						});
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
+
+		$('.nuevoCliente').click(function(){
+
+			//información del formulario
+			var formData = new FormData($(".formulario")[4]);
+			var message = "";
+			//hacemos la petición ajax
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Creado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+
+						$('#lgmNuevo').modal('hide');
+						location.reload();
 					} else {
 						swal({
 								title: "Respuesta",

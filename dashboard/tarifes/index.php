@@ -265,7 +265,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 	               </div>
 	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo" data-dismiss="modal">GUARDAR</button>
 	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 	               </div>
 	           </div>
@@ -606,13 +606,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('#lgmNuevo').modal('hide');
 						$('#unidadnegocio').val('');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
+						location.reload();
 					} else {
 						swal({
 								title: "Respuesta",
 								text: data,
 								type: "error",
-								timer: 2500,
+								timer: 1500,
 								showConfirmButton: false
 						});
 
