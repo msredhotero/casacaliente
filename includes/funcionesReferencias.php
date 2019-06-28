@@ -169,6 +169,7 @@ class ServiciosReferencias {
 
 		$taxaPer = mysql_result($resTaxa,0,1);
 		$taxaTur = mysql_result($resTaxa,0,2);
+		$taxaMax = mysql_result($resTaxa,0,3);
 
 		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
 
@@ -176,7 +177,14 @@ class ServiciosReferencias {
 		$fechaFin		=	strtotime($fechahasta);
 
 		$totalTaxaPersona = 0;
-		$totalTaxaTuristica = $personas * $dias * $taxaTur;
+		$totalTaxaTuristica = 1 * $dias * $taxaTur;
+
+		if ($totalTaxaTuristica > $taxaMax) {
+			$totalTaxaTuristica  = $personas * $taxaMax;
+		} else {
+			$totalTaxaTuristica = $personas * $dias * $taxaTur;
+		}
+
 		$totalTarifa = 0;
 
 		// si es menos de una semana
@@ -203,6 +211,7 @@ class ServiciosReferencias {
 
 		$taxaPer = mysql_result($resTaxa,0,1);
 		$taxaTur = mysql_result($resTaxa,0,2);
+		$taxaMax = mysql_result($resTaxa,0,3);
 
 		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
 
@@ -211,6 +220,13 @@ class ServiciosReferencias {
 
 		$totalTaxaPersona = 0;
 		$totalTaxaTuristica = $personas * $dias * $taxaTur;
+
+		if ($totalTaxaTuristica > $taxaMax) {
+			$totalTaxaTuristica  = $personas * $taxaMax;
+		} else {
+			$totalTaxaTuristica = $personas * $dias * $taxaTur;
+		}
+		
 		$totalTarifa = 0;
 
 		// si es menos de una semana
@@ -1449,18 +1465,18 @@ return $res;
 
 	/* PARA Taxa */
 
-	function insertarTaxa($taxaper,$taxaturistico) {
-	$sql = "insert into tbtaxa(idtaxa,taxaper,taxaturistico)
+	function insertarTaxa($taxaper,$taxaturistico,$maxtaxa) {
+	$sql = "insert into tbtaxa(idtaxa,taxaper,taxaturistico,maxtaxa)
 	values ('',".$taxaper.",".$taxaturistico.")";
 	$res = $this->query($sql,1);
 	return $res;
 	}
 
 
-	function modificarTaxa($id,$taxaper,$taxaturistico) {
+	function modificarTaxa($id,$taxaper,$taxaturistico,$maxtaxa) {
 	$sql = "update tbtaxa
 	set
-	taxaper = ".$taxaper.",taxaturistico = ".$taxaturistico."
+	taxaper = ".$taxaper.",taxaturistico = ".$taxaturistico.",maxtaxa = ".$maxtaxa."
 	where idtaxa =".$id;
 	$res = $this->query($sql,0);
 	return $res;
@@ -1478,7 +1494,8 @@ return $res;
 	$sql = "select
 	t.idtaxa,
 	t.taxaper,
-	t.taxaturistico
+	t.taxaturistico,
+	t.maxtaxa
 	from tbtaxa t
 	order by 1";
 	$res = $this->query($sql,0);
@@ -1487,7 +1504,7 @@ return $res;
 
 
 	function traerTaxaPorId($id) {
-	$sql = "select idtaxa,taxaper,taxaturistico from tbtaxa where idtaxa =".$id;
+	$sql = "select idtaxa,taxaper,taxaturistico,maxtaxa from tbtaxa where idtaxa =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
