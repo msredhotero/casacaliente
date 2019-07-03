@@ -393,7 +393,7 @@ class Servicios {
 			break;
 
 			default:
-				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","idusuario","refestados");
+				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","idusuario");
 				break;
 		}
 
@@ -572,11 +572,13 @@ class Servicios {
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
                                   <b>'.$label.'</b>
                                   <div class="input-group">
+
                                       <span class="input-group-addon">
                                           <i class="material-icons">date_range</i>
                                       </span>
                                       <div class="form-line">
-                                          <input type="text" class="form-control date" placeholder="Ej: 2019-01-01" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'>
+												   	<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="'.$campo.'" name="'.$campo.'" required />
+
                                       </div>
                                   </div>
                               </div>

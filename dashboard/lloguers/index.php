@@ -57,8 +57,8 @@ $modificar = "modificarLloguers";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dblloguers";
 
-$lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa');
-$lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa');
+$lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa','refestados');
+$lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa','Estat');
 
 
 $resVar1 = $serviciosReferencias->traerClientes();
@@ -67,8 +67,12 @@ $cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
 $resVar2 = $serviciosReferencias->traerUbicaciones();
 $cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(4,1,2),' - ');
 
-$refdescripcion = array(0 => $cadRef1,1=>$cadRef2);
-$refCampo 	=  array('refclientes','refubicaciones');
+$resVar3 = $serviciosReferencias->traerEstados();
+$cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+
+$refdescripcion = array(0 => $cadRef1,1=>$cadRef2, 2=>$cadRef3);
+$refCampo 	=  array('refclientes','refubicaciones','refestados');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -229,28 +233,30 @@ $taxaTur = mysql_result($resTaxa,0,2);
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Cliente</th>
-												<th>Ubicacion</th>
+												<th>Client</th>
+												<th>Ubicació</th>
 												<th>Entrada</th>
 												<th>Sortida</th>
-												<th>Dias</th>
+												<th>Dies</th>
 												<th>Preu</th>
-												<th>majors d'edat</th>
-												<th>Total Per.</th>
-												<th>Acciones</th>
+												<th>m. d'edat</th>
+												<th>Tot.Per.</th>
+												<th>Estat</th>
+												<th>Accions</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Cliente</th>
-												<th>Ubicacion</th>
+												<th>Client</th>
+												<th>Ubicació</th>
 												<th>Entrada</th>
 												<th>Sortida</th>
-												<th>Dias</th>
+												<th>Dies</th>
 												<th>Preu</th>
-												<th>majors d'edat</th>
-												<th>Total Per.</th>
-												<th>Acciones</th>
+												<th>m. d'edat</th>
+												<th>Tot.Per.</th>
+												<th>Estat</th>
+												<th>Accions</th>
 											</tr>
 										</tfoot>
 									</table>
@@ -477,6 +483,11 @@ $taxaTur = mysql_result($resTaxa,0,2);
 
 <script src="../../js/pages/examples/sign-in.js"></script>
 
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
 
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
@@ -488,18 +499,42 @@ $taxaTur = mysql_result($resTaxa,0,2);
 	$(document).ready(function(){
 		<?php $date = date('Y-m-d'); ?>
 
+		$('.maximizar').click(function() {
+			if ($('.icomarcos').text() == 'web') {
+				$('#marcos').show();
+				$('.content').css('marginLeft', '315px');
+				$('.icomarcos').html('aspect_ratio');
+			} else {
+				$('#marcos').hide();
+				$('.content').css('marginLeft', '15px');
+				$('.icomarcos').html('web');
+			}
+
+		});
+
+		$('.maximizar').click();
+
+		$('.datepicker').bootstrapMaterialDatePicker({
+        format: 'DD/MM/YYYY',
+        clearButton: true,
+        weekStart: 1,
+        time: false
+    });
+
 		$( "#fechapago1" ).datepicker({ dateFormat: 'yy-mm-dd' });
-		$( "#fechapago1" ).val('<?php echo date('Y-m-d'); ?>');
+		$( "#fechapago1" ).val('<?php echo date('Y-m-d', strtotime($date.' + 5 days')); ?>');
 		$( "#fechapago2" ).datepicker({ dateFormat: 'yy-mm-dd' });
-		$( "#fechapago2" ).val('<?php echo date('Y-m-d'); ?>');
+		$( "#fechapago2" ).val('<?php echo date('Y-m-d', strtotime($date.' + 30 days')); ?>');
 
 		$('#valorpago1').number(true,2,'.','');
 		$('#valorpago2').number(true,2,'.','');
 		$('#pagotaxa').number(true,2,'.','');
 
-		$('#datalloguer').val('<?php echo date('Y-m-d'); ?>');
-		$('#entrada').val('<?php echo date('Y-m-d'); ?>');
-		$('#sortida').val('<?php echo date('Y-m-d', strtotime($date.' + 7 days')); ?>');
+		$('#datalloguer').val('<?php echo date('d/m/Y'); ?>');
+		$('#entrada').val('<?php echo date('d/m/Y'); ?>');
+		$('#sortida').val('<?php echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
+
+
 
 		$('#numpertax').val(2);
 		$('#persset').val(2);
@@ -547,6 +582,8 @@ $taxaTur = mysql_result($resTaxa,0,2);
 					$('#valorpago1').val(data.datos.tarifa / 2);
 					$('#valorpago2').val(data.datos.tarifa / 2);
 					$('#pagotaxa').val(data.datos.taxapersona + data.datos.taxaturistica);
+
+					$( "#fechapago2" ).val(data.datos.fechasegundopago);
 				},
 				//si ha ocurrido un error
 				error: function(){

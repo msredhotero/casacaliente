@@ -226,12 +226,16 @@ function devolverTarifaArray($serviciosReferencias) {
    $finsaperiode        =  mysql_result($resLloguer,0,'sortida');
    $personas            =  mysql_result($resLloguer,0,'numpertax');
    $total               =  mysql_result($resLloguer,0,'total');
+   $sortida             =  mysql_result($resLloguer,0,'sortida');
+
+   $segundopago = strtotime ( '-30 day' , strtotime ( $sortida ) ) ;
+   $segundopago = date ( 'Y-m-d' , $segundopago );
 
    $resFaltaPagar       =  $serviciosReferencias->faltaPagar($id);
 
    $falta               =  mysql_result($resFaltaPagar,0,'falta');
 
-   $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta);
+   $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta,$segundopago);
 
    header('Content-type: application/json');
    echo json_encode($resV);
@@ -239,9 +243,11 @@ function devolverTarifaArray($serviciosReferencias) {
 
 function devolverTarifa($serviciosReferencias) {
    $refubicaciones    =  $_POST['refubicaciones'];
-   $desdeperiode        =  $_POST['entrada'];
-   $finsaperiode        =  $_POST['sortida'];
+   $desdeperiode        =  date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
+   $finsaperiode        =  date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
    $personas            =  $_POST['personas'];
+
+
 
    $tarifa = $serviciosReferencias->calcularTarifa($refubicaciones,$desdeperiode,$finsaperiode,$personas);
 
@@ -259,8 +265,9 @@ function insertarLloguers($serviciosReferencias) {
    $persset = $_POST['persset'];
    $taxa = $_POST['taxa'];
    $maxtaxa = $_POST['maxtaxa'];
+   $refestados = $_POST['refestados'];
 
-   $res = $serviciosReferencias->insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa);
+   $res = $serviciosReferencias->insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados);
 
    if ((integer)$res > 0) {
       echo '';

@@ -48,16 +48,33 @@ function armarAcciones($id,$label='',$class,$icon) {
 	return $cad;
 }
 
+function armarAccionesDropDown($id,$label='',$class,$icon) {
+	$cad = '<div class="btn-group">
+					<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						 Accions <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">';
+
+	for ($j=0; $j<count($class); $j++) {
+		$cad .= '<li><a href="javascript:void(0);" id="'.$id.'" class=" waves-effect waves-block '.$label[$j].'">'.$icon[$j].'</a></li>';
+
+	}
+
+	$cad .= '</ul></div>';
+
+	return $cad;
+}
+
 switch ($tabla) {
 	case 'lloguers':
 		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerLloguers();
-		$label = array('btnCliente','btnModificar','btnEliminar','btnPagos','btnPagar','btnContratos');
-		$class = array('bg-blue','bg-amber','bg-red','bg-grey','bg-green','bg-brown');
-		$icon = array('perm_identity','create','delete','view_agenda','attach_money','attachment');
+		$label = array('btnCliente','btnModificar','btnEliminar','btnPagos','btnPagar','btnContratos','btnAgregarPersonas');
+		$class = array('bg-blue','bg-amber','bg-red','bg-grey','bg-green','bg-brown','bg-teal');
+		$icon = array('Client','Modificar','Eliminar','Pagament','Pagos','Contrats','Agregar Personas');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 8;
+		$termina = 9;
 	break;
 	case 'clientes':
 		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
@@ -137,7 +154,12 @@ $id = 0;
 			array_push($arAux, $row[$i]);
 		}
 
-		array_push($arAux, armarAcciones($row[0],$label,$class,$icon));
+		if ($tabla == 'lloguers') {
+			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
+		} else {
+			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));
+		}
+
 
 		array_push($ar, $arAux);
 

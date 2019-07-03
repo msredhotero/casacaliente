@@ -9,6 +9,59 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	/* PARA Lloguersadicional */
+
+	function insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica) {
+	$sql = "insert into dblloguersadicional(idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica)
+	values ('',".$reflloguers.",".$personas.",'".($entrada)."','".($sortida)."',".$taxapersona.",".$taxaturistica.")";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica) {
+	$sql = "update dblloguersadicional
+	set
+	reflloguers = ".$reflloguers.",personas = ".$personas.",entrada = '".($entrada)."',sortida = '".($sortida)."',taxapersona = ".$taxapersona.",taxaturistica = ".$taxaturistica."
+	where idllogueradicional =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarLloguersadicional($id) {
+	$sql = "delete from dblloguersadicional where idllogueradicional =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerLloguersadicional() {
+	$sql = "select
+	l.idllogueradicional,
+	l.reflloguers,
+	l.personas,
+	l.entrada,
+	l.sortida,
+	l.taxapersona,
+	l.taxaturistica
+	from dblloguersadicional l
+	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerLloguersadicionalPorId($id) {
+	$sql = "select idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica from dblloguersadicional where idllogueradicional =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: dblloguersadicional*/
+
 	/* PARA Pagos */
 
 	function insertarPagos($reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
@@ -203,7 +256,7 @@ class ServiciosReferencias {
 	}
 
 
-	function calcularTarifaArray($idubicacion, $fechadesde, $fechahasta, $personas,$total,$falta) {
+	function calcularTarifaArray($idubicacion, $fechadesde, $fechahasta, $personas,$total,$falta,$segundopago) {
 		$resUbicacion = $this->traerUbicacionesPorId($idubicacion);
 		$idtipoubicacion = mysql_result($resUbicacion,0,'reftipoubicacion');
 
@@ -226,7 +279,7 @@ class ServiciosReferencias {
 		} else {
 			$totalTaxaTuristica = $personas * $dias * $taxaTur;
 		}
-		
+
 		$totalTarifa = 0;
 
 		// si es menos de una semana
@@ -240,26 +293,26 @@ class ServiciosReferencias {
 		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i));
 		}
 
-		return array('tarifa'=> $totalTarifa, 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta);
+		return array('tarifa'=> $totalTarifa, 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
 
 	}
 	/* fin alquileres */
 
 	/* PARA Lloguers */
 
-	function insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa) {
-		$sql = "insert into dblloguers(idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa)
-		values ('',".$refclientes.",".$refubicaciones.",'".($datalloguer)."','".($entrada)."','".($sortida)."',".$total.",".$numpertax.",".$persset.",".$taxa.",".$maxtaxa.")";
+	function insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados) {
+		$sql = "insert into dblloguers(idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa, refestados)
+		values ('',".$refclientes.",".$refubicaciones.",'".($datalloguer)."','".($entrada)."','".($sortida)."',".$total.",".$numpertax.",".$persset.",".$taxa.",".$maxtaxa.",".$refestados.")";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa) {
+	function modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados) {
 	$sql = "update dblloguers
 	set
-	refclientes = ".$refclientes.",refubicaciones = ".$refubicaciones.",datalloguer = '".($datalloguer)."',entrada = '".($entrada)."',sortida = '".($sortida)."',total = ".$total.",numpertax = ".$numpertax.",persset = ".$persset.",taxa = ".$taxa.",maxtaxa = ".$maxtaxa."
+	refclientes = ".$refclientes.",refubicaciones = ".$refubicaciones.",datalloguer = '".($datalloguer)."',entrada = '".($entrada)."',sortida = '".($sortida)."',total = ".$total.",numpertax = ".$numpertax.",persset = ".$persset.",taxa = ".$taxa.",maxtaxa = ".$maxtaxa.",refestados = ".$refestados."
 	where idlloguer =".$id;
 	$res = $this->query($sql,0);
 	return $res;
@@ -285,11 +338,13 @@ class ServiciosReferencias {
 	l.numpertax,
 	l.persset,
 	l.taxa,
-	l.maxtaxa
+	l.maxtaxa,
+	l.refestados
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+	inner join tbestados est on est.idestado = l.refestados
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
@@ -305,18 +360,20 @@ class ServiciosReferencias {
 
 		$sql = "select
 		l.idlloguer,
-		concat(cli.cognom, ' ', cli.nom) as cliente,
+		concat(cli.cognom, ' ', cli.nom, ' - NIF:', cli.nif) as cliente,
 		ti.tipoubicacion,
-		l.entrada,
-		l.sortida,
+		DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
+		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
 		datediff(l.sortida, l.entrada) as dias,
 		l.total,
 		l.numpertax,
-		l.persset
+		l.persset,
+		est.estado
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes
 		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 		inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+		inner join tbestados est on est.idestado = l.refestados
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
@@ -327,7 +384,7 @@ class ServiciosReferencias {
 
 
 	function traerLloguersPorId($id) {
-	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa from dblloguers where idlloguer =".$id;
+	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa,refestados from dblloguers where idlloguer =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
