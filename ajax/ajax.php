@@ -178,10 +178,74 @@ break;
 case 'insertarPagare':
    insertarPagare($serviciosReferencias);
 break;
+case 'modificarPagoCliente':
+   modificarPagoCliente($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function modificarPagoCliente($serviciosReferencias) {
+   session_start();
+
+   $reflloguers =  $_POST['idlloguerpagarecliente'];
+
+   $resPagos   = $serviciosReferencias->traerPagosPorLloguers($reflloguers);
+
+   $refformaspagos = 0;
+   $monto1 = $_POST['valorpagocliente1'];
+   $monto2 = $_POST['valorpagocliente2'];
+   $taxa = $_POST['pagotaxacliente'];
+   $fecha1 = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['fechapagocliente1'])));
+   $fecha2 = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['fechapagocliente2'])));
+
+   $formapago1 = $_POST['formapago1'];
+   $formapago2 = $_POST['formapago2'];
+
+   $cargarpago1 = $_POST['cargarpago1'];
+   $cargarpago2 = $_POST['cargarpago2'];
+
+   $usuario = $_SESSION['usua_sahilices'];
+
+   $error = '';
+
+   if (mysql_num_rows($resPagos)>0) {
+      $res1 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,0,'idpago'),$reflloguers,$formapago1,$monto1,$cargarpago1,0,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
+
+      if ($res1 == true) {
+         $error = '';
+      } else {
+         $error .= 'Huvo un error al insertar datos ';
+      }
+
+      $res2 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,1,'idpago'),$reflloguers,$formapago2,$monto2,$cargarpago2,$taxa,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
+
+      if ($res2 == true) {
+         $error .= '';
+      } else {
+         $error .= ' - Huvo un error al insertar datos';
+      }
+   } else {
+      $res1 = $serviciosReferencias->insertarPagos($reflloguers,$formapago1,$monto1,$cargarpago1,0,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
+
+      if ((integer)$res1 > 0) {
+         $error = '';
+      } else {
+         $error .= 'Huvo un error al insertar datos ';
+      }
+
+      $res2 = $serviciosReferencias->insertarPagos($reflloguers,$formapago2,$monto2,$cargarpago2,$taxa,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
+      if ((integer)$res2 > 0) {
+         $error .= '';
+      } else {
+         $error .= ' - Huvo un error al insertar datos';
+      }
+   }
+
+
+   echo $error;
+}
 
 function insertarPagare($serviciosReferencias) {
    session_start();
@@ -201,7 +265,21 @@ function insertarPagare($serviciosReferencias) {
    $error = '';
 
    if (mysql_num_rows($resPagos)>0) {
+      $res1 = $serviciosReferencias->modificarPagosParcial(mysql_result($resPagos,0,'idpago'),$monto1,0,$fecha1,$usuario);
 
+      if ($res1 == true) {
+         $error = '';
+      } else {
+         $error .= 'Huvo un error al insertar datos ';
+      }
+
+      $res2 = $serviciosReferencias->modificarPagosParcial(mysql_result($resPagos,1,'idpago'),$monto2,$taxa,$fecha2,$usuario);
+
+      if ($res2 == true) {
+         $error .= '';
+      } else {
+         $error .= ' - Huvo un error al insertar datos';
+      }
    } else {
       $res1 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto1,0,0,'00/00/0000',$fecha1,$usuario,0);
 
@@ -252,6 +330,10 @@ function devolverTarifaArray($serviciosReferencias) {
       $taxa = mysql_result($resPagos,1,'taxa');
       $primerpago = mysql_result($resPagos,0,'fechapago');
       $segundopago = mysql_result($resPagos,1,'fechapago');
+      $monto1 = mysql_result($resPagos,0,'monto');
+      $monto2 = mysql_result($resPagos,1,'monto');
+      $formapago1 = mysql_result($resPagos,0,'refformaspagos');
+      $formapago2 = mysql_result($resPagos,1,'refformaspagos');
 
    } else {
       $existePago = 0;
@@ -259,7 +341,13 @@ function devolverTarifaArray($serviciosReferencias) {
       $pago2 = 0;
       $taxa = 0;
       $primerpago = 0;
-      $segundopago = 0;
+      $monto1 = 0;
+      $monto2 = 0;
+
+      $monto1 = 0;
+      $monto2 = 0;
+      $formapago1 = 0;
+      $formapago2 = 0;
    }
 
    $resV['pagos'] = array(
@@ -268,7 +356,11 @@ function devolverTarifaArray($serviciosReferencias) {
                      'pago2' => $pago2,
                      'taxa' => $taxa,
                      'primerpago' => $primerpago,
-                     'segundopago' => $segundopago
+                     'segundopago' => $segundopago,
+                     'monto1' => $monto1,
+                     'monto2' => $monto2,
+                     'formapago1' => $formapago1,
+                     'formapago2' => $formapago2
                   );
 
    $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta,$segundopago);

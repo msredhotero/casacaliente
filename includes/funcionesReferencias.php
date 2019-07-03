@@ -83,6 +83,16 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function modificarPagosParcial($id,$cuota,$taxa,$fechapago,$usuario) {
+		$sql = "update dbpagos
+		set
+		cuota = ".$cuota.",taxa = ".$taxa.",fechapago = '".($fechapago)."',usuario = '".($usuario)."'
+		where idpago =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function eliminarPagos($id) {
 		$sql = "delete from dbpagos where idpago =".$id;
@@ -293,7 +303,7 @@ class ServiciosReferencias {
 		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i));
 		}
 
-		return array('tarifa'=> $totalTarifa, 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
+		return array('tarifa'=> round($totalTarifa,2, PHP_ROUND_HALF_UP), 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
 
 	}
 	/* fin alquileres */
