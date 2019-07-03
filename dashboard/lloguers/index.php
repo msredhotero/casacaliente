@@ -521,10 +521,10 @@ $taxaTur = mysql_result($resTaxa,0,2);
         time: false
     });
 
-		$( "#fechapago1" ).datepicker({ dateFormat: 'yy-mm-dd' });
-		$( "#fechapago1" ).val('<?php echo date('Y-m-d', strtotime($date.' + 5 days')); ?>');
-		$( "#fechapago2" ).datepicker({ dateFormat: 'yy-mm-dd' });
-		$( "#fechapago2" ).val('<?php echo date('Y-m-d', strtotime($date.' + 30 days')); ?>');
+		$( "#fechapago1" ).datepicker({ dateFormat: 'dd/mm/yy' });
+		$( "#fechapago1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
+		$( "#fechapago2" ).datepicker({ dateFormat: 'dd/mm/yy' });
+		$( "#fechapago2" ).val('<?php echo date('d/m/Y', strtotime($date.' + 30 days')); ?>');
 
 		$('#valorpago1').number(true,2,'.','');
 		$('#valorpago2').number(true,2,'.','');
@@ -559,6 +559,9 @@ $taxaTur = mysql_result($resTaxa,0,2);
 			$('#persset').val($('#numpertax').val());
 		});
 
+		function formato(texto){
+			return texto.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+		}
 
 		function devolverTarifaArray(id) {
 			$.ajax({
@@ -579,11 +582,21 @@ $taxaTur = mysql_result($resTaxa,0,2);
 
 					$('#totalapagar').val(data.datos.total);
 					$('#faltapagar').val(data.datos.falta);
-					$('#valorpago1').val(data.datos.tarifa / 2);
-					$('#valorpago2').val(data.datos.tarifa / 2);
-					$('#pagotaxa').val(data.datos.taxapersona + data.datos.taxaturistica);
+					if (data.pagos.existe == 1) {
+						$('#valorpago1').val(data.pagos.pago1);
+						$('#valorpago2').val(data.pagos.pago2);
+						$('#pagotaxa').val(data.pagos.taxa);
+						$( "#fechapago1" ).val(formato(data.pagos.primerpago));
+						$( "#fechapago2" ).val(formato(data.pagos.segundopago));
+					} else {
+						$('#valorpago1').val(data.datos.tarifa / 2);
+						$('#valorpago2').val(data.datos.tarifa / 2);
+						$('#pagotaxa').val(data.datos.taxapersona + data.datos.taxaturistica);
+						$( "#fechapago2" ).val(formato(data.datos.fechasegundopago));
+					}
 
-					$( "#fechapago2" ).val(data.datos.fechasegundopago);
+
+
 				},
 				//si ha ocurrido un error
 				error: function(){

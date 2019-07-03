@@ -187,30 +187,38 @@ function insertarPagare($serviciosReferencias) {
    session_start();
 
    $reflloguers =  $_POST['idlloguerpagare'];
+
+   $resPagos   = $serviciosReferencias->traerPagosPorLloguers($reflloguers);
+
    $refformaspagos = 0;
    $monto1 = $_POST['valorpago1'];
    $monto2 = $_POST['valorpago2'];
    $taxa = $_POST['pagotaxa'];
-   $fecha1 = $_POST['fechapago1'];
-   $fecha2 = $_POST['fechapago2'];
+   $fecha1 = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['fechapago1'])));
+   $fecha2 = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['fechapago2'])));
    $usuario = $_SESSION['usua_sahilices'];
 
    $error = '';
 
-   $res1 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto1,0,0,'00/00/0000',$fecha1,$usuario,0);
+   if (mysql_num_rows($resPagos)>0) {
 
-   if ((integer)$res1 > 0) {
-      $error = '';
    } else {
-      $error .= 'Huvo un error al insertar datos ';
+      $res1 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto1,0,0,'00/00/0000',$fecha1,$usuario,0);
+
+      if ((integer)$res1 > 0) {
+         $error = '';
+      } else {
+         $error .= 'Huvo un error al insertar datos ';
+      }
+
+      $res2 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto2,0,$taxa,'00/00/0000',$fecha2,$usuario,0);
+      if ((integer)$res2 > 0) {
+         $error .= '';
+      } else {
+         $error .= ' - Huvo un error al insertar datos';
+      }
    }
 
-   $res2 = $serviciosReferencias->insertarPagos($reflloguers,$refformaspagos,$monto2,0,$taxa,'00/00/0000',$fecha2,$usuario,0);
-   if ((integer)$res2 > 0) {
-      $error .= '';
-   } else {
-      $error .= ' - Huvo un error al insertar datos';
-   }
 
    echo $error;
 }
@@ -220,6 +228,8 @@ function devolverTarifaArray($serviciosReferencias) {
    $id = $_POST['id'];
 
    $resLloguer = $serviciosReferencias->traerLloguersPorId($id);
+
+   $resPagos   = $serviciosReferencias->traerPagosPorLloguers($id);
 
    $refubicaciones      =  mysql_result($resLloguer,0,'refubicaciones');
    $desdeperiode        =  mysql_result($resLloguer,0,'entrada');
@@ -234,6 +244,32 @@ function devolverTarifaArray($serviciosReferencias) {
    $resFaltaPagar       =  $serviciosReferencias->faltaPagar($id);
 
    $falta               =  mysql_result($resFaltaPagar,0,'falta');
+
+   if (mysql_num_rows($resPagos)>0) {
+      $existePago = 1;
+      $pago1 = mysql_result($resPagos,0,'cuota');
+      $pago2 = mysql_result($resPagos,1,'cuota');
+      $taxa = mysql_result($resPagos,1,'taxa');
+      $primerpago = mysql_result($resPagos,0,'fechapago');
+      $segundopago = mysql_result($resPagos,1,'fechapago');
+
+   } else {
+      $existePago = 0;
+      $pago1 = 0;
+      $pago2 = 0;
+      $taxa = 0;
+      $primerpago = 0;
+      $segundopago = 0;
+   }
+
+   $resV['pagos'] = array(
+                     'existe' => $existePago,
+                     'pago1' => $pago1,
+                     'pago2' => $pago2,
+                     'taxa' => $taxa,
+                     'primerpago' => $primerpago,
+                     'segundopago' => $segundopago
+                  );
 
    $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta,$segundopago);
 
