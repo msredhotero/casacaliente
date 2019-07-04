@@ -52,6 +52,23 @@ class ServiciosReferencias {
 	return $res;
 	}
 
+	function traerLloguersadicionalPorLloguer($idlloguer) {
+	$sql = "select
+	l.idllogueradicional,
+	l.reflloguers,
+	l.personas,
+	l.entrada,
+	l.sortida,
+	l.taxapersona,
+	l.taxaturistica
+	from dblloguersadicional l
+	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
+	where l.reflloguers = ".$idlloguer."
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
 
 	function traerLloguersadicionalPorId($id) {
 	$sql = "select idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica from dblloguersadicional where idllogueradicional =".$id;
@@ -395,6 +412,15 @@ class ServiciosReferencias {
 
 	function traerLloguersPorId($id) {
 	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa,refestados from dblloguers where idlloguer =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	function traerLloguersPorIdAux($id) {
+	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,
+	DATE_FORMAT(entrada, '%d/%m/%Y') as entrada,
+	DATE_FORMAT(sortida, '%d/%m/%Y') as sortida,
+	total,numpertax,persset,taxa,maxtaxa,refestados from dblloguers where idlloguer =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}

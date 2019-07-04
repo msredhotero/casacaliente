@@ -92,6 +92,7 @@ $refCampoCliente 	=  array();
 $frmCliente 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tablaCliente,$lblCambioCliente,$lblreemplazoCliente,$refdescripcionCliente,$refCampoCliente);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+
 $resTaxa = $serviciosReferencias->traerTaxa();
 
 $taxaPer = mysql_result($resTaxa,0,1);
@@ -595,6 +596,60 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					<input type="hidden" id="idlloguerpagarecliente" name="idlloguerpagarecliente" value="0"/>
 				</form>
 
+
+
+				<!-- NUEVO -->
+				<form class="formulario" role="form" id="sign_in">
+				   <div class="modal fade" id="lgmNuevoCualquiera" tabindex="-1" role="dialog">
+				       <div class="modal-dialog modal-lg" role="document">
+				           <div class="modal-content">
+				               <div class="modal-header">
+				                   <h4 class="modal-title" id="largeModalLabel"><span class="tituloNuevo"></span></h4>
+				               </div>
+				               <div class="modal-body demo-masked-input">
+										<div class="row frmAjaxGrilla">
+
+										</div>
+										<div class="row frmAjaxNuevo">
+
+										</div>
+				               </div>
+				               <div class="modal-footer">
+				                   <button type="submit" class="btn btn-primary waves-effect nuevoCualquiera">GUARDAR</button>
+				                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				               </div>
+				           </div>
+				       </div>
+				   </div>
+
+				</form>
+
+
+				<!-- ELIMINAR -->
+					<form class="formulario" role="form" id="sign_in">
+					   <div class="modal fade" id="lgmEliminarLA" tabindex="-1" role="dialog">
+					       <div class="modal-dialog modal-lg" role="document">
+					           <div class="modal-content">
+					               <div class="modal-header">
+					                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR PERSONES ADDICIONALS</h4>
+					               </div>
+					               <div class="modal-body">
+													 <p>¿Esta seguro que desea eliminar el registro?</p>
+													 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+					               </div>
+					               <div class="modal-footer">
+					                   <button type="button" class="btn btn-danger waves-effect eliminarLA">ELIMINAR</button>
+					                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					               </div>
+					           </div>
+					       </div>
+					   </div>
+						<input type="hidden" id="accion" name="accion" value="eliminarLloguersadicional"/>
+						<input type="hidden" name="ideliminarLA" id="ideliminarLA" value="0">
+					</form>
+
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -608,6 +663,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 <!-- Moment Plugin Js -->
     <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
 
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
@@ -642,7 +698,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
         clearButton: true,
         weekStart: 1,
         time: false
-    });
+   	});
 
 		$( "#fechapago1" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
@@ -959,13 +1015,13 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});
 
 
-		function frmAjaxEliminar(id) {
+		function frmAjaxEliminar(id, accion, contenedor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: '<?php echo $eliminar; ?>', id: id},
+				data: {accion: accion, id: id},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 
@@ -981,9 +1037,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								timer: 1500,
 								showConfirmButton: false
 						});
-						$('#lgmEliminar').modal('toggle');
+						$('#' + contenedor).modal('toggle');
+
+						if (contenedor == 'lgmEliminarLA') {
+							$('#lgmNuevoCualquiera').modal('toggle');
+						}
+
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
+
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1017,7 +1078,18 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});//fin del boton eliminar
 
 		$('.eliminar').click(function() {
-			frmAjaxEliminar($('#ideliminar').val());
+			frmAjaxEliminar($('#ideliminar').val(), 'eliminarLloguers', 'lgmEliminar');
+		});
+
+
+		$(".frmAjaxGrilla").on("click",'.btnEliminarLA', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminarLA').val(idTable);
+			$('#lgmEliminarLA').modal();
+		});//fin del boton eliminar
+
+		$('.eliminarLA').click(function() {
+			frmAjaxEliminar($('#ideliminarLA').val(), 'eliminarLloguersadicional', 'lgmEliminarLA');
 		});
 
 		$("#example").on("click",'.btnModificar', function(){
@@ -1356,6 +1428,133 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				}
 			});
 		});
+
+
+		$('.nuevoCualquiera').click(function(){
+
+			//información del formulario
+			var formData = new FormData($(".formulario")[7]);
+			var message = "";
+			//hacemos la petición ajax
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Creado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+
+						$('#lgmNuevo').modal('hide');
+						location.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2500,
+								showConfirmButton: false
+						});
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
+
+
+
+		$("#example").on("click",'.btnAgregarPersonas', function(){
+
+			var tabla =  'dblloguersadicional';
+			var id = $(this).attr("id");
+			$('.tituloNuevo').html('PERSONES ADDICIONALS');
+			$('#accion').html('insertarLloguersadicional');
+			$('#lgmNuevoCualquiera').modal();
+			frmAjaxNuevo(id, tabla);
+
+		});//fin del boton nuevo planata
+
+		$(".frmAjaxGrilla").on("click",'.btnEliminarLA', function(){
+
+			var tabla =  'dblloguersadicional';
+			var id = $(this).attr("id");
+			$('.tituloNuevo').html('PERSONES ADDICIONALS');
+			$('#accion').html('insertarLloguersadicional');
+			$('#lgmNuevoCualquiera').modal();
+			frmAjaxNuevo(id, tabla);
+
+		});//fin del boton nuevo planata
+
+
+
+		function frmAjaxNuevo(id, tabla) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'frmAjaxNuevo',tabla: tabla, id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+					$('.frmAjaxNuevo').html('');
+					$('.frmAjaxGrilla').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.frmAjaxNuevo').html(data.formulario);
+						$('.frmAjaxNuevo #entrada').val(data.aux.desde);
+						$('.frmAjaxNuevo #sortida').val(data.aux.hasta);
+						$('.frmAjaxGrilla').html(data.aux.vista);
+						$('#personas').val(0);
+						$('.datepicker').bootstrapMaterialDatePicker({
+				        format: 'DD/MM/YYYY',
+						  minDate: data.aux.desde,
+						  maxDate: data.aux.hasta,
+						  lang : 'ca',
+				        clearButton: true,
+				        weekStart: 1,
+				        time: false
+				   	});
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
 
 
 	});

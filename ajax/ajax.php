@@ -181,10 +181,124 @@ break;
 case 'modificarPagoCliente':
    modificarPagoCliente($serviciosReferencias);
 break;
+case 'frmAjaxNuevo':
+   frmAjaxNuevo($serviciosReferencias, $serviciosFunciones);
+break;
+case 'insertarLloguersadicional':
+   insertarLloguersadicional($serviciosReferencias);
+break;
+case 'modificarLloguersadicional':
+   modificarLloguersadicional($serviciosReferencias);
+break;
+case 'eliminarLloguersadicional':
+   eliminarLloguersadicional($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+
+function insertarLloguersadicional($serviciosReferencias) {
+   $reflloguers = $_POST['reflloguers'];
+   $personas = $_POST['personas'];
+   $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
+   $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
+
+   $resTaxa = $serviciosReferencias->traerTaxa();
+
+   $taxaPer = mysql_result($resTaxa,0,1);
+   $taxaTur = mysql_result($resTaxa,0,2);
+   $taxaMax = mysql_result($resTaxa,0,3);
+
+   $dias = $serviciosReferencias->s_datediff('d', $entrada, $sortida, false);
+
+   $totalTaxaPersona = 0;
+   $totalTaxaTuristica = 1 * $dias * $taxaTur;
+
+   if ($totalTaxaTuristica > $taxaMax) {
+      $totalTaxaTuristica  = $personas * $taxaMax;
+   } else {
+      $totalTaxaTuristica = $personas * $dias * $taxaTur;
+   }
+
+   $totalTarifa = 0;
+
+   // si es menos de una semana
+   if ($dias < 7) {
+      $totalTaxaPersona = $personas * 1 * $taxaPer;
+   } else {
+      $totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+   }
+
+   $taxapersona = $totalTaxaPersona;
+   $taxaturistica = $totalTaxaTuristica;
+
+   $res = $serviciosReferencias->insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Huvo un error al insertar datos';
+   }
+}
+
+function modificarLloguersadicional($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reflloguers = $_POST['reflloguers'];
+   $personas = $_POST['personas'];
+   $entrada = $_POST['entrada'];
+   $sortida = $_POST['sortida'];
+
+   $resTaxa = $serviciosReferencias->traerTaxa();
+
+   $taxaPer = mysql_result($resTaxa,0,1);
+   $taxaTur = mysql_result($resTaxa,0,2);
+   $taxaMax = mysql_result($resTaxa,0,3);
+
+   $dias = $this->s_datediff('d', $entrada, $sortida, false);
+
+   $totalTaxaPersona = 0;
+   $totalTaxaTuristica = 1 * $dias * $taxaTur;
+
+   if ($totalTaxaTuristica > $taxaMax) {
+      $totalTaxaTuristica  = $personas * $taxaMax;
+   } else {
+      $totalTaxaTuristica = $personas * $dias * $taxaTur;
+   }
+
+   $totalTarifa = 0;
+
+   // si es menos de una semana
+   if ($dias < 7) {
+      $totalTaxaPersona = $personas * 1 * $taxaPer;
+   } else {
+      $totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+   }
+
+   $taxapersona = $totalTaxaPersona;
+   $taxaturistica = $totalTaxaTuristica;
+
+   $res = $serviciosReferencias->modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Huvo un error al modificar datos';
+   }
+}
+
+
+function eliminarLloguersadicional($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarLloguersadicional($id);
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Huvo un error en la operacion';
+   }
+
+}
 
 function modificarPagoCliente($serviciosReferencias) {
    session_start();
@@ -386,8 +500,10 @@ function insertarLloguers($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
    $refubicaciones = $_POST['refubicaciones'];
    $datalloguer = $_POST['datalloguer'];
-   $entrada = $_POST['entrada'];
-   $sortida = $_POST['sortida'];
+
+   $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
+   $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
+
    $total = $_POST['total'];
    $numpertax = $_POST['numpertax'];
    $persset = $_POST['persset'];
@@ -409,8 +525,8 @@ function modificarLloguers($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
    $refubicaciones = $_POST['refubicaciones'];
    $datalloguer = $_POST['datalloguer'];
-   $entrada = $_POST['entrada'];
-   $sortida = $_POST['sortida'];
+   $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
+   $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
    $total = $_POST['total'];
    $numpertax = $_POST['numpertax'];
    $persset = $_POST['persset'];
@@ -684,25 +800,60 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 }
 
 
-function frmAjaxNuevo($serviciosFunciones, $serviciosReferencias) {
+function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
    $tabla = $_POST['tabla'];
    $id = $_POST['id'];
 
    switch ($tabla) {
-      case 'dbplantas':
+      case 'dblloguersadicional':
 
-         $insertar = "insertarPlantas";
-         $idTabla = "idplanta";
+         $insertar = "insertarLloguersadicional";
+         $idTabla = "idllogueradicional";
 
-         $lblCambio	 	= array("reflientes");
-         $lblreemplazo	= array("Cliente");
+         $lblCambio	 	= array("reflloguers");
+         $lblreemplazo	= array("Lloguer");
 
-         $resVar1 = $serviciosReferencias->traerClientesPorId($id);
-         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'', $id);
+         $resVar1 = $serviciosReferencias->traerLloguersPorIdAux($id);
+         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(4,5),' - ', $id);
+
 
          $refdescripcion = array(0=>$cadRef1);
-         $refCampo 	=  array('refclientes');
-         break;
+         $refCampo 	=  array('reflloguers');
+
+         $resLA = $serviciosReferencias->traerLloguersadicionalPorLloguer($id);
+         $cadTabla = "<table class='table table-hover'>
+                     <thead>
+                     <th>Persones</th>
+                     <th>Entrada</th>
+                     <th>Sortida</th>
+                     <th>Taxa Per</th>
+                     <th>Taxa Tur.</th>
+                     <th>Total</th>
+                     <th>Accions</th>
+                     </thead>
+                     <tbody>";
+         while ($row = mysql_fetch_array($resLA)) {
+            $cadTabla .= "<tr>";
+            $cadTabla .= "<td>".$row['personas']."</td>";
+            $cadTabla .= "<td>".$row['entrada']."</td>";
+            $cadTabla .= "<td>".$row['sortida']."</td>";
+            $cadTabla .= "<td>".$row['taxapersona']."</td>";
+            $cadTabla .= "<td>".$row['taxaturistica']."</td>";
+            $cadTabla .= "<td>".($row['taxaturistica'] + $row['taxapersona'])."</td>";
+            $cadTabla .= '<td><button type="button" class="btn bg-red btn-circle waves-effect waves-circle waves-float btnEliminarLA" id="'.$row['idllogueradicional'].'">
+				<i class="material-icons">delete</i>
+			</button></td>';
+            $cadTabla .= "</tr>";
+         }
+         $cadTabla .= "</tbody></table>";
+
+         $resV['aux'] = array(
+                        'desde' => mysql_result($resVar1,0,'entrada'),
+                        'hasta' => mysql_result($resVar1,0,'sortida'),
+                        'vista' => $cadTabla
+                     );
+
+      break;
 
       default:
          // code...
@@ -711,7 +862,10 @@ function frmAjaxNuevo($serviciosFunciones, $serviciosReferencias) {
 
    $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-   echo $formulario;
+   $resV['formulario'] = $formulario;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
 }
 
 
