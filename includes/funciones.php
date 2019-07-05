@@ -1065,10 +1065,11 @@ class Servicios {
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
-			case 'tbmotivosoportunidades':
-				$sqlMod = "select idmotivooportunidad,
-													motivo,
-													(case when activo = 1 then 'Si' else 'No' end) activo
+			case 'dblloguers':
+				$sqlMod = "select idlloguer,refclientes,refubicaciones,datalloguer,
+				DATE_FORMAT(entrada, '%d/%m/%Y') as entrada,
+				DATE_FORMAT(sortida, '%d/%m/%Y') as sortida,
+				total,numpertax,persset,taxa,maxtaxa,refestados
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
@@ -1264,7 +1265,7 @@ class Servicios {
 													<i class="material-icons">date_range</i>
 											  </span>
 											  <div class="form-line">
-													<input type="text" class="form-control date" value="'.mysql_result($resMod,0,$row[0]).'" placeholder="Ej: 2019-01-01" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'>
+													<input type="text" class="datepicker form-control" value="'.mysql_result($resMod,0,$row[0]).'" placeholder="Ej: 2019-01-01" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'>
 											  </div>
 										 </div>
 									</div>

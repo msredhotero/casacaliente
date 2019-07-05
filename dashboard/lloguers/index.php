@@ -285,7 +285,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                   <h4 class="modal-title" id="largeModalLabel">NOU <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
-							<div class="row">
+							<div class="row frmNuevoPrincipal">
 								<?php echo $frmUnidadNegocios; ?>
 							</div>
 
@@ -725,21 +725,25 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#maxtaxa').val(<?php echo $taxaTur; ?>);
 		$('#taxa').val(<?php echo $taxaPer; ?>);
 
-		$('#sortida').change(function() {
-			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		$('.frmNuevoPrincipal #sortida').change(function() {
+			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
 		});
 
-		$('#entrada').change(function() {
-			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		$('.frmNuevoPrincipal #entrada').change(function() {
+			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
 		});
 
-		$('#refubicaciones').change(function() {
-			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		$('.frmNuevoPrincipal #refubicaciones').change(function() {
+			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
 		});
 
-		$('#numpertax').change(function() {
-			devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
-			$('#persset').val($('#numpertax').val());
+		$('.frmNuevoPrincipal #numpertax').change(function() {
+			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
+			$('.frmNuevoPrincipal #persset').val($('.frmNuevoPrincipal #numpertax').val());
+		});
+
+		$('.btnNuevo').click(function() {
+			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
 		});
 
 		function formato(texto){
@@ -863,12 +867,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('#total').val(0);
+					$('.frmNuevoPrincipal #total').val(0);
+					$('.frmAjaxModificar #total').val(0);
 				},
 				//una vez finalizado correctamente
 				success: function(data){
+					$('.frmNuevoPrincipal #total').val(data);
+					$('.frmAjaxModificar #total').val(data);
 
-					$('#total').val(data);
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -932,12 +938,20 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.frmAjaxModificar').html('');
+					
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+						$('.datepicker').bootstrapMaterialDatePicker({
+				        format: 'DD/MM/YYYY',
+						  lang : 'ca',
+				        clearButton: true,
+				        weekStart: 1,
+				        time: false
+				   	});
 					} else {
 						swal("Error!", data, "warning");
 
@@ -984,6 +998,32 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			});
 
 		}
+
+
+		$("#example").on("click",'.btnContratos', function(){
+
+			idTable =  $(this).attr("id");
+
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=catalan" ,'_blank');
+		});
+
+
+		$(".frmAjaxModificar").on("change",'#sortida', function(){
+			devolverTarifa($('.frmAjaxModificar #refubicaciones').val(), $('.frmAjaxModificar #entrada').val(), $('.frmAjaxModificar #sortida').val(), $('.frmAjaxModificar #numpertax').val());
+		});
+
+		$(".frmAjaxModificar").on("change",'#entrada', function(){
+			devolverTarifa($('.frmAjaxModificar #refubicaciones').val(), $('.frmAjaxModificar #entrada').val(), $('.frmAjaxModificar #sortida').val(), $('.frmAjaxModificar #numpertax').val());
+		});
+
+		$(".frmAjaxModificar").on("change",'#refubicaciones', function(){
+			devolverTarifa($('.frmAjaxModificar #refubicaciones').val(), $('.frmAjaxModificar #entrada').val(), $('.frmAjaxModificar #sortida').val(), $('.frmAjaxModificar #numpertax').val());
+		});
+
+		$(".frmAjaxModificar").on("change",'#numpertax', function(){
+			devolverTarifa($('.frmAjaxModificar #refubicaciones').val(), $('.frmAjaxModificar #entrada').val(), $('.frmAjaxModificar #sortida').val(), $('.frmAjaxModificar #numpertax').val());
+			$('.frmAjaxModificar #persset').val($('.frmAjaxModificar #numpertax').val());
+		});
 
 		$("#example").on("click",'.btnCliente', function(){
 			$('.largeModalLabelVer').html('CLIENT');

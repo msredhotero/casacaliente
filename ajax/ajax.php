@@ -532,8 +532,9 @@ function modificarLloguers($serviciosReferencias) {
    $persset = $_POST['persset'];
    $taxa = $_POST['taxa'];
    $maxtaxa = $_POST['maxtaxa'];
+   $refestados = $_POST['refestados'];
 
-   $res = $serviciosReferencias->modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa);
+   $res = $serviciosReferencias->modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados);
 
    if ($res == true) {
       echo '';
@@ -544,8 +545,14 @@ function modificarLloguers($serviciosReferencias) {
 
 function eliminarLloguers($serviciosReferencias) {
    $id = $_POST['id'];
+   $resAd = $serviciosReferencias->eliminarLloguersadicionalPorLloguer($id);
+   
    $res = $serviciosReferencias->eliminarLloguers($id);
-   echo $res;
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Huvo un error al modificar datos';
+   }
 }
 
 function armarTablaTarifas($serviciosReferencias) {
@@ -786,6 +793,29 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $refdescripcion = array();
          $refCampo 	=  array();
+      break;
+      case 'dblloguers':
+         $resultado = $serviciosReferencias->traerLloguersPorId($id);
+
+         $modificar = "modificarLloguers";
+         $idTabla = "idlloguer";
+
+         $lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa','refestados');
+         $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa','Estat');
+
+         $resVar1 = $serviciosReferencias->traerClientes();
+         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
+
+         $resVar2 = $serviciosReferencias->traerUbicaciones();
+         $cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(4,1,2),' - ',mysql_result($resultado,0,'refubicaciones'));
+
+         $resVar3 = $serviciosReferencias->traerEstados();
+         $cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'',mysql_result($resultado,0,'refestados'));
+
+
+         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2, 2=>$cadRef3);
+         $refCampo 	=  array('refclientes','refubicaciones','refestados');
+
       break;
 
 

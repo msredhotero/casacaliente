@@ -35,6 +35,11 @@ class ServiciosReferencias {
 	return $res;
 	}
 
+	function eliminarLloguersadicionalPorLloguer($idlloguer) {
+	$sql = "delete from dblloguersadicional where reflloguers =".$idlloguer;
+	$res = $this->query($sql,0);
+	return $res;
+	}
 
 	function traerLloguersadicional() {
 	$sql = "select
@@ -372,6 +377,46 @@ class ServiciosReferencias {
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
 	inner join tbestados est on est.idestado = l.refestados
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	function traerLloguersPorIdCompleto($id) {
+	$sql = "select
+	l.idlloguer,
+	l.refclientes,
+	l.refubicaciones,
+	l.datalloguer,
+	l.entrada,
+	l.sortida,
+	l.total,
+	l.numpertax,
+	l.persset,
+	l.taxa,
+	l.maxtaxa,
+	l.refestados,
+	est.estado,
+	cli.nom,
+	cli.cognom,
+	cli.nif,
+	cli.pais,
+	cli.carrer,
+	cli.codipostal,
+	cli.ciutat,
+	ubi.codapartament,
+	DATE_FORMAT(l.entrada, '%d/%m/%Y') as entradacorta,
+	DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortidacorta,
+	year(l.entrada) as anyentrada,
+	year(l.sortida) as anysortida,
+	ubi.dormitorio,
+	DATEDIFF(l.entrada,l.sortida) as dias
+	from dblloguers l
+	inner join dbclientes cli ON cli.idcliente = l.refclientes
+	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
+	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+	inner join tbestados est on est.idestado = l.refestados
+	where l.idlloguer = ".$id."
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
