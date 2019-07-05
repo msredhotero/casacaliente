@@ -40,7 +40,7 @@ function Footer($pdf)
 $pdf->SetY(-20);
 
 $pdf->SetFont('Arial','I',12);
-$pdf->Cell(0,10,utf8_decode( 'PLAYA CANYELLES PETITES – ROSES – COSTA BRAVA - ESPAÑA'),0,0,'C');
+$pdf->Cell(0,10,utf8_decode( 'PLAYA CANYELLES PETITES - ROSES - COSTA BRAVA - ESPAÑA'),0,0,'C');
 $pdf->SetFont('Arial','I',10);
 $pdf->Cell(0,20,'Pagina '.$pdf->PageNo()." - Fecha: ".date('Y-m-d'),0,0,'R');
 }
@@ -84,7 +84,7 @@ $pdf->SetAutoPageBreak(false,1);
 
    $pdf->Ln();
    $pdf->SetX(5);
-   $pdf->Cell(140,5,'Apartaments Casa Caliente – Apartado 431 - 17480 Roses - España.',0,0,'L',false);
+   $pdf->Cell(140,5,utf8_decode('Apartaments Casa Caliente - Apartado 431 - 17480 Roses - España.'),0,0,'L',false);
 
    $pdf->Ln();
    $pdf->SetX(5);
@@ -105,7 +105,7 @@ $pdf->SetAutoPageBreak(false,1);
    $pdf->SetFont('Arial','',12);
    $pdf->SetTextColor(0,0,0);
    $pdf->setX(130);
-   $pdf->Cell(70,5,mysql_result($resLloguer,0,'nom').' '.mysql_result($resLloguer,0,'cognom'),0,0,'L',false);
+   $pdf->Cell(70,5,utf8_decode(mysql_result($resLloguer,0,'nom').' '.mysql_result($resLloguer,0,'cognom')),0,0,'L',false);
 
    $pdf->Ln();
    $pdf->setX(130);
@@ -113,25 +113,25 @@ $pdf->SetAutoPageBreak(false,1);
 
    $pdf->Ln();
    $pdf->setX(130);
-   $pdf->Cell(70,5,mysql_result($resLloguer,0,'carrer'),0,0,'L',false);
+   $pdf->Cell(70,5,utf8_decode(mysql_result($resLloguer,0,'carrer')),0,0,'L',false);
 
    $pdf->Ln();
    $pdf->setX(130);
-   $pdf->Cell(70,5,mysql_result($resLloguer,0,'codipostal').'  '.mysql_result($resLloguer,0,'ciutat'),0,0,'L',false);
+   $pdf->Cell(70,5,mysql_result($resLloguer,0,'codipostal').'  '.utf8_decode(mysql_result($resLloguer,0,'ciutat')),0,0,'L',false);
 
    $pdf->Ln();
    $pdf->setX(130);
-   $pdf->Cell(70,5,mysql_result($resLloguer,0,'pais'),0,0,'L',false);
+   $pdf->Cell(70,5,utf8_decode(mysql_result($resLloguer,0,'pais')),0,0,'L',false);
 
    $pdf->Ln();
    $pdf->Ln();
    $pdf->setX(5);
-   $pdf->Cell(70,5,'Estimado/a Sr. / Sra '.mysql_result($resLloguer,0,'nom'),0,0,'L',false);
+   $pdf->Cell(70,5,'Estimado/a Sr. / Sra '.utf8_decode(mysql_result($resLloguer,0,'nom')),0,0,'L',false);
 
    $pdf->Ln();
    $pdf->Ln();
    $pdf->setX(5);
-   $pdf->MultiCell(200,5,'Tenemos reservado para usted el apartamento N° '.mysql_result($resLloguer,0,'codapartament').' de '.mysql_result($resLloguer,0,'dormitorio').' dormitorio/s '.mysql_result($resLloguer,0,'dias').' dias, del '.mysql_result($resLloguer,0,'entradacorta').' (17h) hasta '.mysql_result($resLloguer,0,'sortidacorta').' (9h). Pueden pagar por transferencia bancaria',0,'L',false);
+   $pdf->MultiCell(200,5,utf8_decode('Tenemos reservado para usted el apartamento N° '.mysql_result($resLloguer,0,'codapartament').' de '.mysql_result($resLloguer,0,'dormitorio').' dormitorio/s '.mysql_result($resLloguer,0,'dias').' dias, del '.mysql_result($resLloguer,0,'entradacorta').' (17h) hasta '.mysql_result($resLloguer,0,'sortidacorta').' (9h). Pueden pagar por transferencia bancaria'),0,'L',false);
 
 	//$pdf->SetY($contadorY1);
 
