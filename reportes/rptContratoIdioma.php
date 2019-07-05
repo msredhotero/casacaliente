@@ -40,9 +40,9 @@ function Footer($pdf)
 $pdf->SetY(-20);
 
 $pdf->SetFont('Arial','I',12);
-$pdf->Cell(0,10,'PLAYA CANYELLES PETITES – ROSES – COSTA BRAVA - ESPAÑA',0,0,'C');
+$pdf->Cell(0,10,utf8_decode( 'PLAYA CANYELLES PETITES – ROSES – COSTA BRAVA - ESPAÑA'),0,0,'C');
 $pdf->SetFont('Arial','I',10);
-$pdf->Cell(0,10,'Pagina '.$pdf->PageNo()." - Fecha: ".date('Y-m-d'),0,0,'R');
+$pdf->Cell(0,20,'Pagina '.$pdf->PageNo()." - Fecha: ".date('Y-m-d'),0,0,'R');
 }
 
 
