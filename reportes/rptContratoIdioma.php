@@ -100,7 +100,7 @@ $pdf->SetAutoPageBreak(false,1);
    $pdf->SetFont('Arial','B',14);
    $pdf->Ln();
    $pdf->SetX(5);
-   $pdf->Cell(130,5,'CONTRATO Nº: '.$id,0,0,'L',false);
+   $pdf->Cell(130,5,utf8_decode('CONTRATO Nº: ').$id,0,0,'L',false);
 
    $pdf->SetFont('Arial','',12);
    $pdf->SetTextColor(0,0,0);
