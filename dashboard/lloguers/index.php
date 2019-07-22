@@ -138,6 +138,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.contDisponibilidad table tbody tr td { border: 1px solid #444; }
+		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
 	</style>
 
 
@@ -938,7 +940,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.frmAjaxModificar').html('');
-					
+
 				},
 				//una vez finalizado correctamente
 				success: function(data){

@@ -101,6 +101,8 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
     <style>
         .alert > i{ vertical-align: middle !important; }
+		  .contDisponibilidad table tbody tr td { border: 1px solid #444; }
+		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
     </style>
 
 </head>
@@ -168,22 +170,9 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 							</div>
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
-								<div class="row" style="padding: 5px 20px;">
+								<div class="row contDisponibilidad" style="padding: 5px 20px;">
 
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
 
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
 								</div>
 							</form>
 						</div>
@@ -266,6 +255,42 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 					}
 				});
 */
+	traerDisponibilidad();
+
+	function traerDisponibilidad() {
+		$.ajax({
+			url: '../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {accion: 'traerDisponibilidad',any: 2019},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$('.contDisponibilidad').html('');
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+
+				if (data != '') {
+					$('.contDisponibilidad').html(data);
+
+
+				} else {
+					swal("Error!", data, "warning");
+
+					$("#load").html('');
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+	}
+
+
+
 				function frmAjaxModificar(id) {
 					$.ajax({
 						url: '../ajax/ajax.php',

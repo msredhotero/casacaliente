@@ -9,6 +9,38 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	function buscarAlquilerPorFechaUbicacion($fechadesde, $fechahasta, $idubicacion) {
+		$sql = "SELECT
+				    l.idlloguer, c.nom, c.cognom, c.telefon, est.estado, l.total, l.persset,
+					 est.color
+				FROM
+				    dblloguers l
+				        INNER JOIN
+				    dbclientes c ON l.refclientes = c.idcliente
+				        INNER JOIN
+				    tbestados est ON est.idestado = l.refestados
+				WHERE
+				    (((l.entrada BETWEEN '".$fechadesde."' AND '".$fechahasta."')
+				        AND (l.entrada <> '".$fechahasta."'))
+				        OR ((l.sortida BETWEEN '".$fechadesde."' AND '".$fechahasta."')
+				        AND (l.sortida <> '".$fechadesde."'))) and l.refubicaciones = ".$idubicacion;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPeriodosDisponibilidad($any) {
+		$sql = "SELECT
+				    p.idperiodo,p.periodo, (datediff(p.finsaperiode,p.desdeperiode) / 7) as semanas ,p.desdeperiode
+				FROM
+				    dbperiodos p
+				where p.any = ".$any."
+				order by p.desdeperiode ";
+
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
 	/* PARA Lloguersadicional */
 
 	function insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica) {
