@@ -65,7 +65,8 @@ class ServiciosReferencias {
 	l.entrada,
 	l.sortida,
 	l.taxapersona,
-	l.taxaturistica
+	l.taxaturistica,
+	datediff(l.sortida,l.entrada) as dias
 	from dblloguersadicional l
 	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
 	where l.reflloguers = ".$idlloguer."
@@ -73,6 +74,7 @@ class ServiciosReferencias {
 	$res = $this->query($sql,0);
 	return $res;
 	}
+
 
 
 	function traerLloguersadicionalPorId($id) {
@@ -227,7 +229,7 @@ class ServiciosReferencias {
 	/* calculos para el alquiler */
 	function calcularCoeficienteTarifa($idubicacion, $fecha) {
 		$sql = "SELECT
-					    t.tarifa / 7
+					    t.tarifa / 7, p.periodo, t.tarifa
 					FROM
 					    dbtarifas t
 					        INNER JOIN
@@ -239,10 +241,10 @@ class ServiciosReferencias {
 
 		//die(var_dump($sql));
 		if (mysql_num_rows($res)>0) {
-			return mysql_result($res,0,0);
+			return array('tarifa' => mysql_result($res,0,0), 'periodo' => mysql_result($res,0,1), 'precio' => mysql_result($res,0,2));
 		}
 
-		return 0;
+		return array('tarifa' => 0, 'periodo' => '', 'precio' => 0);
 	}
 
 
@@ -280,7 +282,7 @@ class ServiciosReferencias {
 		}
 
 		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
-		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i));
+		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i))['tarifa'];
 		}
 
 		return $totalTarifa + $totalTaxaPersona + $totalTaxaTuristica;
@@ -322,7 +324,7 @@ class ServiciosReferencias {
 		}
 
 		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
-		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i));
+		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i))['tarifa'];
 		}
 
 		return array('tarifa'=> round($totalTarifa,2, PHP_ROUND_HALF_UP), 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
@@ -410,7 +412,8 @@ class ServiciosReferencias {
 	year(l.entrada) as anyentrada,
 	year(l.sortida) as anysortida,
 	ubi.dormitorio,
-	DATEDIFF(l.entrada,l.sortida) as dias
+	DATEDIFF(l.sortida,l.entrada) as dias,
+	ti.idtipoubicacion
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
