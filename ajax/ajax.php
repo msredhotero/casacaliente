@@ -891,10 +891,10 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
 
          $resVar2 = $serviciosReferencias->traerUbicaciones();
-         $cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(4,1,2),' - ',mysql_result($resultado,0,'refubicaciones'));
+         $cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(4,1,2),' - ',mysql_result($resultado,0,'refubicaciones'));
 
          $resVar3 = $serviciosReferencias->traerEstados();
-         $cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'',mysql_result($resultado,0,'refestados'));
+         $cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestados'));
 
 
          $refdescripcion = array(0 => $cadRef1,1=>$cadRef2, 2=>$cadRef3);
