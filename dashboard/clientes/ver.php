@@ -164,7 +164,7 @@ $resultado = $serviciosReferencias->traerClientesPorId($id);
 					<div class="card ">
 						<div class="header bg-red">
 							<h2 style="color:#fff;">
-								<?php echo strtoupper($singular); ?>: <?php echo strtoupper(mysql_result($resultado,0,'cognom')); ?> <?php echo strtoupper(mysql_result($resultado,0,'nom')); ?>
+								<?php echo strtoupper($singular); ?>: <?php echo mb_strtoupper(mysql_result($resultado,0,'cognom'), 'UTF-8'); ?> <?php echo mb_strtoupper(mysql_result($resultado,0,'nom'), 'UTF-8'); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
