@@ -140,6 +140,18 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		.alert > i{ vertical-align: middle !important; }
 		.contDisponibilidad table tbody tr td { border: 1px solid #444; }
 		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
+		.modal-dialog {
+		  width: 95%;
+		  height: 100%;
+		  margin: 10px 10px;
+		  padding: 0;
+		}
+
+		.modal-content {
+		  height: auto;
+		  min-height: 95%;
+		  border-radius: 0;
+		}
 	</style>
 
 
@@ -221,7 +233,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<i class="material-icons">add</i>
 												<span>NOU</span>
 											</button>
-											<button type="button" class="btn bg-teal waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+											<button type="button" class="btn bg-teal waves-effect btnDisponibilidad" data-toggle="modal" data-target="#lgmDisponibilidad">
 												<i class="material-icons">date_range</i>
 												<span>DISPONIBILITAT</span>
 											</button>
@@ -277,7 +289,24 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	</div>
 </section>
 
+	<div class="modal fade" id="lgmDisponibilidad" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-lg modalDisponibilidad" role="document">
+			  <div class="modal-content modalDisp">
+					<div class="modal-header">
+						 <h4 class="modal-title" id="largeModalLabel">DISPONIBILITAT</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row contDisponibilidad">
 
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
 <!-- NUEVO -->
 	<form class="formulario" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
@@ -678,6 +707,43 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 <script src="../../js/datepicker-es.js"></script>
 <script>
 	$(document).ready(function(){
+		traerDisponibilidad();
+		$('.btnDisponibilidad').click(function() {
+			traerDisponibilidad();
+		});
+
+
+		function traerDisponibilidad() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerDisponibilidad',any: 2019},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contDisponibilidad').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.contDisponibilidad').html(data);
+
+
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 		<?php $date = date('Y-m-d'); ?>
 
 		$('.maximizar').click(function() {
