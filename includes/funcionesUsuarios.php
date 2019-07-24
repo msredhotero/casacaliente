@@ -34,10 +34,23 @@ function login($usuario,$pass) {
 
 
 		$idUsua = mysql_result($respusu,0,0);
-		$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol
-				from dbusuarios u
-				inner join tbroles r on r.idrol = u.refroles
-				where password = '".$pass."' and u.activo = 1 and idusuario = ".$idUsua;
+		$sqlpass = "SELECT
+                   u.nombrecompleto,
+                   u.email,
+                   u.usuario,
+                   r.descripcion,
+                   r.idrol,
+                   u.reflocatarios,
+                   CONCAT(l.cognom, ' ', l.nom) AS locatario
+               FROM
+                   dbusuarios u
+                       INNER JOIN
+                   tbroles r ON r.idrol = u.refroles
+                       LEFT JOIN
+                   dblocatarios l ON l.idlocatario = u.reflocatarios
+               WHERE
+                   password = '".$pass."' AND u.activo = 1
+                       AND idusuario = ".$idUsua;
 
 
 		$resppass = $this->query($sqlpass,0);
@@ -64,6 +77,9 @@ function login($usuario,$pass) {
 			$_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
 			$_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
 			$_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
+
+         $_SESSION['idlocatario_sahilices'] = mysql_result($resppass,0,5);
+         $_SESSION['locatario_sahilices'] = mysql_result($resppass,0,6);
 
 
 			return 1;
@@ -181,7 +197,7 @@ function traerRoles() {
 }
 
 function traerRolesSimple() {
-	$sql = "select * from tbroles where idrol <> 1";
+	$sql = "select * from tbroles where idrol > 2";
 	$res = $this->query($sql,0);
 	if ($res == false) {
 		return 'Error al traer datos';
@@ -198,7 +214,7 @@ function traerUsuario($email) {
 }
 
 function traerUsuarios() {
-	$sql = "select u.idusuario,u.usuario, u.password, r.descripcion, u.email , u.nombrecompleto, u.refroles
+	$sql = "select u.idusuario,u.usuario, u.password, r.descripcion, u.email , u.nombrecompleto, u.refroles, u.reflocatarios
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
 			order by nombrecompleto";
@@ -222,9 +238,11 @@ function traerUsuariosajax($length, $start, $busqueda) {
                   u.email ,
                   u.nombrecompleto,
                   (case when u.activo = 1 then 'Si' else 'No' end) as activo,
+                  concat(l.cognom, ' ', l.nom) as locatario,
                   u.refroles
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
+         left join dblocatarios l on l.idlocatario = u.reflocatarios
          ".$where."
       	order by u.nombrecompleto
       	limit ".$start.",".$length;

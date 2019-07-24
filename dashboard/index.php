@@ -153,9 +153,9 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
-							<div class="header bg-riderz">
+							<div class="header bg-red">
 								<h2 style="color:#fff">
-									<?php echo strtoupper($plural); ?>
+									PLANING
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">

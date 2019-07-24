@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../usuarios/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../llogater/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Usuarios",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Llogater",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,42 +39,30 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Usuario";
+$singular = "Llogater";
 
-$plural = "Usuarios";
+$plural = "Llogaters";
 
-$eliminar = "eliminarUsuarios";
+$eliminar = "eliminarLocatarios";
 
-$insertar = "insertarUsuarios";
+$insertar = "insertarLocatarios";
 
-$modificar = "modificarUsuario";
+$modificar = "modificarLocatarios";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbusuarios";
+$tabla 			= "dblocatarios";
 
-$lblCambio	 	= array('nombrecompleto','reflocatarios','refroles');
-$lblreemplazo	= array('Nombre Completo','Llogater','Perfil');
+$lblCambio	 	= array('codipostal');
+$lblreemplazo	= array('Cod Postal');
 
-if ($_SESSION['refroll_sahilices'] == 1) {
-	$refLocatario = $serviciosReferencias->traerLocatarios();
-}	else {
-	$refLocatario = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
-}
-$cadRef = $serviciosFunciones->devolverSelectBox($refLocatario,array(1,2),' ');
 
-if ($_SESSION['refroll_sahilices'] == 1) {
-	$resRoles 	= $serviciosUsuario->traerRoles();
-} else {
-	$resRoles 	= $serviciosUsuario->traerRolesSimple();
-}
+$cadRef 	= '';
 
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resRoles,array(1),'');
-
-$refdescripcion = array(0=>$cadRef, 1 => $cadRef2);
-$refCampo 	=  array('reflocatarios','refroles');
+$refdescripcion = array();
+$refCampo 	=  array();
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -99,14 +87,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 	<link href="../../plugins/waitme/waitMe.css" rel="stylesheet" />
 	<link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
-
-	<!-- VUE JS -->
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-	<!-- axios -->
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-	<script src="https://unpkg.com/vue-swal"></script>
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
@@ -167,7 +147,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <!-- #Top Bar -->
 <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../'); ?>
 
-<section class="content" style="margin-top:-15px;">
+<section class="content" style="margin-top:-75px;">
 
 	<div class="container-fluid">
 		<div class="row clearfix">
@@ -177,8 +157,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
-						<div class="header bg-indigo">
-							<h2 style="color:white;">
+						<div class="header bg-red">
+							<h2>
 								<?php echo strtoupper($plural); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
@@ -207,29 +187,34 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									</div>
 								</div>
 
-
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Usuario</th>
-												<th>Perfil</th>
-												<th>Email</th>
-												<th>Nombre Completo</th>
-												<th>Activo</th>
-												<th>Llogater</th>
+												<th>cognom</th>
+												<th>nom</th>
+												<th>nif</th>
+												<th>carrer</th>
+												<th>codipostal</th>
+												<th>ciutat</th>
+												<th>pais</th>
+												<th>telefon</th>
+												<th>email</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Usuario</th>
-												<th>Perfil</th>
-												<th>Email</th>
-												<th>Nombre Completo</th>
-												<th>Activo</th>
-												<th>Llogater</th>
+												<th>cognom</th>
+												<th>nom</th>
+												<th>nif</th>
+												<th>carrer</th>
+												<th>codipostal</th>
+												<th>ciutat</th>
+												<th>pais</th>
+												<th>telefon</th>
+												<th>email</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -255,7 +240,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
-	                  <?php echo $frmUnidadNegocios; ?>
+							<div class="row">
+								<?php echo $frmUnidadNegocios; ?>
+							</div>
+
 	               </div>
 	               <div class="modal-footer">
 	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
@@ -275,8 +263,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		               <div class="modal-header">
 		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
-		               <div class="modal-body frmAjaxModificar">
+		               <div class="modal-body">
+								<div class="row frmAjaxModificar">
 
+								</div>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
@@ -335,7 +325,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=usuarios",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=locatarios",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -449,59 +439,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		}
 
-		function reenviarActivacion(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'reenviarActivacion', idusuario: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data.error == false) {
-						swal({
-								title: "Respuesta",
-								text: data.mensaje,
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data.mensaje,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
-
-		$("#example").on("click",'.btnEnviar', function(){
-			idTable =  $(this).attr("id");
-			reenviarActivacion(idTable);
-		});//fin del boton eliminar
-
 		$("#example").on("click",'.btnEliminar', function(){
 			idTable =  $(this).attr("id");
 			$('#ideliminar').val(idTable);
@@ -516,6 +453,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+		$("#example").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
 		});//fin del boton modificar
 
 		$('.nuevo').click(function(){

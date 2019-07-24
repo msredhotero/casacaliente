@@ -9,6 +9,93 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	/* PARA Locatarios */
+
+	function traerLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or td.pais like '%".$busqueda."%' or td.telefon like '%".$busqueda."%' or td.email like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+	   c.idlocatario,
+	   c.cognom,
+	   c.nom,
+	   c.nif,
+	   c.carrer,
+	   c.codipostal,
+	   c.ciutat,
+	   c.pais,
+	   c.telefon,
+	   c.email
+	   from dblocatarios c
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function insertarLocatarios($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
+		$sql = "insert into dblocatarios(idlocatario,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email)
+		values ('','".($cognom)."','".($nom)."','".($nif)."','".($carrer)."','".($codipostal)."','".($ciutat)."','".($pais)."','".($telefon)."','".($email)."')";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarLocatarios($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
+		$sql = "update dblocatarios
+		set
+		cognom = '".($cognom)."',nom = '".($nom)."',nif = '".($nif)."',carrer = '".($carrer)."',codipostal = '".($codipostal)."',ciutat = '".($ciutat)."',pais = '".($pais)."',telefon = '".($telefon)."',email = '".($email)."'
+		where idlocatario =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarLocatarios($id) {
+		$sql = "delete from dblocatarios where idlocatario =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerLocatarios() {
+		$sql = "select
+		l.idlocatario,
+		l.cognom,
+		l.nom,
+		l.nif,
+		l.carrer,
+		l.codipostal,
+		l.ciutat,
+		l.pais,
+		l.telefon,
+		l.email
+		from dblocatarios l
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerLocatariosPorId($id) {
+		$sql = "select idlocatario,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email from dblocatarios where idlocatario =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: dblocatarios*/
+
 	function buscarAlquilerPorFechaUbicacion($fechadesde, $fechahasta, $idubicacion) {
 		$sql = "SELECT
 				    l.idlloguer, c.nom, c.cognom, c.telefon, est.estado, l.total, l.persset,
@@ -214,6 +301,25 @@ class ServiciosReferencias {
 
 		$res = $this->query($sql,0);
 		return $res;
+	}
+
+
+	function faltaPagarDato($idlloguer) {
+		$sql = "SELECT
+				    l.total, COALESCE(l.total - SUM(p.monto), l.total) AS falta
+				FROM
+				    dblloguers l
+				        LEFT JOIN
+				    dbpagos p ON l.idlloguer = p.reflloguers
+				where l.idlloguer = ".$idlloguer."
+				GROUP BY l.total";
+
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res)>0) {
+			return mysql_result($res,0,1);
+		}
+		return 0;
 	}
 
 
@@ -1425,18 +1531,18 @@ return $res;
 
    /* PARA Usuarios */
 
-   function insertarUsuarios($usuario,$password,$refroles,$email,$nombrecompleto,$activo,$refclientes) {
-   $sql = "insert into dbusuarios(idusuario,usuario,password,refroles,email,nombrecompleto,activo,refclientes)
-   values (null,'".$usuario."','".$password."',".$refroles.",'".$email."','".$nombrecompleto."',".$activo.",".$refclientes.")";
+   function insertarUsuarios($usuario,$password,$refroles,$email,$nombrecompleto,$activo,$reflocatarios) {
+   $sql = "insert into dbusuarios(idusuario,usuario,password,refroles,email,nombrecompleto,activo,reflocatarios)
+   values (null,'".$usuario."','".$password."',".$refroles.",'".$email."','".$nombrecompleto."',".$activo.",".$reflocatarios.")";
    $res = $this->query($sql,1);
    return $res;
    }
 
 
-   function modificarUsuarios($id,$usuario,$password,$refroles,$email,$nombrecompleto,$activo,$refclientes) {
+   function modificarUsuarios($id,$usuario,$password,$refroles,$email,$nombrecompleto,$activo,$reflocatarios) {
    $sql = "update dbusuarios
    set
-   usuario = '".$usuario."',password = '".$password."',refroles = ".$refroles.",email = '".$email."',nombrecompleto = '".$nombrecompleto."',activo = ".$activo." ,refclientes = ".($refclientes)."
+   usuario = '".$usuario."',password = '".$password."',refroles = ".$refroles.",email = '".$email."',nombrecompleto = '".$nombrecompleto."',activo = ".$activo." ,reflocatarios = ".($reflocatarios)."
    where idusuario =".$id;
    $res = $this->query($sql,0);
    return $res;
@@ -1458,7 +1564,7 @@ return $res;
    u.refroles,
    u.email,
    u.nombrecompleto,
-   u.refpersonal
+   u.reflocatarios
    from dbusuarios u
    inner join tbroles rol ON rol.idrol = u.refroles
    order by 1";
@@ -1468,7 +1574,7 @@ return $res;
 
 
    function traerUsuariosPorId($id) {
-   $sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refclientes from dbusuarios where idusuario =".$id;
+   $sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,reflocatarios from dbusuarios where idusuario =".$id;
    $res = $this->query($sql,0);
    return $res;
    }

@@ -87,6 +87,17 @@ switch ($tabla) {
 		$termina = 12;
 
 		break;
+	case 'locatarios':
+		$resAjax = $serviciosReferencias->traerLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerLocatarios();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+
+		break;
 	case 'tipoubicacion':
 		$resAjax = $serviciosReferencias->traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerTipoubicacion();
@@ -129,6 +140,17 @@ switch ($tabla) {
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 4;
+
+	break;
+	case 'usuarios':
+		$resAjax = $serviciosUsuarios->traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosUsuarios->traerUsuarios();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
 
 	break;
 
