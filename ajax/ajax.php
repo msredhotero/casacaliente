@@ -291,7 +291,9 @@ function traerDisponibilidad($serviciosReferencias) {
    $linea = '';
    $primero = 0;
 
-   $cad = "<table class='table table-striped table-bordered table-responsive' id='tblPlaning'>
+
+
+   $cad = "<table class='display table table-bordered table-responsive' id='tblPlaning'>
             <thead>
                <th>".$any."</th>";
    while ($rowY = mysql_fetch_array($resUbicaciones)) {
