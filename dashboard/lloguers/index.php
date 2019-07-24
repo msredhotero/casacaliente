@@ -141,7 +141,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		.contDisponibilidad table tbody tr td { border: 1px solid #444; }
 		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
 		.modal-dialog {
-		  width: 95%;
+		  width: 98%;
 		  height: 100%;
 		  margin: 10px 10px;
 		  padding: 0;
@@ -149,7 +149,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		.modal-content {
 		  height: auto;
-		  min-height: 95%;
+		  min-height: 98%;
 		  border-radius: 0;
 		}
 	</style>
