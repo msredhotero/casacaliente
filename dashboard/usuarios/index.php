@@ -58,14 +58,14 @@ $tabla 			= "dbusuarios";
 $lblCambio	 	= array('nombrecompleto','reflocatarios','refroles');
 $lblreemplazo	= array('Nombre Completo','Llogater','Perfil');
 
-if ($_SESSION['refroll_sahilices'] == 1) {
+if ($_SESSION['idroll_sahilices'] == 1) {
 	$refLocatario = $serviciosReferencias->traerLocatarios();
 }	else {
 	$refLocatario = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
 }
 $cadRef = $serviciosFunciones->devolverSelectBox($refLocatario,array(1,2),' ');
 
-if ($_SESSION['refroll_sahilices'] == 1) {
+if ($_SESSION['idroll_sahilices'] == 1) {
 	$resRoles 	= $serviciosUsuario->traerRoles();
 } else {
 	$resRoles 	= $serviciosUsuario->traerRolesSimple();
