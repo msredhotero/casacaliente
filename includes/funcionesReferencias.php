@@ -709,7 +709,7 @@ function traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 	$busqueda = str_replace("'","",$busqueda);
 	if ($busqueda != '') {
-		$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or td.pais like '%".$busqueda."%' or td.telefon like '%".$busqueda."%' or td.email like '%".$busqueda."%' or td.comentaris like '%".$busqueda."%' or td.telefon2 like '%".$busqueda."%' or td.email2 like '%".$busqueda."%'";
+		$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or c.pais like '%".$busqueda."%' or c.telefon like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.comentaris like '%".$busqueda."%' or c.telefon2 like '%".$busqueda."%' or c.email2 like '%".$busqueda."%'";
 	}
 
 	$sql = "select

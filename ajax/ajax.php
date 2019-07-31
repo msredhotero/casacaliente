@@ -329,7 +329,7 @@ function traerDisponibilidad($serviciosReferencias) {
 
                $cad .= '<td style="'.$linea.'"><div class="btn-group">
             					<button type="button" class="btn bg-'.mysql_result($resAlquiler,0,'color').' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            						 '.mysql_result($resAlquiler,0,'cognom').' '.mysql_result($resAlquiler,0,'nom').' <span class="caret"></span>
+            						 '.substr(mysql_result($resAlquiler,0,'cognom').' '.mysql_result($resAlquiler,0,'nom'),0,13).' <span class="caret"></span>
             					</button>
             					<ul class="dropdown-menu">
                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Tel.: '.mysql_result($resAlquiler,0,'telefon').'</a></li>

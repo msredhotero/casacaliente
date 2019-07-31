@@ -165,7 +165,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
-						<div class="header bg-blue">
+						<div class="header bg-red">
 							<h2>
 								<?php echo strtoupper($plural); ?>
 							</h2>
@@ -336,6 +336,20 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+
+		$('.maximizar').click(function() {
+			if ($('.icomarcos').text() == 'web') {
+				$('#marcos').show();
+				$('.content').css('marginLeft', '315px');
+				$('.icomarcos').html('aspect_ratio');
+			} else {
+				$('#marcos').hide();
+				$('.content').css('marginLeft', '15px');
+				$('.icomarcos').html('web');
+			}
+
+		});
+		
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,

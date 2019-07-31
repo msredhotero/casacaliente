@@ -77,7 +77,7 @@ switch ($tabla) {
 		$termina = 9;
 	break;
 	case 'clientes':
-		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerClientes();
 		$label = array('btnVer','btnModificar','btnEliminar');
 		$class = array('bg-green','bg-amber','bg-red');
@@ -173,7 +173,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, $row[$i]);
+			array_push($arAux, utf8_encode($row[$i]));
 		}
 
 		if ($tabla == 'lloguers') {

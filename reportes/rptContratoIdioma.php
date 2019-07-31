@@ -38,10 +38,12 @@ $resLloguerAdicional =  $serviciosReferencias->traerLloguersadicionalPorLloguer(
 $resPagos = $serviciosReferencias->traerPagosPorLloguers($id);
 
 if (mysql_result($resLloguer,0,'dias') < 7) {
-	$totalTaxaPersona = mysql_result($resLloguer,0,'numpertax') * 1 * mysql_result($resLloguer,0,'taxa');
+	$totalTaxaPersona = mysql_result($resLloguer,0,'numpertax') * 1 * $taxaPer;
 } else {
-	$totalTaxaPersona = mysql_result($resLloguer,0,'numpertax') * mysql_result($resLloguer,0,'dias') / 7 * mysql_result($resLloguer,0,'taxa');
+	$totalTaxaPersona = mysql_result($resLloguer,0,'numpertax') * mysql_result($resLloguer,0,'dias') / 7 * $taxaPer;
 }
+
+//die(var_dump($taxaPer));
 
 
 $taxaturisticaAdicional = 0;
