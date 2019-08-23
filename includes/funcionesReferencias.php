@@ -776,7 +776,7 @@ c.comentaris,
 c.telefon2,
 c.email2
 from dbclientes c
-order by 1";
+order by trim(c.cognom),trim(c.nom)";
 $res = $this->query($sql,0);
 return $res;
 }

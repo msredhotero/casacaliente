@@ -140,14 +140,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		.alert > i{ vertical-align: middle !important; }
 		.contDisponibilidad table tbody tr td { border: 1px solid #444; }
 		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
-		.modal-dialog {
+		.modal-dialog2 {
 		  width: 100%;
 		  height: 100%;
 		  margin: 10px 10px;
 		  padding: 0;
 		}
 
-		.modal-content {
+		.modal-content2 {
 		  height: auto;
 		  min-height: 100%;
 		  border-radius: 0;
@@ -314,21 +314,221 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		 </div>
 	</div>
 <!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
+	<form class="formulario frmLloguer" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
 	                   <h4 class="modal-title" id="largeModalLabel">NOU <?php echo strtoupper($singular); ?></h4>
 	               </div>
-	               <div class="modal-body">
-							<div class="row frmNuevoPrincipal">
-								<?php echo $frmUnidadNegocios; ?>
+	               <div class="modal-body frmNuevoPrincipal">
+							<div class="row">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<div class="form-line">
+										<label for="refclientes" class="control-label" style="text-align:left">Client</label>
+										<select class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes">
+												<?php echo $cadRef1; ?>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<div class="form-line">
+										<label for="refubicaciones" class="control-label" style="text-align:left">Ubicaciones</label>
+										<select class="form-control show-tick" id="refubicaciones" name="refubicaciones">
+											<?php echo $cadRef2; ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+	                         <label class="form-label">Entrada</label>
+	                         <div class="input-group">
+
+	                             <span class="input-group-addon">
+	                                 <i class="material-icons">date_range</i>
+	                             </span>
+	                             <div class="form-line">
+										   	<input readonly="readonly" type="text" class="datepicker form-control" id="entrada" name="entrada" required />
+
+	                             </div>
+	                         </div>
+	                     </div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+	                         <label class="form-label">Sortida</label>
+	                         <div class="input-group">
+
+	                             <span class="input-group-addon">
+	                                 <i class="material-icons">date_range</i>
+	                             </span>
+	                             <div class="form-line">
+										   	<input readonly="readonly" type="text" class="datepicker form-control" id="sortida" name="sortida" required />
+
+	                             </div>
+	                         </div>
+	                     </div>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
+									<label class="form-label">N° Pers Taxa</label>
+									<div class="form-group">
+										<div class="form-line">
+											<input type="number" class="form-control" id="numpertax" name="numpertax" />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
+									<label class="form-label">Pers Total</label>
+									<div class="form-group">
+										<div class="form-line">
+											<input type="number" class="form-control" id="persset" name="persset" />
+
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<label for="taxa" class="control-label" style="text-align:left">Taxa</label>
+									<div class="input-group">
+	                           <span class="input-group-addon">€</span>
+	                           <div class="form-line">
+	                              <input type="text" class="form-control" id="taxa" name="taxa" value="" >
+	                           </div>
+	                           <span class="input-group-addon">.00</span>
+	                        </div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<label for="Max Taxa" class="control-label" style="text-align:left">Max Taxa</label>
+									<div class="input-group">
+	                           <span class="input-group-addon">€</span>
+	                           <div class="form-line">
+	                              <input type="text" class="form-control" id="maxtaxa" name="maxtaxa" value="" >
+	                           </div>
+	                           <span class="input-group-addon">.00</span>
+	                        </div>
+								</div>
+
+							</div>
+
+							<div class="row">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Data Contracte</label>
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="datalloguer" name="datalloguer" />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<div class="form-line">
+										<label for="refestados" class="control-label" style="text-align:left">Estat</label>
+										<select class="form-control show-tick" id="refestados" name="refestados">
+											<?php echo $cadRef3; ?>
+										</select>
+									</div>
+								</div>
+
+							</div>
+							<div class="row">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display:block; color:blue; text-align:center;">
+									<h4>Declare la cantidad de personas y los dias que van a hospedarse</h4>
+								</div>
+								<div class="row lstPersonaLloguer">
+									<div class="row" style="padding-left: 20px;">
+										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
+											<label class="form-label">Persones</label>
+											<div class="form-group">
+												<div class="form-line">
+													<input type="number" value="1" class="form-control personasLloguer" id="personas1" name="personas1" required="">
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
+			                         <label class="form-label">Entrada</label>
+			                         <div class="input-group">
+
+			                             <span class="input-group-addon">
+			                                 <i class="material-icons">date_range</i>
+			                             </span>
+			                             <div class="form-line">
+												   	<input readonly="readonly" type="text" class="datepicker form-control entradaImp" id="entradapersonas1" name="entradapersonas1" required />
+
+			                             </div>
+			                         </div>
+			                     </div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
+			                         <label class="form-label">Sortida</label>
+			                         <div class="input-group">
+
+			                             <span class="input-group-addon">
+			                                 <i class="material-icons">date_range</i>
+			                             </span>
+			                             <div class="form-line">
+												   	<input readonly="readonly" type="text" class="datepicker form-control sortidaImp" id="sortidapersonas1" name="sortidapersonas1" required />
+
+			                             </div>
+			                         </div>
+			                     </div>
+
+										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
+											<label class="form-label">Acciones</label>
+											<div class="form-group">
+												<div class="form-line">
+													<button type="button" id="1" class="btn bg-green btn-circle waves-effect waves-circle waves-float agregarRenglon">
+		                                    <i class="material-icons">add_circle</i>
+		                                </button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;font-size:16px;">
+									<label for="total" class="control-label" style="text-align:left; color:red;">Total</label>
+									<div class="input-group">
+	                           <span class="input-group-addon">€</span>
+	                           <div class="form-line">
+	                              <input type="text" class="form-control" id="total" name="total" value="" >
+	                           </div>
+	                           <span class="input-group-addon">.00</span>
+	                        </div>
+								</div>
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
+									<label class="form-label">Nrolloguer</label>
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nrolloguer" name="nrolloguer" />
+
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" id="accion" name="accion" value="insertarLloguers"/>
+
 							</div>
 
 	               </div>
 	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="button" class="btn bg-green waves-effect" id="validarmasivo"><i class="material-icons">done_all</i> <span>VALIDAR CARGA</span></button>
 	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 	               </div>
 	           </div>
@@ -712,12 +912,200 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="../../js/datepicker-es.js"></script>
 <script>
+	var indice = 1;
 	$(document).ready(function(){
+
+		function validarmasivo(refclientes, refubicaciones, datalloguer, entrada, sortida, total, numpertax, persset, taxa, maxtaxa, refestados, indice) {
+		$.ajax({
+			data:  {
+				refclientes: refclientes,
+				refubicaciones: refubicaciones,
+				datalloguer: datalloguer,
+				entrada: entrada,
+				sortida: sortida,
+				total: total,
+				numpertax: numpertax,
+				persset: persset,
+				taxa: taxa,
+				maxtaxa: maxtaxa,
+				refestados: refestados,
+				indice: indice,
+				accion: 'insertarLloguers'},
+			url:   '../../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+				$('.validarmasivo').hide();
+			},
+			success:  function (response) {
+
+				$('.validarmasivo').show();
+				if (response.error) {
+					swal("Error!", response.data, "warning");
+				} else {
+					swal({
+					  title: response.data + ', Desea guardar el Alquiler?',
+					  text: "Una vez guardado finalizara su carga",
+					  type: "success",
+					  showCancelButton: true,
+					  confirmButtonColor: "#28a745",
+					  confirmButtonText: "Si, deseo guardar el Alquiler",
+					  cancelButtonText: "No!",
+					  closeOnConfirm: false,
+					  closeOnCancel: false,
+					  showLoaderOnConfirm: true
+					},
+					function(isConfirm) {
+					  if (isConfirm) {
+						  $( ".frmLloguer" ).submit();
+						  setTimeout(function () {
+						    swal("Alquiler Cargado Correctamente!", "El alquiler se cargo de manera correcta.", "success");
+						 }, 20000);
+
+
+					  } else {
+					    swal("Alquiler Sin Cargar!", "El Alquiler no fue guardado", "error");
+					  }
+					});
+
+					//swal("Correcto!", response.data, "success");
+				}
+
+
+			}
+		});
+	}
+
+	$('#validarmasivo').click(function() {
+		var errorValida = false;
+		var cadErrorValida = '';
+
+		if ($('#entrada').val() >= $('#sortida').val()) {
+
+			cadErrorValida = 'La fecha de Sortida no puede ser major que la de Entrada. \
+			\n';
+			errorValida = true;
+		}
+
+		$( ".lstPersonaLloguer .entradaImp" ).each(function( index ) {
+			if (($( this ).val() < $('#entrada').val()) || ($( this ).val() >= $('#sortida').val())) {
+				cadErrorValida += 'La fecha de Entrada de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
+				\n';
+				errorValida = true;
+			}
+		});
+
+		$( ".lstPersonaLloguer .sortidaImp" ).each(function( index ) {
+			if (($( this ).val() <= $('#entrada').val()) || ($( this ).val() > $('#sortida').val())) {
+				cadErrorValida += 'La fecha de Sortida de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
+				\n';
+				errorValida = true;
+			}
+		});
+
+		if (errorValida) {
+			swal("Error!", cadErrorValida, "warning");
+		} else {
+			swal({
+			  title: ' Desea guardar el Alquiler?',
+			  text: "Una vez guardado finalizara su carga",
+			  type: "success",
+			  showCancelButton: true,
+			  confirmButtonColor: "#28a745",
+			  confirmButtonText: "Si, deseo guardar el Alquiler",
+			  cancelButtonText: "No!",
+			  closeOnConfirm: false,
+			  closeOnCancel: false,
+			  showLoaderOnConfirm: true
+			},
+			function(isConfirm) {
+			  if (isConfirm) {
+				  $( ".frmLloguer" ).submit();
+				  setTimeout(function () {
+					 swal("Alquiler Cargado Correctamente!", "El alquiler se cargo de manera correcta.", "success");
+				 }, 20000);
+
+
+			  } else {
+				 swal("Alquiler Sin Cargar!", "El Alquiler no fue guardado", "error");
+			  }
+			});
+		}
+
+		//validarmasivo($('#refclientes').val(), $('#refubicaciones').val(), $('#datalloguer').val(), $('#entrada').val(), $('#sortida').val(), $('#total').val(), $('#numpertax').val(), $('#persset').val(), $('#taxa').val(), $('#maxtaxa').val(), $('#refestados').val(), indice);
+
+
+	});
+
 		traerDisponibilidad();
+
 		$('.btnDisponibilidad').click(function() {
 			traerDisponibilidad();
 		});
 
+		$('#lgmNuevo').on("click",'.quitarRenglon', function() {
+			indice -= 1;
+			usersid =  $(this).attr("id");
+			$('.renglon' + usersid).remove();
+		});
+
+		$('#lgmNuevo').on("click",'.agregarRenglon', function() {
+			indice += 1;
+			$('.lstPersonaLloguer').append('<div class="row renglon' + indice + '" style="padding-left: 20px;"> \
+			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block"> \
+				<label class="form-label">Persones</label> \
+				<div class="form-group"> \
+					<div class="form-line"> \
+						<input type="number" value="1" class="form-control personasLloguer" id="personas' + indice + '" name="personas' + indice + '" required=""> \
+					</div> \
+				</div> \
+			</div> \
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block"> \
+				 <label class="form-label">Entrada</label> \
+				 <div class="input-group"> \
+					  <span class="input-group-addon"> \
+							<i class="material-icons">date_range</i> \
+					  </span> \
+					  <div class="form-line"> \
+							<input readonly="readonly" type="text" class="datepicker form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" required /> \
+					  </div> \
+				 </div> \
+			</div> \
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block"> \
+				 <label class="form-label">Sortida</label> \
+				 <div class="input-group"> \
+					  <span class="input-group-addon"> \
+							<i class="material-icons">date_range</i> \
+					  </span> \
+					  <div class="form-line"> \
+							<input readonly="readonly" type="text" class="datepicker form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" required /> \
+					  </div> \
+				 </div> \
+			</div> \
+			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block"> \
+				<label class="form-label">Acciones</label> \
+				<div class="form-group"> \
+					<div class="form-line"> \
+					  <button id="' + indice + '" type="button" class="btn bg-red btn-circle waves-effect waves-circle waves-float quitarRenglon"> \
+						  <i class="material-icons">remove_circle</i> \
+					 </button> \
+					</div> \
+				</div> \
+			</div></div>');
+
+			$('.datepicker').bootstrapMaterialDatePicker({
+				format: 'DD/MM/YYYY',
+				lang : 'ca',
+				clearButton: true,
+				weekStart: 1,
+				time: false
+			});
+		});
+
+		$("#lgmNuevo").on("change",'.personasLloguer', function(){
+			if ($(this).val() <= 0) {
+				$(this).val(1);
+			}
+		});
 
 		function traerDisponibilidad() {
 			$.ajax({
@@ -1673,13 +2061,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 	});
 </script>
-
-
-
-
-
-
-
 
 </body>
 <?php } ?>

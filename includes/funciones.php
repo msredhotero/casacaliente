@@ -394,6 +394,9 @@ class Servicios {
 			case 'dblloguersadicional':
 				$ocultar = array("taxapersona","taxaturistica");
 			break;
+			case 'dblloguers':
+				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","idusuario","nrolloguer","numpertax","persset");
+			break;
 
 			default:
 				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","idusuario");
