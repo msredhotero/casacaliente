@@ -671,13 +671,57 @@ function insertarLloguers($serviciosReferencias) {
    $maxtaxa = $_POST['maxtaxa'];
    $refestados = $_POST['refestados'];
 
-   $res = $serviciosReferencias->insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados);
+   $indice = $_POST['indice'];
 
-   if ((integer)$res > 0) {
-      echo '';
+   if ($indice < 1) {
+      echo 'Debe seleccionar la cantidad de personas';
    } else {
-      echo 'Hubo un error al insertar datos';
+      $res = $serviciosReferencias->insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados);
+
+      if ((integer)$res > 0) {
+
+         $resTaxa = $serviciosReferencias->traerTaxa();
+
+         $taxaPer = mysql_result($resTaxa,0,1);
+         $taxaTur = mysql_result($resTaxa,0,2);
+         $taxaMax = mysql_result($resTaxa,0,3);
+
+         for ($i=1;$i<$indice+1;$i++) {
+            $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entradapersonas'.$i])));
+            $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortidapersonas'.$i])));
+            $personas = $_POST['personas'.$i];
+
+            $dias = $serviciosReferencias->s_datediff('d', $entrada, $sortida, false);
+
+            $totalTaxaPersona = 0;
+            $totalTaxaTuristica = 1 * $dias * $taxaTur;
+
+            if ($totalTaxaTuristica > $taxaMax) {
+               $totalTaxaTuristica  = $personas * $taxaMax;
+            } else {
+               $totalTaxaTuristica = $personas * $dias * $taxaTur;
+            }
+
+            $totalTarifa = 0;
+
+            // si es menos de una semana
+            if ($dias < 7) {
+               $totalTaxaPersona = $personas * 1 * $taxaPer;
+            } else {
+               $totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+            }
+
+            $taxapersona = $totalTaxaPersona;
+            $taxaturistica = $totalTaxaTuristica;
+
+            $serviciosReferencias->insertarLloguersadicional($res,$personas,$entrada,$sortida,$taxapersona,$taxaturistica);
+         }
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
    }
+
 }
 
 function modificarLloguers($serviciosReferencias) {

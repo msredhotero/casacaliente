@@ -74,7 +74,7 @@ switch ($tabla) {
 		$icon = array('Client','Modificar','Eliminar','Pagament','Pagos','Contrats','Persones Addicionals');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 9;
+		$termina = 8;
 	break;
 	case 'clientes':
 		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);

@@ -258,9 +258,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<th>Sortida</th>
 												<th>Dies</th>
 												<th>Preu</th>
-												<th>m. d'edat</th>
-												<th>Tot.Per.</th>
 												<th>Estat</th>
+												<th>Nro Lloguer</th>
 												<th>Accions</th>
 											</tr>
 										</thead>
@@ -272,9 +271,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<th>Sortida</th>
 												<th>Dies</th>
 												<th>Preu</th>
-												<th>m. d'edat</th>
-												<th>Tot.Per.</th>
 												<th>Estat</th>
+												<th>Nro Lloguer</th>
 												<th>Accions</th>
 											</tr>
 										</tfoot>
@@ -487,7 +485,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
 											<label class="form-label">Acciones</label>
 											<div class="form-group">
-												<div class="form-line">
+												<div class="form-line" style="border:none;">
 													<button type="button" id="1" class="btn bg-green btn-circle waves-effect waves-circle waves-float agregarRenglon">
 		                                    <i class="material-icons">add_circle</i>
 		                                </button>
@@ -523,6 +521,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								</div>
 
 								<input type="hidden" id="accion" name="accion" value="insertarLloguers"/>
+								<input type="hidden" id="indice" name="indice" value="1"/>
 
 							</div>
 
@@ -956,11 +955,12 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					},
 					function(isConfirm) {
 					  if (isConfirm) {
-						  $( ".frmLloguer" ).submit();
+						  guardarLloguer();
+						  /*
 						  setTimeout(function () {
 						    swal("Alquiler Cargado Correctamente!", "El alquiler se cargo de manera correcta.", "success");
 						 }, 20000);
-
+						 */
 
 					  } else {
 					    swal("Alquiler Sin Cargar!", "El Alquiler no fue guardado", "error");
@@ -1005,6 +1005,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		if (errorValida) {
 			swal("Error!", cadErrorValida, "warning");
 		} else {
+			$('#indice').val(indice);
 			swal({
 			  title: ' Desea guardar el Alquiler?',
 			  text: "Una vez guardado finalizara su carga",
@@ -1019,11 +1020,12 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			},
 			function(isConfirm) {
 			  if (isConfirm) {
-				  $( ".frmLloguer" ).submit();
+				  guardarLloguer();
+				  /*
 				  setTimeout(function () {
 					 swal("Alquiler Cargado Correctamente!", "El alquiler se cargo de manera correcta.", "success");
 				 }, 20000);
-
+				 */
 
 			  } else {
 				 swal("Alquiler Sin Cargar!", "El Alquiler no fue guardado", "error");
@@ -1084,7 +1086,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block"> \
 				<label class="form-label">Acciones</label> \
 				<div class="form-group"> \
-					<div class="form-line"> \
+					<div class="form-line" style="border:none;"> \
 					  <button id="' + indice + '" type="button" class="btn bg-red btn-circle waves-effect waves-circle waves-float quitarRenglon"> \
 						  <i class="material-icons">remove_circle</i> \
 					 </button> \
@@ -1158,6 +1160,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('.datepicker').bootstrapMaterialDatePicker({
         format: 'DD/MM/YYYY',
         clearButton: true,
+		  lang : 'ca',
         weekStart: 1,
         time: false
    	});
@@ -1600,7 +1603,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
-		$('.nuevo').click(function(){
+		function guardarLloguer() {
 
 			//información del formulario
 			var formData = new FormData($(".formulario")[0]);
@@ -1654,7 +1657,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					$("#load").html('');
 				}
 			});
-		});
+		}
 
 
 		$('.modificar').click(function(){

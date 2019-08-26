@@ -1072,7 +1072,7 @@ class Servicios {
 				$sqlMod = "select idlloguer,refclientes,refubicaciones,datalloguer,
 				DATE_FORMAT(entrada, '%d/%m/%Y') as entrada,
 				DATE_FORMAT(sortida, '%d/%m/%Y') as sortida,
-				total,numpertax,persset,taxa,maxtaxa,refestados
+				total,numpertax,persset,taxa,maxtaxa,refestados, nrolloguer
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
@@ -1124,7 +1124,7 @@ class Servicios {
 				if ($tabla == 'dbarchivos') {
 					$ocultar = array("token","anio","mes","refclientes","refcategorias","imagen");
 				} else {
-					$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","idusuario","imagen");
+					$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","idusuario","imagen","nrolloguer","persset","numpertax");
 				}
 
 			}

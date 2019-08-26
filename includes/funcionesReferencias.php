@@ -423,7 +423,8 @@ class ServiciosReferencias {
 		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i))['tarifa'];
 		}
 
-		return $totalTarifa + $totalTaxaPersona + $totalTaxaTuristica;
+		return $totalTarifa;
+		// + $totalTaxaPersona + $totalTaxaTuristica;
 
 	}
 
@@ -511,12 +512,14 @@ class ServiciosReferencias {
 	l.persset,
 	l.taxa,
 	l.maxtaxa,
-	l.refestados
+	l.refestados,
+	nrolloguer
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
 	inner join tbestados est on est.idestado = l.refestados
+	where l.entrada is not null
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
@@ -566,9 +569,22 @@ class ServiciosReferencias {
 	function traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir) {
 		$where = '';
 
+		switch ($colSort) {
+			case 4:
+				$colSort = 'l.entrada';
+			break;
+			case 5:
+				$colSort = 'l.sortida';
+			break;
+			default:
+				$colSort = 'l.entrada';
+			break;
+		}
+
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or l.entrada like '%".$busqueda."%' or l.sortida like '%".$busqueda."%' or l.persset like '%".$busqueda."%'";
+			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%')";
 		}
 
 		$sql = "select
@@ -579,15 +595,14 @@ class ServiciosReferencias {
 		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
 		datediff(l.sortida, l.entrada) as dias,
 		l.total,
-		l.numpertax,
-		l.persset,
-		est.estado
+		est.estado,
+		coalesce(nrolloguer,l.idlloguer) as nrolooguer
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes
 		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 		inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
 		inner join tbestados est on est.idestado = l.refestados
-		".$where."
+		where (l.entrada is not null and l.sortida is not null) ".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
 
