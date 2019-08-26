@@ -37,18 +37,22 @@ $resLloguerAdicional =  $serviciosReferencias->traerLloguersadicionalPorLloguer(
 
 $resPagos = $serviciosReferencias->traerPagosPorLloguers($id);
 
+$totalTaxaPersona = 0;
+
+/*
 if (mysql_result($resLloguer,0,'dias') < 7) {
 	$totalTaxaPersona = mysql_result($resLloguer,0,'numpertax') * 1 * $taxaPer;
 } else {
 	$totalTaxaPersona = mysql_result($resLloguer,0,'numpertax') * mysql_result($resLloguer,0,'dias') / 7 * $taxaPer;
 }
-
+*/
 //die(var_dump($taxaPer));
 
 
 $taxaturisticaAdicional = 0;
-$taxaturisticaAdicionalPersonas = mysql_result($resLloguer,0,'numpertax');
+$taxaturisticaAdicionalPersonas = 0;
 
+/*
 $taxaturisticaAdicional = 1 * mysql_result($resLloguer,0,'dias') * $taxaTur;
 
 if ($taxaturisticaAdicional > $taxaMax) {
@@ -56,10 +60,11 @@ if ($taxaturisticaAdicional > $taxaMax) {
 } else {
 	$taxaturisticaAdicional = mysql_result($resLloguer,0,'numpertax') * mysql_result($resLloguer,0,'dias') * $taxaTur;
 }
-
+*/
 //die(var_dump($taxaturisticaAdicional));
 
 while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
+	/*
 	$totalTaxaTuristica = 1 * $rowAd['dias'] * $rowAd['taxaturistica'];
 
 	if ($totalTaxaTuristica > $taxaMax) {
@@ -67,15 +72,19 @@ while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 	} else {
 		$totalTaxaTuristica = $rowAd['personas'] * $rowAd['dias'] * $rowAd['taxaturistica'];
 	}
-
+	*/
 	$taxaturisticaAdicionalPersonas += $rowAd['personas'];
-	$taxaturisticaAdicional += $totalTaxaTuristica;
 
+	$taxaturisticaAdicional += $rowAd['taxaturistica'];
+
+	$totalTaxaPersona += $rowAd['taxapersona'];
+	/*
 	if ($rowAd['dias'] < 7) {
 		$totalTaxaPersona += $rowAd['personas'] * 1 * mysql_result($resLloguer,0,'taxa');
 	} else {
 		$totalTaxaPersona += $rowAd['personas'] * $rowAd['dias'] / 7 * $rowAd['taxapersona'];
 	}
+	*/
 }
 
 

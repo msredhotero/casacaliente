@@ -97,6 +97,7 @@ $resTaxa = $serviciosReferencias->traerTaxa();
 
 $taxaPer = mysql_result($resTaxa,0,1);
 $taxaTur = mysql_result($resTaxa,0,2);
+$maxTaxaTur = mysql_result($resTaxa,0,3);
 
 $resFormaPago = $serviciosReferencias->traerFormaspagos();
 $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),'');
@@ -726,7 +727,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<div class="row">
 													<label class="form-label">Total a Pagar</label>
 													<div class="form-line">
-														<input readonly="readonly" style="width:200px;border: 0;" value="0" type="text" class="form-control" id="totalapagarcliente" name="totalapagarcliente" required />
+														<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="totalapagarcliente" name="totalapagarcliente" required />
 													</div>
 												</div>
 												<div class="row">
@@ -743,14 +744,40 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<div class="row">
 													<label class="form-label">Realitzat Pag. 1°</label>
 													<div class="form-line">
-														<input value="0" style="width:200px;" type="text" class="form-control" id="cargarpago1" name="cargarpago1" required />
+														<div class="input-group input-group-lg">
+															<span class="input-group-addon">
+																<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico1" value="1">
+																<label for="pagotaxaunico1"></label>
+															</span>
+															<div class="form-line" style="width:120px;">
+																<input value="0" type="text" class="form-control" id="cargarpago1" name="cargarpago1" required />
+
+															</div>
+															<span class="input-group-addon">
+																<span style="color:green; text-align:left;" class="lblTaxaPaga1"></span>
+															</span>
+														</div>
+
 													</div>
 												</div>
 
 												<div class="row">
 													<label class="form-label">Realitzat Pag. 2°</label>
 													<div class="form-line">
-														<input value="0" style="width:200px;" type="text" class="form-control" id="cargarpago2" name="cargarpago2" required />
+														<div class="input-group input-group-lg">
+
+															<span class="input-group-addon">
+																<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico2" value="2">
+																<label for="pagotaxaunico2"></label>
+															</span>
+															<div class="form-line" style="width:120px;">
+																<input value="0" type="text" class="form-control" id="cargarpago2" name="cargarpago2" required />
+															</div>
+															<span class="input-group-addon">
+																<label style="color:green; text-align:left;" class="lblTaxaPaga2"></label>
+															</span>
+														</div>
+
 													</div>
 												</div>
 
@@ -785,13 +812,13 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<div class="row">
 													<label class="form-label">Fecha Pag. 1°</label>
 													<div class="form-line">
-														<input readonly="readonly" style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente1" name="fechapagocliente1" required />
+														<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente1" name="fechapagocliente1" required />
 													</div>
 												</div>
 												<div class="row">
 													<label class="form-label">Fecha Pag. 2°</label>
 													<div class="form-line">
-														<input readonly="readonly" style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente2" name="fechapagocliente2" required />
+														<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente2" name="fechapagocliente2" required />
 													</div>
 												</div>
 											</div>
@@ -800,19 +827,19 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<div class="row">
 													<label class="form-label">Valor Pag. 1°</label>
 													<div class="form-line">
-														<input readonly="readonly" value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente1" name="valorpagocliente1" required />
+														<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente1" name="valorpagocliente1" required />
 													</div>
 												</div>
 												<div class="row">
 													<label class="form-label">Valor Pag. 2°</label>
 													<div class="form-line">
-														<input readonly="readonly" value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente2" name="valorpagocliente2" required />
+														<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente2" name="valorpagocliente2" required />
 													</div>
 												</div>
 												<div class="row">
 													<label class="form-label">Taxa</label>
 													<div class="form-line">
-														<input readonly="readonly" value="0" style="width:200px;border: 0;" type="text" class="form-control" id="pagotaxacliente" name="pagotaxacliente" required />
+														<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="pagotaxacliente" name="pagotaxacliente" required />
 													</div>
 												</div>
 											</div>
@@ -975,27 +1002,42 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});
 	}
 
+	function devolverFechaCorrecta(fecha) {
+		var cadNuevaFecha = fecha.split('/');
+
+		return cadNuevaFecha[2] + '-' + cadNuevaFecha[1] + '-' + cadNuevaFecha[0];
+	}
+
 	$('#validarmasivo').click(function() {
 		var errorValida = false;
 		var cadErrorValida = '';
 
-		if ($('#entrada').val() >= $('#sortida').val()) {
+		var cadFechaSortida = '';
 
-			cadErrorValida = 'La fecha de Sortida no puede ser major que la de Entrada. \
+		if ($('#sortida').val() >= $('#entrada').val()) {
+
+			cadErrorValida = 'La fecha de Sortida no puede ser menor que la de Entrada. \
 			\n';
 			errorValida = true;
 		}
 
 		$( ".lstPersonaLloguer .entradaImp" ).each(function( index ) {
-			if (($( this ).val() < $('#entrada').val()) || ($( this ).val() >= $('#sortida').val())) {
-				cadErrorValida += 'La fecha de Entrada de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
+			if ($( this ).val() == '') {
+				cadErrorValida += 'Debe ingresar una fecha de entrada valida. \
 				\n';
-				errorValida = true;
+			} else {
+				if ((devolverFechaCorrecta($( this ).val()) < devolverFechaCorrecta($('#entrada').val())) || (devolverFechaCorrecta($( this ).val()) >= devolverFechaCorrecta($('#sortida').val()))) {
+
+					cadErrorValida += 'La fecha de Entrada de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
+					\n';
+					errorValida = true;
+				}
 			}
+
 		});
 
 		$( ".lstPersonaLloguer .sortidaImp" ).each(function( index ) {
-			if (($( this ).val() <= $('#entrada').val()) || ($( this ).val() > $('#sortida').val())) {
+			if ((devolverFechaCorrecta($( this ).val()) <= devolverFechaCorrecta($('#entrada').val())) || (devolverFechaCorrecta($( this ).val()) > devolverFechaCorrecta($('#sortida').val()))) {
 				cadErrorValida += 'La fecha de Sortida de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
 				\n';
 				errorValida = true;
@@ -1178,6 +1220,12 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#cargarpago1').number(true,2,'.','');
 		$('#cargarpago2').number(true,2,'.','');
 
+		$('#totalapagarcliente').number(true,2,'.','');
+		$('#pagotaxacliente').number(true,2,'.','');
+		$('#valorpagocliente1').number(true,2,'.','');
+		$('#valorpagocliente2').number(true,2,'.','');
+
+
 		$('#datalloguer').val('<?php echo date('d/m/Y'); ?>');
 		$('#entrada').val('<?php echo date('d/m/Y'); ?>');
 		$('#sortida').val('<?php echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
@@ -1187,8 +1235,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#numpertax').val(2);
 		$('#persset').val(2);
 
-		$('#maxtaxa').val(<?php echo $taxaTur; ?>);
-		$('#taxa').val(<?php echo $taxaPer; ?>);
+		$('#maxtaxa').val(<?php echo $maxTaxaTur; ?>);
+		$('#taxa').val(<?php echo $taxaTur; ?>);
 
 		$('.frmNuevoPrincipal #sortida').change(function() {
 			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
@@ -1278,6 +1326,10 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 					$('#totalapagarcliente').val(data.datos.total);
 					$('#faltapagarcliente').val(data.datos.falta);
+
+					$('#fechapagocliente2').datepicker({ dateFormat: 'dd/mm/yy' });
+					$('#fechapagocliente1').datepicker({ dateFormat: 'dd/mm/yy' });
+
 					if (data.pagos.existe == 1) {
 						$('#valorpagocliente1').val(data.pagos.pago1);
 						$('#valorpagocliente2').val(data.pagos.pago2);
@@ -1291,6 +1343,15 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 						$('#formapago1').selectpicker('refresh');
 						$('#formapago2').selectpicker('refresh');
+
+						if (data.pagos.taxaunica == 1) {
+							$('#pagotaxaunico1').prop('checked',true);
+							$('.lblTaxaPaga1').html('+ ' + data.pagos.taxa);
+						}
+						if (data.pagos.taxaunica == 2) {
+							$('#pagotaxaunico2').prop('checked',true);
+							$('.lblTaxaPaga2').html('+ ' + data.pagos.taxa);
+						}
 
 					} else {
 						$('#valorpagocliente1').val(data.datos.tarifa / 2);

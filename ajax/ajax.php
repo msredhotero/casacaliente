@@ -482,10 +482,21 @@ function modificarPagoCliente($serviciosReferencias) {
 
    $usuario = $_SESSION['usua_sahilices'];
 
+   $unicoPagoTaxa = $_POST['pagotaxaunico'];
+
+   $taxa1 = 0;
+   $taxa2 = 0;
+
+   if ($unicoPagoTaxa == 1) {
+      $taxa1 = $taxa;
+   } else {
+      $taxa2 = $taxa;
+   }
+
    $error = '';
 
    if (mysql_num_rows($resPagos)>0) {
-      $res1 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,0,'idpago'),$reflloguers,$formapago1,$monto1,$cargarpago1,0,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
+      $res1 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,0,'idpago'),$reflloguers,$formapago1,$monto1,$cargarpago1,$taxa1,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
 
       if ($res1 == true) {
          $error = '';
@@ -493,7 +504,7 @@ function modificarPagoCliente($serviciosReferencias) {
          $error .= 'Hubo un error al insertar datos ';
       }
 
-      $res2 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,1,'idpago'),$reflloguers,$formapago2,$monto2,$cargarpago2,$taxa,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
+      $res2 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,1,'idpago'),$reflloguers,$formapago2,$monto2,$cargarpago2,$taxa2,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
 
       if ($res2 == true) {
          $error .= '';
@@ -501,7 +512,7 @@ function modificarPagoCliente($serviciosReferencias) {
          $error .= ' - Hubo un error al insertar datos';
       }
    } else {
-      $res1 = $serviciosReferencias->insertarPagos($reflloguers,$formapago1,$monto1,$cargarpago1,0,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
+      $res1 = $serviciosReferencias->insertarPagos($reflloguers,$formapago1,$monto1,$cargarpago1,$taxa1,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
 
       if ((integer)$res1 > 0) {
          $error = '';
@@ -509,7 +520,7 @@ function modificarPagoCliente($serviciosReferencias) {
          $error .= 'Hubo un error al insertar datos ';
       }
 
-      $res2 = $serviciosReferencias->insertarPagos($reflloguers,$formapago2,$monto2,$cargarpago2,$taxa,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
+      $res2 = $serviciosReferencias->insertarPagos($reflloguers,$formapago2,$monto2,$cargarpago2,$taxa2,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
       if ((integer)$res2 > 0) {
          $error .= '';
       } else {
@@ -583,6 +594,16 @@ function devolverTarifaArray($serviciosReferencias) {
 
    $resPagos   = $serviciosReferencias->traerPagosPorLloguers($id);
 
+   $resLloguerAdicional =  $serviciosReferencias->traerLloguersadicionalPorLloguer($id);
+
+   while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
+
+   	$taxaturisticaAdicional += $rowAd['taxaturistica'];
+
+   	$totalTaxaPersona += $rowAd['taxapersona'];
+
+   }
+
    $refubicaciones      =  mysql_result($resLloguer,0,'refubicaciones');
    $desdeperiode        =  mysql_result($resLloguer,0,'entrada');
    $finsaperiode        =  mysql_result($resLloguer,0,'sortida');
@@ -597,17 +618,39 @@ function devolverTarifaArray($serviciosReferencias) {
 
    $falta               =  mysql_result($resFaltaPagar,0,'falta');
 
+   $taxaUnica = 0;
+
    if (mysql_num_rows($resPagos)>0) {
       $existePago = 1;
+
       $pago1 = mysql_result($resPagos,0,'cuota');
-      $pago2 = mysql_result($resPagos,1,'cuota');
-      $taxa = mysql_result($resPagos,1,'taxa');
       $primerpago = mysql_result($resPagos,0,'fechapago');
-      $segundopago = mysql_result($resPagos,1,'fechapago');
       $monto1 = mysql_result($resPagos,0,'monto');
-      $monto2 = mysql_result($resPagos,1,'monto');
       $formapago1 = mysql_result($resPagos,0,'refformaspagos');
-      $formapago2 = mysql_result($resPagos,1,'refformaspagos');
+
+      if (mysql_result($resPagos,0,'taxa') > 0) {
+         $taxaUnica = 1;
+         $taxa = mysql_result($resPagos,0,'taxa');
+      }
+
+      if (mysql_num_rows($resPagos)>1) {
+         $pago2 = mysql_result($resPagos,1,'cuota');
+
+         $segundopago = mysql_result($resPagos,1,'fechapago');
+         $monto2 = mysql_result($resPagos,1,'monto');
+         $formapago2 = mysql_result($resPagos,1,'refformaspagos');
+
+         if (mysql_result($resPagos,1,'taxa') > 0) {
+            $taxaUnica = 2;
+            $taxa = mysql_result($resPagos,1,'taxa');
+         }
+      } else {
+         $pago2 = 0;
+         $taxa = 0;
+         $segundopago = 0;
+         $monto2 = 0;
+         $formapago2 = 0;
+      }
 
    } else {
       $existePago = 0;
@@ -634,7 +677,8 @@ function devolverTarifaArray($serviciosReferencias) {
                      'monto1' => $monto1,
                      'monto2' => $monto2,
                      'formapago1' => $formapago1,
-                     'formapago2' => $formapago2
+                     'formapago2' => $formapago2,
+                     'taxaunica' => $taxaUnica
                   );
 
    $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta,$segundopago);

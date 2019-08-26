@@ -69,9 +69,9 @@ switch ($tabla) {
 	case 'lloguers':
 		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerLloguers();
-		$label = array('btnCliente','btnModificar','btnEliminar','btnPagos','btnPagar','btnContratos','btnAgregarPersonas');
-		$class = array('bg-blue','bg-amber','bg-red','bg-grey','bg-green','bg-brown','bg-teal');
-		$icon = array('Client','Modificar','Eliminar','Pagament','Pagos','Contrats','Persones Addicionals');
+		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos','btnAgregarPersonas');
+		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown','bg-teal');
+		$icon = array('Client','Modificar','Eliminar','Pagos','Contrats','Persones Addicionals');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 8;
