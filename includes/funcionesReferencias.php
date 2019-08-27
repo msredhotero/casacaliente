@@ -444,29 +444,13 @@ class ServiciosReferencias {
 		$fechaInicio	=	strtotime($fechadesde);
 		$fechaFin		=	strtotime($fechahasta);
 
-		$totalTaxaPersona = 0;
-		$totalTaxaTuristica = $personas * $dias * $taxaTur;
-
-		if ($totalTaxaTuristica > $taxaMax) {
-			$totalTaxaTuristica  = $personas * $taxaMax;
-		} else {
-			$totalTaxaTuristica = $personas * $dias * $taxaTur;
-		}
-
 		$totalTarifa = 0;
-
-		// si es menos de una semana
-		if ($dias < 7) {
-			$totalTaxaPersona = $personas * 1 * $taxaPer;
-		} else {
-			$totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
-		}
 
 		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
 		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i))['tarifa'];
 		}
 
-		return array('tarifa'=> round($totalTarifa,2, PHP_ROUND_HALF_UP), 'taxapersona'=> $totalTaxaPersona, 'taxaturistica'=> $totalTaxaTuristica, 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
+		return array('tarifa'=> round($totalTarifa,2, PHP_ROUND_HALF_UP), 'taxapersona'=> $personas[0], 'taxaturistica'=> $personas[1], 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
 
 	}
 	/* fin alquileres */

@@ -504,12 +504,21 @@ function modificarPagoCliente($serviciosReferencias) {
          $error .= 'Hubo un error al insertar datos ';
       }
 
-      $res2 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,1,'idpago'),$reflloguers,$formapago2,$monto2,$cargarpago2,$taxa2,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
+      if (mysql_num_rows($resPagos)>1) {
+         $res2 = $serviciosReferencias->modificarPagos(mysql_result($resPagos,1,'idpago'),$reflloguers,$formapago2,$monto2,$cargarpago2,$taxa2,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
 
-      if ($res2 == true) {
-         $error .= '';
+         if ($res2 == true) {
+            $error .= '';
+         } else {
+            $error .= ' - Hubo un error al insertar datos';
+         }
       } else {
-         $error .= ' - Hubo un error al insertar datos';
+         $res2 = $serviciosReferencias->insertarPagos($reflloguers,$formapago2,$monto2,$cargarpago2,$taxa2,date('Y-m-d H:i:s'),$fecha2,$usuario,0);
+         if ((integer)$res2 > 0) {
+            $error .= '';
+         } else {
+            $error .= ' - Hubo un error al insertar datos';
+         }
       }
    } else {
       $res1 = $serviciosReferencias->insertarPagos($reflloguers,$formapago1,$monto1,$cargarpago1,$taxa1,date('Y-m-d H:i:s'),$fecha1,$usuario,0);
@@ -596,6 +605,9 @@ function devolverTarifaArray($serviciosReferencias) {
 
    $resLloguerAdicional =  $serviciosReferencias->traerLloguersadicionalPorLloguer($id);
 
+   $taxaturisticaAdicional = 0;
+   $totalTaxaPersona = 0;
+
    while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
@@ -645,9 +657,13 @@ function devolverTarifaArray($serviciosReferencias) {
             $taxa = mysql_result($resPagos,1,'taxa');
          }
       } else {
+         $fecha2pago = date($sortida);
+         $segundopago = strtotime ( '-30 day' , strtotime ( $fecha2pago ) ) ;
+         $segundopago = date ( 'd/m/Y' , $segundopago );
+
          $pago2 = 0;
          $taxa = 0;
-         $segundopago = 0;
+         //$segundopago = 0;
          $monto2 = 0;
          $formapago2 = 0;
       }
@@ -681,7 +697,7 @@ function devolverTarifaArray($serviciosReferencias) {
                      'taxaunica' => $taxaUnica
                   );
 
-   $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$personas,$total,$falta,$segundopago);
+   $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$taxa=array($totalTaxaPersona,$taxaturisticaAdicional),$total,$falta,$segundopago);
 
    header('Content-type: application/json');
    echo json_encode($resV);

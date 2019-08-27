@@ -743,13 +743,13 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
 												<div class="row">
 													<label class="form-label">Realitzat Pag. 1°</label>
-													<div class="form-line">
+													<div class="form-line" style="width:250px;">
 														<div class="input-group input-group-lg">
 															<span class="input-group-addon">
 																<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico1" value="1">
 																<label for="pagotaxaunico1"></label>
 															</span>
-															<div class="form-line" style="width:120px;">
+															<div class="form-line">
 																<input value="0" type="text" class="form-control" id="cargarpago1" name="cargarpago1" required />
 
 															</div>
@@ -763,14 +763,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 												<div class="row">
 													<label class="form-label">Realitzat Pag. 2°</label>
-													<div class="form-line">
+													<div class="form-line" style="width:250px;">
 														<div class="input-group input-group-lg">
 
 															<span class="input-group-addon">
 																<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico2" value="2">
 																<label for="pagotaxaunico2"></label>
 															</span>
-															<div class="form-line" style="width:120px;">
+															<div class="form-line">
 																<input value="0" type="text" class="form-control" id="cargarpago2" name="cargarpago2" required />
 															</div>
 															<span class="input-group-addon">
@@ -1220,6 +1220,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#cargarpago1').number(true,2,'.','');
 		$('#cargarpago2').number(true,2,'.','');
 
+		$('#cargarpago1').dblclick(function() {
+			$(this).val($('#totalapagarcliente').val() / 2);
+		});
+
+		$('#cargarpago2').dblclick(function() {
+			$(this).val($('#totalapagarcliente').val() / 2);
+		});
+
 		$('#totalapagarcliente').number(true,2,'.','');
 		$('#pagotaxacliente').number(true,2,'.','');
 		$('#valorpagocliente1').number(true,2,'.','');
@@ -1286,12 +1294,21 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						$('#valorpago1').val(data.pagos.pago1);
 						$('#valorpago2').val(data.pagos.pago2);
 						$('#pagotaxa').val(data.pagos.taxa);
-						$( "#fechapago1" ).val(formato(data.pagos.primerpago));
-						$( "#fechapago2" ).val(formato(data.pagos.segundopago));
+
+						if (data.pagos.primerpago != 0) {
+							alert('asd');
+							$( "#fechapago1" ).val(formato(data.pagos.primerpago));
+						}
+						if (data.pagos.segundopago != 0) {
+							alert('asd2');
+							$( "#fechapago2" ).val(formato(data.pagos.segundopago));
+						}
+
 					} else {
 						$('#valorpago1').val(data.datos.tarifa / 2);
 						$('#valorpago2').val(data.datos.tarifa / 2);
 						$('#pagotaxa').val(data.datos.taxapersona + data.datos.taxaturistica);
+
 						$( "#fechapago2" ).val(formato(data.datos.fechasegundopago));
 					}
 
@@ -1334,8 +1351,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						$('#valorpagocliente1').val(data.pagos.pago1);
 						$('#valorpagocliente2').val(data.pagos.pago2);
 						$('#pagotaxacliente').val(data.pagos.taxa);
-						$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));
-						$( "#fechapagocliente2" ).val(formato(data.pagos.segundopago));
+						if (data.pagos.primerpago != 0) {
+							$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));
+						}
+
+						if (data.pagos.segundopago != 0) {
+							$( "#fechapagocliente2" ).val(formato(data.pagos.segundopago));
+						}
+
 						$( "#cargarpago1" ).val(data.pagos.monto1);
 						$( "#cargarpago2" ).val(data.pagos.monto2);
 						$( "#formapago1" ).val(data.pagos.formapago1);
