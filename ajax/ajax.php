@@ -362,6 +362,7 @@ function traerDisponibilidad($serviciosReferencias) {
 function insertarLloguersadicional($serviciosReferencias) {
    $reflloguers = $_POST['reflloguers'];
    $personas = $_POST['personas'];
+   $menores = $_POST['menores'];
    $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
    $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
 
@@ -386,15 +387,15 @@ function insertarLloguersadicional($serviciosReferencias) {
 
    // si es menos de una semana
    if ($dias < 7) {
-      $totalTaxaPersona = $personas * 1 * $taxaPer;
+      $totalTaxaPersona = ($personas + $menores) * 1 * $taxaPer;
    } else {
-      $totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+      $totalTaxaPersona = ($personas + $menores) * $dias / 7 * $taxaPer;
    }
 
    $taxapersona = $totalTaxaPersona;
    $taxaturistica = $totalTaxaTuristica;
 
-   $res = $serviciosReferencias->insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica);
+   $res = $serviciosReferencias->insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores);
 
    if ((integer)$res > 0) {
       echo '';
@@ -407,6 +408,7 @@ function modificarLloguersadicional($serviciosReferencias) {
    $id = $_POST['id'];
    $reflloguers = $_POST['reflloguers'];
    $personas = $_POST['personas'];
+   $menores = $_POST['menores'];
    $entrada = $_POST['entrada'];
    $sortida = $_POST['sortida'];
 
@@ -431,15 +433,15 @@ function modificarLloguersadicional($serviciosReferencias) {
 
    // si es menos de una semana
    if ($dias < 7) {
-      $totalTaxaPersona = $personas * 1 * $taxaPer;
+      $totalTaxaPersona = ($personas + $menores) * 1 * $taxaPer;
    } else {
-      $totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+      $totalTaxaPersona = ($personas + $menores) * $dias / 7 * $taxaPer;
    }
 
    $taxapersona = $totalTaxaPersona;
    $taxaturistica = $totalTaxaTuristica;
 
-   $res = $serviciosReferencias->modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica);
+   $res = $serviciosReferencias->modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores);
 
    if ($res == true) {
       echo '';
@@ -624,13 +626,22 @@ function devolverTarifaArray($serviciosReferencias) {
    $sortida             =  mysql_result($resLloguer,0,'sortida');
 
    $segundopago = strtotime ( '-30 day' , strtotime ( $sortida ) ) ;
-   $segundopago = date ( 'Y-m-d' , $segundopago );
+
+   if ($segundopago < strtotime(date("d-m-Y H:i:00",time()))) {
+      $segundopago = strtotime ( '0 day' , strtotime ( $sortida ) ) ;
+      $segundopago = date ( 'Y-m-d' , $segundopago );
+   } else {
+      $segundopago = date ( 'Y-m-d' , $segundopago );
+   }
+
 
    $resFaltaPagar       =  $serviciosReferencias->faltaPagar($id);
 
    $falta               =  mysql_result($resFaltaPagar,0,'falta');
 
    $taxaUnica = 0;
+
+   $taxa = $taxaturisticaAdicional + $totalTaxaPersona;
 
    if (mysql_num_rows($resPagos)>0) {
       $existePago = 1;
@@ -642,7 +653,6 @@ function devolverTarifaArray($serviciosReferencias) {
 
       if (mysql_result($resPagos,0,'taxa') > 0) {
          $taxaUnica = 1;
-         $taxa = mysql_result($resPagos,0,'taxa');
       }
 
       if (mysql_num_rows($resPagos)>1) {
@@ -654,15 +664,20 @@ function devolverTarifaArray($serviciosReferencias) {
 
          if (mysql_result($resPagos,1,'taxa') > 0) {
             $taxaUnica = 2;
-            $taxa = mysql_result($resPagos,1,'taxa');
          }
       } else {
          $fecha2pago = date($sortida);
          $segundopago = strtotime ( '-30 day' , strtotime ( $fecha2pago ) ) ;
-         $segundopago = date ( 'd/m/Y' , $segundopago );
+
+         if ($segundopago < strtotime(date("d-m-Y H:i:00",time()))) {
+            $segundopago = strtotime ( '0 day' , strtotime ( $fecha2pago ) ) ;
+            $segundopago = date ( 'd/m/Y' , $segundopago );
+         } else {
+            $segundopago = date ( 'd/m/Y' , $segundopago );
+         }
+
 
          $pago2 = 0;
-         $taxa = 0;
          //$segundopago = 0;
          $monto2 = 0;
          $formapago2 = 0;
@@ -672,7 +687,7 @@ function devolverTarifaArray($serviciosReferencias) {
       $existePago = 0;
       $pago1 = 0;
       $pago2 = 0;
-      $taxa = 0;
+
       $primerpago = 0;
       $monto1 = 0;
       $monto2 = 0;
@@ -750,6 +765,7 @@ function insertarLloguers($serviciosReferencias) {
             $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entradapersonas'.$i])));
             $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortidapersonas'.$i])));
             $personas = $_POST['personas'.$i];
+            $menores = $_POST['menores'.$i];
 
             $dias = $serviciosReferencias->s_datediff('d', $entrada, $sortida, false);
 
@@ -766,15 +782,15 @@ function insertarLloguers($serviciosReferencias) {
 
             // si es menos de una semana
             if ($dias < 7) {
-               $totalTaxaPersona = $personas * 1 * $taxaPer;
+               $totalTaxaPersona = ($personas + $menores) * 1 * $taxaPer;
             } else {
-               $totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
+               $totalTaxaPersona = ($personas + $menores) * $dias / 7 * $taxaPer;
             }
 
             $taxapersona = $totalTaxaPersona;
             $taxaturistica = $totalTaxaTuristica;
 
-            $serviciosReferencias->insertarLloguersadicional($res,$personas,$entrada,$sortida,$taxapersona,$taxaturistica);
+            $serviciosReferencias->insertarLloguersadicional($res,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores);
          }
          echo '';
       } else {
@@ -1104,8 +1120,8 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
          $insertar = "insertarLloguersadicional";
          $idTabla = "idllogueradicional";
 
-         $lblCambio	 	= array("reflloguers");
-         $lblreemplazo	= array("Lloguer");
+         $lblCambio	 	= array("reflloguers",'personas');
+         $lblreemplazo	= array("Lloguer",'Adultos');
 
          $resVar1 = $serviciosReferencias->traerLloguersPorIdAux($id);
          $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(4,5),' - ', $id);
@@ -1117,7 +1133,8 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
          $resLA = $serviciosReferencias->traerLloguersadicionalPorLloguer($id);
          $cadTabla = "<table class='table table-hover'>
                      <thead>
-                     <th>Persones</th>
+                     <th>Adultos</th>
+                     <th>Menores</th>
                      <th>Entrada</th>
                      <th>Sortida</th>
                      <th>Taxa Per</th>
@@ -1129,6 +1146,7 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
          while ($row = mysql_fetch_array($resLA)) {
             $cadTabla .= "<tr>";
             $cadTabla .= "<td>".$row['personas']."</td>";
+            $cadTabla .= "<td>".$row['menores']."</td>";
             $cadTabla .= "<td>".$row['entrada']."</td>";
             $cadTabla .= "<td>".$row['sortida']."</td>";
             $cadTabla .= "<td>".$row['taxapersona']."</td>";

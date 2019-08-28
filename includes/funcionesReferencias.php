@@ -130,18 +130,18 @@ class ServiciosReferencias {
 
 	/* PARA Lloguersadicional */
 
-	function insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica) {
-	$sql = "insert into dblloguersadicional(idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica)
-	values ('',".$reflloguers.",".$personas.",'".($entrada)."','".($sortida)."',".$taxapersona.",".$taxaturistica.")";
+	function insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores) {
+	$sql = "insert into dblloguersadicional(idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica,menores)
+	values ('',".$reflloguers.",".$personas.",'".($entrada)."','".($sortida)."',".$taxapersona.",".$taxaturistica.",".$menores.")";
 	$res = $this->query($sql,1);
 	return $res;
 	}
 
 
-	function modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica) {
+	function modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores) {
 	$sql = "update dblloguersadicional
 	set
-	reflloguers = ".$reflloguers.",personas = ".$personas.",entrada = '".($entrada)."',sortida = '".($sortida)."',taxapersona = ".$taxapersona.",taxaturistica = ".$taxaturistica."
+	reflloguers = ".$reflloguers.",personas = ".$personas.",entrada = '".($entrada)."',sortida = '".($sortida)."',taxapersona = ".$taxapersona.",taxaturistica = ".$taxaturistica.",menores = ".$menores."
 	where idllogueradicional =".$id;
 	$res = $this->query($sql,0);
 	return $res;
@@ -168,7 +168,8 @@ class ServiciosReferencias {
 	l.entrada,
 	l.sortida,
 	l.taxapersona,
-	l.taxaturistica
+	l.taxaturistica,
+	l.menores
 	from dblloguersadicional l
 	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
 	order by 1";
@@ -185,6 +186,7 @@ class ServiciosReferencias {
 	l.sortida,
 	l.taxapersona,
 	l.taxaturistica,
+	l.menores,
 	datediff(l.sortida,l.entrada) as dias
 	from dblloguersadicional l
 	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
@@ -197,7 +199,7 @@ class ServiciosReferencias {
 
 
 	function traerLloguersadicionalPorId($id) {
-	$sql = "select idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica from dblloguersadicional where idllogueradicional =".$id;
+	$sql = "select idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica,menores from dblloguersadicional where idllogueradicional =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
@@ -290,14 +292,32 @@ class ServiciosReferencias {
 	}
 
 	function faltaPagar($idlloguer) {
+
+		$resLloguerAdicional =  $this->traerLloguersadicionalPorLloguer($idlloguer);
+
+	   $taxaturisticaAdicional = 0;
+	   $totalTaxaPersona = 0;
+
+	   while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
+
+	   	$taxaturisticaAdicional += $rowAd['taxaturistica'];
+
+	   	$totalTaxaPersona += $rowAd['taxapersona'];
+
+	   }
+
+		$cadAgregar = $taxaturisticaAdicional + $totalTaxaPersona;
+
 		$sql = "SELECT
-				    l.total, COALESCE(l.total - SUM(p.monto), l.total) AS falta
+				    l.total + ".$cadAgregar.", COALESCE((l.total + ".$cadAgregar.") - SUM(p.monto), (l.total + ".$cadAgregar.")) AS falta
 				FROM
 				    dblloguers l
 				        LEFT JOIN
 				    dbpagos p ON l.idlloguer = p.reflloguers
 				where l.idlloguer = ".$idlloguer."
 				GROUP BY l.total";
+
+		//die(var_dump($sql));
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -325,6 +345,28 @@ class ServiciosReferencias {
 
 	function traerPagosPorId($id) {
 		$sql = "select idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado from dbpagos where idpago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPagosPorIdCompleto($id) {
+		$sql = "select
+					idpago,
+					reflloguers,
+					refformaspagos,
+					cuota,
+					monto,
+					taxa,
+					fecha,
+					fechapago,
+					usuario,
+					cancelado,
+					fp.formapago 
+				from dbpagos p
+				inner
+				join 		tbformaspagos fp
+				on			p.refformaspagos = fp.idformapago
+				where idpago =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

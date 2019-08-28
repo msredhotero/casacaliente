@@ -447,7 +447,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="row lstPersonaLloguer">
 									<div class="row" style="padding-left: 20px;">
 										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
-											<label class="form-label">Persones</label>
+											<label class="form-label">Adultos</label>
 											<div class="form-group">
 												<div class="form-line">
 													<input type="number" value="1" class="form-control personasLloguer" id="personas1" name="personas1" required="">
@@ -455,7 +455,16 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											</div>
 										</div>
 
-										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
+										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
+											<label class="form-label">Menores</label>
+											<div class="form-group">
+												<div class="form-line">
+													<input type="number" value="0" class="form-control menoresLloguer" id="menores1" name="menores1" required="">
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-3 col-md-3 col-sm-4 col-xs-4" style="display:block">
 			                         <label class="form-label">Entrada</label>
 			                         <div class="input-group">
 
@@ -469,7 +478,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			                         </div>
 			                     </div>
 
-										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
+										<div class="col-lg-3 col-md-3 col-sm-4 col-xs-4" style="display:block">
 			                         <label class="form-label">Sortida</label>
 			                         <div class="input-group">
 
@@ -937,6 +946,10 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="../../js/datepicker-es.js"></script>
+
+<script src="../../js/dateFormat.js"></script>
+<script src="../../js/jquery.dateFormat.js"></script>
+
 <script>
 	var indice = 1;
 	$(document).ready(function(){
@@ -1014,7 +1027,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		var cadFechaSortida = '';
 
-		if ($('#sortida').val() >= $('#entrada').val()) {
+		if (devolverFechaCorrecta($('#entrada').val()) >= devolverFechaCorrecta($('#sortida').val())) {
 
 			cadErrorValida = 'La fecha de Sortida no puede ser menor que la de Entrada. \
 			\n';
@@ -1096,32 +1109,40 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			indice += 1;
 			$('.lstPersonaLloguer').append('<div class="row renglon' + indice + '" style="padding-left: 20px;"> \
 			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block"> \
-				<label class="form-label">Persones</label> \
+				<label class="form-label">Adultos</label> \
 				<div class="form-group"> \
 					<div class="form-line"> \
 						<input type="number" value="1" class="form-control personasLloguer" id="personas' + indice + '" name="personas' + indice + '" required=""> \
 					</div> \
 				</div> \
 			</div> \
-			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block"> \
+			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block"> \
+				<label class="form-label">Menores</label> \
+				<div class="form-group"> \
+					<div class="form-line"> \
+						<input type="number" value="0" class="form-control menoresLloguer" id="menores' + indice + '" name="menores' + indice + '" required=""> \
+					</div> \
+				</div> \
+			</div> \
+			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-4" style="display:block"> \
 				 <label class="form-label">Entrada</label> \
 				 <div class="input-group"> \
 					  <span class="input-group-addon"> \
 							<i class="material-icons">date_range</i> \
 					  </span> \
 					  <div class="form-line"> \
-							<input readonly="readonly" type="text" class="datepicker form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" required /> \
+							<input readonly="readonly" type="text" class="datepicker form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" value="' + $('#entrada').val() + '" required /> \
 					  </div> \
 				 </div> \
 			</div> \
-			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block"> \
+			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-4" style="display:block"> \
 				 <label class="form-label">Sortida</label> \
 				 <div class="input-group"> \
 					  <span class="input-group-addon"> \
 							<i class="material-icons">date_range</i> \
 					  </span> \
 					  <div class="form-line"> \
-							<input readonly="readonly" type="text" class="datepicker form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" required /> \
+							<input readonly="readonly" type="text" class="datepicker form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" value="' + $('#sortida').val() + '" required /> \
 					  </div> \
 				 </div> \
 			</div> \
@@ -1201,7 +1222,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		$('.datepicker').bootstrapMaterialDatePicker({
         format: 'DD/MM/YYYY',
-        clearButton: true,
+        clearButton: false,
 		  lang : 'ca',
         weekStart: 1,
         time: false
@@ -1212,6 +1233,16 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$( "#fechapagocliente1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
 		$( "#fechapago2" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago2" ).val('<?php echo date('d/m/Y', strtotime($date.' + 30 days')); ?>');
+
+		$( "#entrada" ).change(function() {
+			var fechaNueva = new Date(devolverFechaCorrecta( $('#entrada').val()));
+			var dias = 8; // Número de días a agregar
+			fechaNueva.setDate(fechaNueva.getDate() + dias)
+			$( "#sortida" ).val($.format.date(fechaNueva, "dd/MM/yyyy"));
+
+			$('.entradaImp').val($('#entrada').val());
+			$('.sortidaImp').val($.format.date(fechaNueva, "dd/MM/yyyy"));
+		});
 
 		$('#valorpago1').number(true,2,'.','');
 		$('#valorpago2').number(true,2,'.','');
@@ -1237,6 +1268,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#datalloguer').val('<?php echo date('d/m/Y'); ?>');
 		$('#entrada').val('<?php echo date('d/m/Y'); ?>');
 		$('#sortida').val('<?php echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
+
+		$('#entradapersonas1').val('<?php echo date('d/m/Y'); ?>');
+		$('#sortidapersonas1').val('<?php echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
 
 
 
@@ -1337,11 +1371,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('#total').val(0);
+					$('.lblTaxaPaga1').html('');
+					$('.lblTaxaPaga2').html('');
+					$('#pagotaxacliente').val(0);
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
-					$('#totalapagarcliente').val(data.datos.total);
+					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.taxa));
 					$('#faltapagarcliente').val(data.datos.falta);
 
 					$('#fechapagocliente2').datepicker({ dateFormat: 'dd/mm/yy' });
@@ -2120,7 +2157,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						$('.frmAjaxNuevo #entrada').val(data.aux.desde);
 						$('.frmAjaxNuevo #sortida').val(data.aux.hasta);
 						$('.frmAjaxGrilla').html(data.aux.vista);
-						$('#personas').val(0);
+						$('#personas').val(2);
+						$('#menores').val(0);
 						$('.datepicker').bootstrapMaterialDatePicker({
 				        format: 'DD/MM/YYYY',
 						  minDate: data.aux.desde,

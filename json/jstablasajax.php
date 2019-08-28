@@ -67,6 +67,11 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 	case 'lloguers':
+		if ($busqueda == '') {
+			$colSort = 'l.entrada';
+			$colSortDir = 'desc';
+		}
+
 		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerLloguers();
 		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos','btnAgregarPersonas');
@@ -75,6 +80,7 @@ switch ($tabla) {
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 8;
+
 	break;
 	case 'clientes':
 		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
