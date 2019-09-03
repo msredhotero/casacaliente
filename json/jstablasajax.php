@@ -76,7 +76,7 @@ switch ($tabla) {
 		$res = $serviciosReferencias->traerLloguers();
 		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos','btnAgregarPersonas');
 		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown','bg-teal');
-		$icon = array('Client','Modificar','Eliminar','Pagos','Contrats','Persones Addicionals');
+		$icon = array('Client','Modificar','Eliminar','Pagos','Contrats','Persones');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 8;
