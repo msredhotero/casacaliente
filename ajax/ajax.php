@@ -610,6 +610,9 @@ function devolverTarifaArray($serviciosReferencias) {
    $taxaturisticaAdicional = 0;
    $totalTaxaPersona = 0;
 
+   $idPago1 = 0;
+   $idPago2 = 0;
+
    while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
@@ -646,6 +649,8 @@ function devolverTarifaArray($serviciosReferencias) {
    if (mysql_num_rows($resPagos)>0) {
       $existePago = 1;
 
+      $idPago1 = mysql_result($resPagos,0,'idpago');
+
       $pago1 = mysql_result($resPagos,0,'cuota');
       $primerpago = mysql_result($resPagos,0,'fechapago');
       $monto1 = mysql_result($resPagos,0,'monto');
@@ -657,6 +662,8 @@ function devolverTarifaArray($serviciosReferencias) {
 
       if (mysql_num_rows($resPagos)>1) {
          $pago2 = mysql_result($resPagos,1,'cuota');
+
+         $idPago2 = mysql_result($resPagos,1,'idpago');
 
          $segundopago = mysql_result($resPagos,1,'fechapago');
          $monto2 = mysql_result($resPagos,1,'monto');
@@ -709,7 +716,9 @@ function devolverTarifaArray($serviciosReferencias) {
                      'monto2' => $monto2,
                      'formapago1' => $formapago1,
                      'formapago2' => $formapago2,
-                     'taxaunica' => $taxaUnica
+                     'taxaunica' => $taxaUnica,
+                     'idpago1' => $idPago1,
+                     'idpago2' => $idPago2
                   );
 
    $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$taxa=array($totalTaxaPersona,$taxaturisticaAdicional),$total,$falta,$segundopago);

@@ -765,6 +765,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 															<span class="input-group-addon">
 																<span style="color:green; text-align:left;" class="lblTaxaPaga1"></span>
 															</span>
+
 														</div>
 
 													</div>
@@ -785,6 +786,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 															<span class="input-group-addon">
 																<label style="color:green; text-align:left;" class="lblTaxaPaga2"></label>
 															</span>
+
 														</div>
 
 													</div>
@@ -858,8 +860,11 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 									</div>
 									<div class="modal-footer">
-										 <button type="button" class="btn btn-primary waves-effect nuevoPagareCliente">GUARDAR</button>
-										 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+										<div class="btnFacturas" style="float:left;">
+
+										</div>
+										<button type="button" class="btn btn-primary waves-effect nuevoPagareCliente">GUARDAR</button>
+										<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 									</div>
 							  </div>
 						 </div>
@@ -1098,6 +1103,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('.btnDisponibilidad').click(function() {
 			traerDisponibilidad();
 		});
+
+
+
+		$('.btnFacturas').on("click",'.rptFactura', function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptFacturaCC.php?id=" + idTable,'_blank');
+		});
+
 
 		$('#lgmNuevo').on("click",'.quitarRenglon', function() {
 			indice -= 1;
@@ -1374,6 +1387,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					$('.lblTaxaPaga1').html('');
 					$('.lblTaxaPaga2').html('');
 					$('#pagotaxacliente').val(0);
+					$('.btnFacturas').html('');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
@@ -1385,6 +1399,15 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					$('#fechapagocliente1').datepicker({ dateFormat: 'dd/mm/yy' });
 
 					if (data.pagos.existe == 1) {
+
+						if (data.pagos.idpago1 > 0) {
+							$('.btnFacturas').append('<button type="button" class="btn bg-deep-orange waves-effect rptFactura" id="' + data.pagos.idpago1 + '"><i class="material-icons">receipt</i>IMPRIMIMR FACTURA 1er PAGO</button>');
+						}
+
+						if (data.pagos.idpago2 > 0) {
+							$('.btnFacturas').append('<button type="button" class="btn bg-deep-orange waves-effect rptFactura" id="' + data.pagos.idpago2 + '"><i class="material-icons">receipt</i>IMPRIMIMR FACTURA 2do PAGO</button>');
+						}
+
 						$('#valorpagocliente1').val(data.pagos.pago1);
 						$('#valorpagocliente2').val(data.pagos.pago2);
 						$('#pagotaxacliente').val(data.pagos.taxa);
