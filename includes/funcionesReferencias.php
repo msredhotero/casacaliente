@@ -9,6 +9,65 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+
+	/* PARA Lloguercomentarios */
+
+function insertarLloguercomentarios($reflloguers,$comentario) {
+$sql = "insert into dblloguercomentarios(idlloguercomentario,reflloguers,comentario)
+values ('',".$reflloguers.",'".$comentario."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarLloguercomentarios($id,$reflloguers,$comentario) {
+$sql = "update dblloguercomentarios
+set
+reflloguers = ".$reflloguers.",comentario = '".$comentario."'
+where idlloguercomentario =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarLloguercomentarios($id) {
+$sql = "delete from dblloguercomentarios where idlloguercomentario =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerLloguercomentarios() {
+$sql = "select
+l.idlloguercomentario,
+l.reflloguers,
+l.comentario
+from dblloguercomentarios l
+inner join dblloguers llo ON llo.idlloguer = l.reflloguers
+inner join dbclientes cl ON cl.idcliente = llo.refclientes
+inner join dbubicaciones ub ON ub.idubicacion = llo.refubicaciones
+inner join tbestados es ON est.idestado = llo.refestados
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerLloguercomentariosPorId($id) {
+$sql = "select idlloguercomentario,reflloguers,comentario from dblloguercomentarios where idlloguercomentario =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerLloguercomentariosPorLloguer($id) {
+$sql = "select idlloguercomentario,comentario from dblloguercomentarios where reflloguers =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dblloguercomentarios*/
+
 	/* PARA Locatarios */
 
 	function traerLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir) {
@@ -95,6 +154,24 @@ class ServiciosReferencias {
 
 	/* Fin */
 	/* /* Fin de la Tabla: dblocatarios*/
+
+	function buscarAlquilerPorFechaUbicacionPorDia($fecha, $idubicacion) {
+		$sql = "SELECT
+				    l.idlloguer, c.nom, c.cognom, c.telefon, est.estado, l.total, l.persset,
+					 est.color, DATE_FORMAT(l.entrada, '%Y-%m-%d') as entrada, DATE_FORMAT(l.sortida, '%Y-%m-%d') as sortida
+				FROM
+				    dblloguers l
+				        INNER JOIN
+				    dbclientes c ON l.refclientes = c.idcliente
+				        INNER JOIN
+				    tbestados est ON est.idestado = l.refestados
+				WHERE
+				    CAST('".$fecha."' AS DATE) BETWEEN l.entrada AND l.sortida
+				    and l.refubicaciones = ".$idubicacion;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
 
 	function buscarAlquilerPorFechaUbicacion($fechadesde, $fechahasta, $idubicacion) {
 		$sql = "SELECT
@@ -361,7 +438,7 @@ class ServiciosReferencias {
 					fechapago,
 					usuario,
 					cancelado,
-					fp.formapago 
+					fp.formapago
 				from dbpagos p
 				inner
 				join 		tbformaspagos fp
@@ -580,13 +657,38 @@ class ServiciosReferencias {
 	year(l.sortida) as anysortida,
 	ubi.dormitorio,
 	DATEDIFF(l.sortida,l.entrada) as dias,
-	ti.idtipoubicacion
+	ti.idtipoubicacion,
+    coalesce((max(p.personas) + max(p.menores)), l.numpertax) as personasreales
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
 	inner join tbestados est on est.idestado = l.refestados
+	left join dblloguersadicional p ON p.reflloguers = l.idlloguer
 	where l.idlloguer = ".$id."
+	group by l.idlloguer,
+	l.refclientes,
+	l.refubicaciones,
+	l.datalloguer,
+	l.entrada,
+	l.sortida,
+	l.total,
+	l.numpertax,
+	l.persset,
+	l.taxa,
+	l.maxtaxa,
+	l.refestados,
+	est.estado,
+	cli.nom,
+	cli.cognom,
+	cli.nif,
+	cli.pais,
+	cli.carrer,
+	cli.codipostal,
+	cli.ciutat,
+	ubi.codapartament,
+	ubi.dormitorio,
+	ti.idtipoubicacion
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;

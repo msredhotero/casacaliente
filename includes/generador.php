@@ -45,7 +45,8 @@ $tablasAr	= array('clientes' => 'dbclientes',
 							'lloguers' => 'dblloguers',
 							'taxa' => 'tbtaxa',
 							'pagos' => 'dbpagos',
-							'lloguersadicional' => 'dblloguersadicional');
+							'lloguersadicional' => 'dblloguersadicional',
+							'lloguercomentarios' => 'dblloguercomentarios');
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
@@ -60,7 +61,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'lloguers' => 'dblloguers',
 								'taxa' => 'tbtaxa',
 								'pagos' => 'dbpagos',
-								'lloguersadicional' => 'dblloguersadicional');
+								'lloguersadicional' => 'dblloguersadicional',
+								'lloguercomentarios' => 'dblloguercomentarios');
 
 	$tablasArAux	= array('clientes' => 1,
 								'periodos' => 1,
@@ -72,7 +74,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'lloguers' => 3,
 								'taxa' => 1,
 								'pagos' => 3,
-								'lloguersadicional' => 2);
+								'lloguersadicional' => 2,
+								'lloguercomentarios' => 2);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
@@ -250,7 +253,7 @@ if ($res == false) {
 			if ((integer)"."$"."res > 0) { <br>
 				echo ''; <br>
 			} else { <br>
-				echo 'Huvo un error al insertar datos';	 <br>
+				echo 'Hubo un error al insertar datos';	 <br>
 			} <br>
 
 		} <br>
@@ -265,7 +268,7 @@ if ($res == false) {
 			if ("."$"."res == true) { <br>
 				echo ''; <br>
 			} else { <br>
-				echo 'Huvo un error al modificar datos'; <br>
+				echo 'Hubo un error al modificar datos'; <br>
 			} <br>
 		} <br>
 

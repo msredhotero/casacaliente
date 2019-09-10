@@ -235,7 +235,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<i class="material-icons">add</i>
 												<span>NOU</span>
 											</button>
-											<button type="button" class="btn bg-teal waves-effect btnDisponibilidad" data-toggle="modal" data-target="#lgmDisponibilidad">
+											<button type="button" class="btn bg-teal waves-effect btnDisponibilidad hidden" data-toggle="modal" data-target="#lgmDisponibilidad">
 												<i class="material-icons">date_range</i>
 												<span>DISPONIBILITAT</span>
 											</button>
@@ -289,7 +289,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	</div>
 </section>
 
-	<div class="modal fade" id="lgmDisponibilidad" tabindex="-1" role="dialog">
+	<div class="modal fade modal-admin" id="lgmDisponibilidad" tabindex="-1" role="dialog" style="overflow-y: scroll;">
 		 <div class="modal-dialog modal-lg modalDisponibilidad" role="document">
 			  <div class="modal-content modalDisp">
 					<div class="modal-header">
@@ -1201,8 +1201,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 					if (data != '') {
 						$('.contDisponibilidad').html(data);
-
-
 					} else {
 						swal("Error!", data, "warning");
 

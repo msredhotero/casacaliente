@@ -101,8 +101,18 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
     <style>
         .alert > i{ vertical-align: middle !important; }
-		  .contDisponibilidad table tbody tr td { border: 1px solid #444; }
-		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
+		  .contDisponibilidad table { table-layout: fixed !important; }
+		  .contDisponibilidad table tbody tr td { border: 1px solid #444; padding: 0 !important; width: 100px !important;overflow: auto !important; text-align: center;}
+		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important;width: 100px !important; overflow: auto !important;}
+		  .tablaInterna tbody tr td { padding: 0; width: 100px !important; height: 20px; text-align: center;}
+		  .disponibilidadLloguer { cursor: pointer; }
+		  .modal-header-ver {
+				padding:9px 15px;
+				border-bottom:1px solid #eee;
+				background-color: #0480be;
+				color: white;
+				font-weight: bold;
+        }
     </style>
 
 </head>
@@ -163,13 +173,14 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 											<i class="material-icons">more_vert</i>
 										</a>
 										<ul class="dropdown-menu pull-right">
-
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
 										</ul>
 									</li>
 								</ul>
 							</div>
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
+
 								<div class="row contDisponibilidad" style="padding: 5px 20px;">
 
 
@@ -186,29 +197,46 @@ if ($_SESSION['idroll_sahilices'] == 1) {
     </section>
 
 
-	 <!-- MODIFICAR -->
-		 <form class="formulario formMod" role="form" id="sign_in">
-			 <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-				  <div class="modal-dialog modal-lg" role="document">
-						<div class="modal-content">
-							 <div class="modal-header">
-								  <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-							 </div>
-							 <div class="modal-body">
-								 <div class="row frmAjaxModificar">
-
-								 </div>
+	 <!-- VER -->
+	 <form class="formulario" role="form" id="sign_in">
+		 <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
+			  <div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						 <div class="modal-header modal-header-ver">
+							  <h4 class="modal-title" id="largeModalLabel">LLOGUER</h4>
+						 </div>
+						 <div class="modal-body">
+							 <div class="row frmVER">
 
 							 </div>
-							 <div class="modal-footer">
-								  <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-								  <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+							 <hr>
+
+							 <div class="row frmComentarios">
+								<div class="col-sm-12">
+								   <label for="carrer" class="control-label" style="text-align:left">Comentarios</label>
+								   <div class="form-group">
+									   <div class="form-line">
+										   <textarea rows="4" class="form-control no-resize" id="comentario" name="comentario" placeholder="Ingrese el Comentario..."></textarea>
+									   </div>
+								   </div>
+							   </div>
+
 							 </div>
-						</div>
-				  </div>
-			 </div>
-			 <input type="hidden" id="accion" name="accion" value="modificarFacturas"/>
-		 </form>
+
+
+
+
+						 </div>
+						 <div class="modal-footer">
+							 <button type="submit" class="btn bg-green waves-effect guardar" data-dismiss="modal">GUARDAR COMENTARIO</button>
+							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						 </div>
+					</div>
+			  </div>
+		 </div>
+		 <input type="hidden" id="accion" name="accion" value="insertarLloguercomentarios"/>
+		 <input type="hidden" id="reflloguers" name="reflloguers" value="0"/>
+	 </form>
 
 
     <?php echo $baseHTML->cargarArchivosJS('../'); ?>
@@ -257,6 +285,10 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 */
 	traerDisponibilidad();
 
+	$('.recargar').click(function() {
+		traerDisponibilidad();
+	});
+
 	function traerDisponibilidad() {
 		$.ajax({
 			url: '../ajax/ajax.php',
@@ -266,7 +298,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 			data: {accion: 'traerDisponibilidad',any: 2019},
 			//mientras enviamos el archivo
 			beforeSend: function(){
-				$('.contDisponibilidad').html('');
+				$('.contDisponibilidad').html('<div align="center"><img src="../imagenes/load13.gif" width="120"></div>');
 			},
 			//una vez finalizado correctamente
 			success: function(data){
@@ -289,126 +321,167 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 		});
 	}
 
+	$(".contDisponibilidad").on("click",'.disponibilidadLloguer', function(){
+		idTable =  $(this).attr("id");
+		$('#reflloguers').val(idTable);
+		verLloguer(idTable);
+		$('#lgmModificar').modal();
+	});//fin del boton modificar
+
+	function verLloguer(id) {
+		$.ajax({
+			url: '../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {accion: 'verLloguer', id: id},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$('.frmVER').html('');
+				$('#comentario').html('');
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+
+				if (data != '') {
+					$('.frmVER').html(data.lloguer);
+					$('#comentario').html(data.comentario);
+
+				} else {
+					swal("Error!", data, "warning");
+
+					$("#load").html('');
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$(".frmVER").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+
+	}
 
 
-				function frmAjaxModificar(id) {
-					$.ajax({
-						url: '../ajax/ajax.php',
-						type: 'POST',
-						// Form data
-						//datos del formulario
-						data: {accion: 'frmAjaxModificar',tabla: 'db', id: id},
-						//mientras enviamos el archivo
-						beforeSend: function(){
-							$('.frmAjaxModificar').html('');
-						},
-						//una vez finalizado correctamente
-						success: function(data){
 
-							if (data != '') {
-								$('.frmAjaxModificar').html(data);
-								$('#fechaingreso').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
-								$('#fechasubido').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
+	function frmAjaxModificar(id) {
+		$.ajax({
+			url: '../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {accion: 'frmAjaxModificar',tabla: 'db', id: id},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$('.frmAjaxModificar').html('');
+			},
+			//una vez finalizado correctamente
+			success: function(data){
 
-							} else {
-								swal("Error!", data, "warning");
+				if (data != '') {
+					$('.frmAjaxModificar').html(data);
+					$('#fechaingreso').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
+					$('#fechasubido').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 
-								$("#load").html('');
-							}
-						},
-						//si ha ocurrido un error
-						error: function(){
-							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-							$("#load").html('');
-						}
+				} else {
+					swal("Error!", data, "warning");
+
+					$("#load").html('');
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+
+	}
+
+	$("#example").on("click",'.btnModificar', function(){
+		idTable =  $(this).attr("id");
+		frmAjaxModificar(idTable);
+		$('#lgmModificar').modal();
+	});//fin del boton modificar
+
+	$('.maximizar').click(function() {
+		if ($('.icomarcos').text() == 'web') {
+			$('#marcos').show();
+			$('.content').css('marginLeft', '315px');
+			$('.icomarcos').html('aspect_ratio');
+		} else {
+			$('#marcos').hide();
+			$('.content').css('marginLeft', '15px');
+			$('.icomarcos').html('web');
+		}
+
+	});
+
+	$("#example").on("click",'.btnDescargar', function(){
+		usersid =  $(this).attr("id");
+
+		url = "descargaradmin.php?token=" + usersid;
+		$(location).attr('href',url);
+
+	});//fin del boton modificar
+
+	$('.guardar').click(function(e){
+
+		e.preventDefault();
+      if ($('.formulario')[0].checkValidity()) {
+		//información del formulario
+		var formData = new FormData($(".formulario")[0]);
+		var message = "";
+		//hacemos la petición ajax
+		$.ajax({
+			url: '../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: formData,
+			//necesario para subir archivos via ajax
+			cache: false,
+			contentType: false,
+			processData: false,
+			//mientras enviamos el archivo
+			beforeSend: function(){
+
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+
+				if (data == '') {
+					swal({
+							title: "Respuesta",
+							text: "Registro Modificado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
 					});
 
-				}
-
-				$("#example").on("click",'.btnModificar', function(){
-					idTable =  $(this).attr("id");
-					frmAjaxModificar(idTable);
-					$('#lgmModificar').modal();
-				});//fin del boton modificar
-
-				$('.maximizar').click(function() {
-					if ($('.icomarcos').text() == 'web') {
-						$('#marcos').show();
-						$('.content').css('marginLeft', '315px');
-						$('.icomarcos').html('aspect_ratio');
-					} else {
-						$('#marcos').hide();
-						$('.content').css('marginLeft', '15px');
-						$('.icomarcos').html('web');
-					}
-
-				});
-
-				$("#example").on("click",'.btnDescargar', function(){
-					usersid =  $(this).attr("id");
-
-					url = "descargaradmin.php?token=" + usersid;
-					$(location).attr('href',url);
-
-				});//fin del boton modificar
-
-				$('.modificar').click(function(e){
-
-					e.preventDefault();
-		         if ($('.formulario')[0].checkValidity()) {
-					//información del formulario
-					var formData = new FormData($(".formulario")[0]);
-					var message = "";
-					//hacemos la petición ajax
-					$.ajax({
-						url: '../ajax/ajax.php',
-						type: 'POST',
-						// Form data
-						//datos del formulario
-						data: formData,
-						//necesario para subir archivos via ajax
-						cache: false,
-						contentType: false,
-						processData: false,
-						//mientras enviamos el archivo
-						beforeSend: function(){
-
-						},
-						//una vez finalizado correctamente
-						success: function(data){
-
-							if (data == '') {
-								swal({
-										title: "Respuesta",
-										text: "Registro Modificado con exito!!",
-										type: "success",
-										timer: 1500,
-										showConfirmButton: false
-								});
-
-								$('#lgmModificar').modal('hide');
-								table.ajax.reload();
-							} else {
-								swal({
-										title: "Respuesta",
-										text: data,
-										type: "error",
-										timer: 2500,
-										showConfirmButton: false
-								});
-
-
-							}
-						},
-						//si ha ocurrido un error
-						error: function(){
-							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-							$("#load").html('');
-						}
+					$('#lgmModificar').modal('hide');
+					table.ajax.reload();
+				} else {
+					swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2500,
+							showConfirmButton: false
 					});
-				}
 
-				});
+
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+	}
+
+	});
 
 
 		});

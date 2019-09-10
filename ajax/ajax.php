@@ -207,10 +207,128 @@ break;
 case 'eliminarLocatarios':
    eliminarLocatarios($serviciosReferencias);
 break;
+case 'verLloguer':
+   verLloguer($serviciosReferencias);
+break;
+
+case 'insertarLloguercomentarios':
+   insertarLloguercomentarios($serviciosReferencias);
+break;
+case 'modificarLloguercomentarios':
+   modificarLloguercomentarios($serviciosReferencias);
+break;
+case 'eliminarLloguercomentarios':
+   eliminarLloguercomentarios($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function insertarLloguercomentarios($serviciosReferencias) {
+   $reflloguers = $_POST['reflloguers'];
+   $comentario = $_POST['comentario'];
+
+   $resComentario = $serviciosReferencias->traerLloguercomentariosPorLloguer($reflloguers);
+
+   if (mysql_num_rows($resComentario) > 0) {
+
+      $res = $serviciosReferencias->modificarLloguercomentarios(mysql_result($resComentario,0,0),$reflloguers,$comentario);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
+   } else {
+      $res = $serviciosReferencias->insertarLloguercomentarios($reflloguers,$comentario);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
+   }
+
+}
+
+function modificarLloguercomentarios($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reflloguers = $_POST['reflloguers'];
+   $comentario = $_POST['comentario'];
+
+   $res = $serviciosReferencias->modificarLloguercomentarios($id,$reflloguers,$comentario);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function verLloguer($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->traerLloguersPorIdCompleto($id);
+
+   $resLloguerAdicional =  $serviciosReferencias->traerLloguersadicionalPorLloguer($id);
+
+   $resPagos = $serviciosReferencias->traerPagosPorLloguers($id);
+
+   $resComentario = $serviciosReferencias->traerLloguercomentariosPorLloguer($id);
+
+   $pago = 0;
+
+   while ($row = mysql_fetch_array($resPagos))
+	{
+      $pago += $row['monto'];
+   }
+
+   $taxaturisticaAdicional = 0;
+   $taxaturisticaAdicionalPersonas = 0;
+   $totalTaxaPersona = 0;
+
+   while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
+   	$taxaturisticaAdicionalPersonas += $rowAd['personas'];
+   	$taxaturisticaAdicional += $rowAd['taxaturistica'];
+   	$totalTaxaPersona += $rowAd['taxapersona'];
+   }
+
+   $cad = '<table class="table table-striped table-bordered">';
+   $cad .= '<thead>';
+   $cad .= '<th>Client</th>
+            <th>Persones</th>
+            <th>Total</th>
+            <th>Falta Pagar</th>';
+   $cad .= '</thead>';
+   $cad .= '<tbody>';
+   $cad .= '<tr>';
+   while ($row = mysql_fetch_array($res)) {
+      $cad .= '<td>'.utf8_encode($row['nom']).' '.utf8_encode($row['cognom']).'</td>';
+      $cad .= '<td>'.$row['personasreales'].'</td>';
+      $cad .= '<td>'.number_format( $row['total'] + $totalTaxaPersona + $taxaturisticaAdicional,2,',','.').' €</td>';
+      if (($row['total'] + $totalTaxaPersona + $taxaturisticaAdicional - $pago) < 0) {
+         $cad .= '<td>'.number_format( 0,2,',','.').' €</td>';
+      } else {
+         $cad .= '<td>'.number_format( $row['total'] + $totalTaxaPersona + $taxaturisticaAdicional - $pago,2,',','.').' €</td>';
+      }
+
+   }
+   $cad .= '</tr>';
+   $cad .= '</tbody></table';
+
+   $resV['lloguer'] = $cad;
+
+   if (mysql_num_rows($resComentario) > 0) {
+      $resV['comentario'] = mysql_result($resComentario,0,'comentario');
+   } else {
+      $resV['comentario'] = '';
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 
 function insertarLocatarios($serviciosReferencias) {
@@ -292,7 +410,6 @@ function traerDisponibilidad($serviciosReferencias) {
    $primero = 0;
 
 
-
    $cad = "<table class='display table table-bordered table-responsive' id='tblPlaning'>
             <thead>
                <th>".$any."</th>";
@@ -316,38 +433,57 @@ function traerDisponibilidad($serviciosReferencias) {
       //
 
       for ($i=0; $i < $rowY['semanas']; $i++) {
-         $fechaAuxYHasta = new DateTime($fechaAuxYDesde);
-         $fechaAuxYDesde = new DateTime($fechaAuxYDesde);
-         $fechaAuxYHasta->add(new DateInterval('P7D'));
+
+
+         $fechaAuxYHastaAux = new DateTime($fechaAuxYDesde);
+         $fechaAuxYDesdeAux = new DateTime($fechaAuxYDesde);
+         $fechaAuxYHastaAux->add(new DateInterval('P7D'));
+
          //echo $fechaAuxYHasta->format('Y-m-d') . "\n";
          //die(var_dump($fechaAuxYDesde));
          $cad .= "<tr>";
-         $cad .= "<td>".$fechaAuxYDesde->format('d/m').'-'.$fechaAuxYHasta->format('d/m')."</td>";
-         for ($k=0; $k < $ejeX; $k++) {
-            $resAlquiler = $serviciosReferencias->buscarAlquilerPorFechaUbicacion($fechaAuxYDesde->format('Y-m-d'),$fechaAuxYHasta->format('Y-m-d'), mysql_result($resUbicaciones,$k,0));
-            if (mysql_num_rows($resAlquiler)>0) {
+         $cad .= "<td>".$fechaAuxYDesdeAux->format('d/m').'-'.$fechaAuxYHastaAux->format('d/m')."</td>";
 
-               $cad .= '<td style="'.$linea.'"><div class="btn-group">
-            					<button type="button" class="btn bg-'.mysql_result($resAlquiler,0,'color').' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            						 '.substr(mysql_result($resAlquiler,0,'cognom').' '.mysql_result($resAlquiler,0,'nom'),0,13).' <span class="caret"></span>
-            					</button>
-            					<ul class="dropdown-menu">
-                           <li><a href="javascript:void(0);" class=" waves-effect waves-block">Tel.: '.mysql_result($resAlquiler,0,'telefon').'</a></li>
-                           <li><a href="javascript:void(0);" class=" waves-effect waves-block">Total: '.mysql_result($resAlquiler,0,'total').'</a></li>
-                           <li><a href="javascript:void(0);" class=" waves-effect waves-block">Persones: '.mysql_result($resAlquiler,0,'persset').'</a></li>
-                           <li><a href="javascript:void(0);" class=" waves-effect waves-block">Falta Pagar: '.$serviciosReferencias->faltaPagarDato(mysql_result($resAlquiler,0,'idlloguer')).'</a></li>
-                           </ul></td>';
-            } else {
-               $cad .= '<td style="'.$linea.'"></td>';
+         for ($k=0; $k < $ejeX; $k++) {
+            $cad .= '<td class="achique" style="'.$linea.'">';
+            $cad .= "<table class='tablaInterna'>";
+
+            for ($d=1; $d <= 7; $d++) {
+
+               $cad .= "<tr>";
+
+               $fechaAuxYHasta = new DateTime($fechaAuxYDesde);
+               //$fechaAuxYDesde = new DateTime($fechaAuxYDesde);
+               $fechaAuxYHasta->add(new DateInterval('P'.$d.'D'));
+
+               $resAlquiler = $serviciosReferencias->buscarAlquilerPorFechaUbicacionPorDia($fechaAuxYHasta->format('Y-m-d'), mysql_result($resUbicaciones,$k,0));
+               if (mysql_num_rows($resAlquiler)>0) {
+                  if (mysql_result($resAlquiler,0,'entrada') == $fechaAuxYHasta->format('Y-m-d')) {
+                     $cad .= '<td bgcolor="#00FF00" class="disponibilidadLloguer" id="'.mysql_result($resAlquiler,0,'idlloguer').'"><b>'.$fechaAuxYHasta->format('Y-m-d').'</b></td>';
+                  } else {
+                     if (mysql_result($resAlquiler,0,'sortida') == $fechaAuxYHasta->format('Y-m-d')) {
+                        $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer"><b>'.$fechaAuxYHasta->format('Y-m-d').'</b></td>';
+                     } else {
+                        $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer"></td>';
+                     }
+                  }
+
+               } else {
+                  $cad .= '<td></td>';
+               }
+
+               $cad .= "</tr>";
             }
 
+            $cad .= "</table>";
+            $cad .= "</td>";
 
 
          }
          $linea = '';
          $cad .= "</tr>";
-         $fechaAuxYDesde->add(new DateInterval('P7D'));
-         $fechaAuxYDesde = $fechaAuxYDesde->format('Y-m-d');
+         $fechaAuxYDesdeAux->add(new DateInterval('P7D'));
+         $fechaAuxYDesde = $fechaAuxYDesdeAux->format('Y-m-d');
       }
 
 
