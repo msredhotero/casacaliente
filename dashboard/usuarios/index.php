@@ -56,7 +56,7 @@ $modificar = "modificarUsuario";
 $tabla 			= "dbusuarios";
 
 $lblCambio	 	= array('nombrecompleto','reflocatarios','refroles');
-$lblreemplazo	= array('Nombre Completo','Llogater','Perfil');
+$lblreemplazo	= array('Nombre Completo','Empresas','Perfil');
 
 if ($_SESSION['idroll_sahilices'] == 1) {
 	$refLocatario = $serviciosReferencias->traerLocatarios();
