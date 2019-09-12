@@ -103,7 +103,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
         .alert > i{ vertical-align: middle !important; }
 		  .contDisponibilidad table { table-layout: fixed !important; }
 		  .contDisponibilidad table tbody tr td { border: 1px solid #444; padding: 0 !important; width: 60px !important;overflow: auto !important; text-align: center;}
-		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important;width: 100px !important; overflow: auto !important;}
+		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important;width: 60px !important; overflow: auto !important;}
 		  .tablaInterna tbody tr td { padding: 0; width: 60px !important; height: 20px; text-align: center;}
 		  .disponibilidadLloguer { cursor: pointer; }
 		  .modal-header-ver {
