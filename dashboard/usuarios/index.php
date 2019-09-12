@@ -63,7 +63,8 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 }	else {
 	$refLocatario = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
 }
-$cadRef = $serviciosFunciones->devolverSelectBox($refLocatario,array(1,2),' ');
+$cadRef = "<option value='0'>----   Sin Empresa   ----</option>";
+$cadRef .= $serviciosFunciones->devolverSelectBox($refLocatario,array(1,2),' ');
 
 if ($_SESSION['idroll_sahilices'] == 1) {
 	$resRoles 	= $serviciosUsuario->traerRoles();

@@ -1590,12 +1590,27 @@ function insertarUsuarios($serviciosReferencias) {
 	$nombre				=	$_POST['nombrecompleto'];
    $reflocatarios			=	$_POST['reflocatarios'];
 
-	$res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroll,$email,$nombre,1,$reflocatarios);
-	if ((integer)$res > 0) {
-		echo '';
-	} else {
-		echo $res;
-	}
+   if ($refroll == 2) {
+      if ($reflocatarios > 0) {
+         $res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroll,$email,$nombre,1,$reflocatarios);
+      	if ((integer)$res > 0) {
+      		echo '';
+      	} else {
+      		echo $res;
+      	}
+      } else {
+         echo 'Es obligatorio seleccionar una Empresa para el ROL = Empresas';
+      }
+   } else {
+      $res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroll,$email,$nombre,1,$reflocatarios);
+   	if ((integer)$res > 0) {
+   		echo '';
+   	} else {
+   		echo $res;
+   	}
+   }
+
+
 }
 
 
