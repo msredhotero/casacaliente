@@ -7,7 +7,6 @@ include ('../includes/funcionesReferencias.php');
 include ('../includes/funcionesNotificaciones.php');
 include ('../includes/validadores.php');
 
-
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
 $serviciosHTML				= new ServiciosHTML();
@@ -15,27 +14,24 @@ $serviciosReferencias		= new ServiciosReferencias();
 $serviciosNotificaciones	= new ServiciosNotificaciones();
 $serviciosValidador        = new serviciosValidador();
 
-
 $accion = $_POST['accion'];
 
 $resV['error'] = '';
 $resV['mensaje'] = '';
 
-
-
 switch ($accion) {
     case 'login':
-        enviarMail($serviciosUsuarios);
-        break;
+      enviarMail($serviciosUsuarios);
+      break;
 	case 'entrar':
 		entrar($serviciosUsuarios);
 		break;
 	case 'insertarUsuario':
-        insertarUsuario($serviciosUsuarios);
-        break;
+      insertarUsuario($serviciosUsuarios);
+      break;
 	case 'modificarUsuario':
-        modificarUsuario($serviciosUsuarios);
-        break;
+      modificarUsuario($serviciosUsuarios);
+      break;
 	case 'registrar':
 		registrar($serviciosUsuarios);
 		break;
@@ -43,7 +39,7 @@ switch ($accion) {
       registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValidador);
    break;
    case 'insertarUsuarios':
-        insertarUsuarios($serviciosReferencias);
+      insertarUsuarios($serviciosReferencias);
    break;
    case 'recuperar':
       recuperar($serviciosUsuarios);
