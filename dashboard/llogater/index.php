@@ -55,8 +55,8 @@ $modificar = "modificarLocatarios";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dblocatarios";
 
-$lblCambio	 	= array('codipostal');
-$lblreemplazo	= array('Cod Postal');
+$lblCambio	 	= array('codipostal','razonsocial');
+$lblreemplazo	= array('Cod Postal','Razon Social');
 
 
 $cadRef 	= '';
@@ -192,29 +192,27 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>cognom</th>
-												<th>nom</th>
-												<th>nif</th>
-												<th>carrer</th>
-												<th>codipostal</th>
-												<th>ciutat</th>
-												<th>pais</th>
-												<th>telefon</th>
-												<th>email</th>
+												<th>Razon social</th>
+												<th>NIF</th>
+												<th>Carrer</th>
+												<th>Cod. Postal</th>
+												<th>Ciutat</th>
+												<th>Pais</th>
+												<th>Telefon</th>
+												<th>Email</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>cognom</th>
-												<th>nom</th>
-												<th>nif</th>
-												<th>carrer</th>
-												<th>codipostal</th>
-												<th>ciutat</th>
-												<th>pais</th>
-												<th>telefon</th>
-												<th>email</th>
+												<th>Razon social</th>
+												<th>NIF</th>
+												<th>Carrer</th>
+												<th>Cod. Postal</th>
+												<th>Ciutat</th>
+												<th>Pais</th>
+												<th>Telefon</th>
+												<th>Email</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

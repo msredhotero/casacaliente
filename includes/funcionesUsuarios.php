@@ -41,7 +41,7 @@ function login($usuario,$pass) {
                    r.descripcion,
                    r.idrol,
                    u.reflocatarios,
-                   CONCAT(l.cognom, ' ', l.nom) AS locatario
+                   razonsocial AS locatario
                FROM
                    dbusuarios u
                        INNER JOIN
@@ -238,7 +238,7 @@ function traerUsuariosajax($length, $start, $busqueda) {
                   u.email ,
                   u.nombrecompleto,
                   (case when u.activo = 1 then 'Si' else 'No' end) as activo,
-                  concat(l.cognom, ' ', l.nom) as locatario,
+                  razonsocial as locatario,
                   u.refroles
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol

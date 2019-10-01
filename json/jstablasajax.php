@@ -87,7 +87,7 @@ switch ($tabla) {
 		$res = $serviciosReferencias->traerClientes();
 		$label = array('btnVer','btnModificar','btnEliminar');
 		$class = array('bg-green','bg-amber','bg-red');
-		$icon = array('search','create','delete');
+		$icon = array('Ver','Modificar','Eliminar');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 12;
@@ -101,7 +101,7 @@ switch ($tabla) {
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 9;
+		$termina = 8;
 
 		break;
 	case 'tipoubicacion':
@@ -182,7 +182,7 @@ $id = 0;
 			array_push($arAux, utf8_encode($row[$i]));
 		}
 
-		if ($tabla == 'lloguers') {
+		if (($tabla == 'lloguers') || ($tabla == 'clientes')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

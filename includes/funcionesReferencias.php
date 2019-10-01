@@ -76,13 +76,12 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or td.pais like '%".$busqueda."%' or td.telefon like '%".$busqueda."%' or td.email like '%".$busqueda."%'";
+			$where = " where c.razonsocial like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or td.pais like '%".$busqueda."%' or td.telefon like '%".$busqueda."%' or td.email like '%".$busqueda."%'";
 		}
 
 		$sql = "select
 	   c.idlocatario,
-	   c.cognom,
-	   c.nom,
+	   c.razonsocial,
 	   c.nif,
 	   c.carrer,
 	   c.codipostal,
@@ -99,19 +98,19 @@ return $res;
 		return $res;
 	}
 
-	function insertarLocatarios($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
-		$sql = "insert into dblocatarios(idlocatario,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email)
-		values ('','".($cognom)."','".($nom)."','".($nif)."','".($carrer)."','".($codipostal)."','".($ciutat)."','".($pais)."','".($telefon)."','".($email)."')";
+	function insertarLocatarios($razonsocial,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
+		$sql = "insert into dblocatarios(idlocatario,razonsocial,nif,carrer,codipostal,ciutat,pais,telefon,email)
+		values ('','".$razonsocial."','".$nif."','".$carrer."','".$codipostal."','".$ciutat."','".$pais."','".$telefon."','".$email."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarLocatarios($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
+	function modificarLocatarios($id,$razonsocial,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
 		$sql = "update dblocatarios
 		set
-		cognom = '".($cognom)."',nom = '".($nom)."',nif = '".($nif)."',carrer = '".($carrer)."',codipostal = '".($codipostal)."',ciutat = '".($ciutat)."',pais = '".($pais)."',telefon = '".($telefon)."',email = '".($email)."'
+		razonsocial = '".$razonsocial."',nif = '".$nif."',carrer = '".$carrer."',codipostal = '".$codipostal."',ciutat = '".$ciutat."',pais = '".$pais."',telefon = '".$telefon."',email = '".$email."'
 		where idlocatario =".$id;
 
 		$res = $this->query($sql,0);
@@ -130,8 +129,7 @@ return $res;
 	function traerLocatarios() {
 		$sql = "select
 		l.idlocatario,
-		l.cognom,
-		l.nom,
+		l.razonsocial,
 		l.nif,
 		l.carrer,
 		l.codipostal,
@@ -147,7 +145,7 @@ return $res;
 
 
 	function traerLocatariosPorId($id) {
-		$sql = "select idlocatario,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email from dblocatarios where idlocatario =".$id;
+		$sql = "select idlocatario,razonsocial,nif,carrer,codipostal,ciutat,pais,telefon,email from dblocatarios where idlocatario =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -199,6 +197,22 @@ return $res;
 				FROM
 				    dbperiodos p
 				where p.any = ".$any."
+				order by p.desdeperiode ";
+
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+
+	function traerPeriodosDisponibilidadDH($desde, $hasta) {
+		$sql = "SELECT
+				    p.idperiodo,p.periodo, (datediff(p.finsaperiode,p.desdeperiode) / 7) as semanas ,p.desdeperiode
+				FROM
+				    dbperiodos p
+				where
+				((YEAR(p.desdeperiode) * 365) + (MONTH(p.desdeperiode) * 30) + DAY(p.desdeperiode) >= (YEAR('".$desde."') * 365) + (MONTH('".$desde."') * 30) + DAY('".$desde."')
+	  AND (YEAR(p.finsaperiode) * 365) + (MONTH(p.finsaperiode) * 30) + DAY(p.finsaperiode) <= (YEAR('".$hasta."') * 365) + (MONTH('".$hasta."') * 30) + DAY('".$hasta."'))
+	  OR ('".$hasta."' BETWEEN p.desdeperiode AND p.finsaperiode)
 				order by p.desdeperiode ";
 
 		$res = $this->query($sql,0);

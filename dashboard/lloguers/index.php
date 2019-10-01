@@ -334,7 +334,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 									<div class="form-line">
 										<label for="refubicaciones" class="control-label" style="text-align:left">Ubicaciones</label>
-										<select class="form-control show-tick" id="refubicaciones" name="refubicaciones">
+										<select class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones">
 											<?php echo $cadRef2; ?>
 										</select>
 									</div>
@@ -1098,7 +1098,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 	});
 
-		traerDisponibilidad();
 
 		$('.btnDisponibilidad').click(function() {
 			traerDisponibilidad();
@@ -1229,7 +1228,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		});
 
-		$('.maximizar').click();
 
 		$('.datepicker').bootstrapMaterialDatePicker({
         format: 'DD/MM/YYYY',

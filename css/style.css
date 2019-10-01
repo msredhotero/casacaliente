@@ -2,7 +2,7 @@
 @import url(materialize.css);
 
 .margTop {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .navbar {
@@ -3096,7 +3096,7 @@ section.content {
     .card .body .col-sm-12,
     .card .body .col-md-12,
     .card .body .col-lg-12 {
-      margin-bottom: 20px; }
+      margin-bottom: 2px; }
       .card .card-action:last-child {
         border-radius: 0 0 2px 2px;
     }
@@ -5091,7 +5091,7 @@ section.content {
 
 .form-group {
   width: 100%;
-  margin-bottom: 25px; }
+  margin-bottom: 5px; }
   .form-group .form-control {
     width: 100%;
     border: none;
@@ -7670,7 +7670,7 @@ fieldset[disabled] .form-control {
         display: inline-flex;
         vertical-align: middle;
         width: 100%;
-        padding: 10px 13px; }
+        padding: 1px 13px; }
         .sidebar .menu .list a:hover, .sidebar .menu .list a:active, .sidebar .menu .list a:focus {
           text-decoration: none !important; }
         .sidebar .menu .list a small {

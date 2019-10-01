@@ -328,8 +328,8 @@ function verLloguer($serviciosReferencias) {
 
 
 function insertarLocatarios($serviciosReferencias) {
-   $cognom = $_POST['cognom'];
-   $nom = $_POST['nom'];
+   $razonsocial = $_POST['razonsocial'];
+
    $nif = $_POST['nif'];
    $carrer = $_POST['carrer'];
    $codipostal = $_POST['codipostal'];
@@ -338,7 +338,7 @@ function insertarLocatarios($serviciosReferencias) {
    $telefon = $_POST['telefon'];
    $email = $_POST['email'];
 
-   $res = $serviciosReferencias->insertarLocatarios($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email);
+   $res = $serviciosReferencias->insertarLocatarios($razonsocial,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email);
 
    if ((integer)$res > 0) {
       echo '';
@@ -349,8 +349,8 @@ function insertarLocatarios($serviciosReferencias) {
 
 function modificarLocatarios($serviciosReferencias) {
    $id = $_POST['id'];
-   $cognom = $_POST['cognom'];
-   $nom = $_POST['nom'];
+   $razonsocial = $_POST['razonsocial'];
+
    $nif = $_POST['nif'];
    $carrer = $_POST['carrer'];
    $codipostal = $_POST['codipostal'];
@@ -359,7 +359,7 @@ function modificarLocatarios($serviciosReferencias) {
    $telefon = $_POST['telefon'];
    $email = $_POST['email'];
 
-   $res = $serviciosReferencias->modificarLocatarios($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email);
+   $res = $serviciosReferencias->modificarLocatarios($id,$razonsocial,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email);
 
    if ($res == true) {
       echo '';
@@ -373,7 +373,7 @@ function eliminarLocatarios($serviciosReferencias) {
    $id = $_POST['id'];
 
    $sqlUsuarios = "select * from dbusuarios where reflocatarios = ".$id;
-   $resUsuarios = $serviciosReferencias->query($sql,0);
+   $resUsuarios = $serviciosReferencias->query($sqlUsuarios,0);
 
    if (mysql_num_rows($resUsuarios)>0) {
       echo 'No se puede eliminar el Locatario ya que tiene datos cargados';
@@ -391,7 +391,24 @@ function eliminarLocatarios($serviciosReferencias) {
 
 function traerDisponibilidad($serviciosReferencias) {
    $any  =  $_POST['any'];
-   $resPeriodos      =  $serviciosReferencias->traerPeriodosDisponibilidad($any);
+
+   $desde = $_POST['desde'];
+   $hasta = $_POST['hasta'];
+
+   if ($desde != '' && $hasta != '') {
+      $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH($desde, $hasta);
+   } else {
+      if ($desde != '' && $hasta == '') {
+         $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH($desde, '2099-01-01');
+      } else {
+         if ($desde == '' && $hasta != '') {
+            $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH(date('Y').'-01-01', $hasta);
+         } else {
+            $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidad($any);
+         }
+      }
+   }
+
    $resUbicaciones   =  $serviciosReferencias->traerUbicaciones();
 
    $ejeX = mysql_num_rows($resUbicaciones);
@@ -469,6 +486,12 @@ function traerDisponibilidad($serviciosReferencias) {
                }
 
                $cad .= "</tr>";
+
+
+               if ($hasta == $fechaAuxYHasta->format('Y-m-d')) {
+                  //die(var_dump($hasta.'---'.$fechaAuxYHasta->format('Y-m-d')));
+                  break 4;
+               }
             }
 
             $cad .= "</table>";
@@ -1119,6 +1142,18 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dblocatarios':
+         $modificar = "modificarLocatarios";
+         $idTabla = "idlocatario";
+
+         $lblCambio	 	= array('codipostal','razonsocial');
+         $lblreemplazo	= array('Cod Postal','Razon Social');
+
+         $cadRef 	= '';
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+      break;
       case 'tbtipoubicacion':
          $modificar = "modificarTipoubicacion";
          $idTabla = "idtipoubicacion";

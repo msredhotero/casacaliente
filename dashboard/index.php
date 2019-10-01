@@ -99,6 +99,8 @@ if ($_SESSION['idroll_sahilices'] == 1) {
  	<link rel="stylesheet" href="../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
  	<link rel="stylesheet" href="../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<link href="../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
+
 
     <style>
         .alert > i{ vertical-align: middle !important; }
@@ -157,7 +159,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
     <!-- #Top Bar -->
     <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], str_replace('..','../dashboard',$resMenu),'../'); ?>
 
-    <section class="content" style="margin-top:-35px;">
+    <section class="content" style="margin-top:-65px;">
 
 		<div class="container-fluid">
 			<!-- Widgets -->
@@ -169,6 +171,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 								<h2 style="color:#fff">
 									PLANING
 								</h2>
+
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
 										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -182,7 +185,35 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 							</div>
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
+									<div class="row" style="margin-top:-15px;">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+			                         <label class="form-label">Entrada</label>
+			                         <div class="input-group">
 
+			                             <span class="input-group-addon">
+			                                 <i class="material-icons">date_range</i>
+			                             </span>
+			                             <div class="form-line">
+												   	<input readonly="readonly" type="text" class="datepicker form-control" id="entrada" name="entrada" required />
+
+			                             </div>
+			                         </div>
+			                     </div>
+
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+			                         <label class="form-label">Sortida</label>
+			                         <div class="input-group">
+
+			                             <span class="input-group-addon">
+			                                 <i class="material-icons">date_range</i>
+			                             </span>
+			                             <div class="form-line">
+												   	<input readonly="readonly" type="text" class="datepicker form-control" id="sortida" name="sortida" required />
+
+			                             </div>
+			                         </div>
+			                     </div>
+									</div>
 									<div class="row contDisponibilidad div2" style="height: 580px; overflow-y: hidden; overflow-y:scroll;">
 									</div>
 							</form>
@@ -249,12 +280,22 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 	 <script src="../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 	 <script src="../js/dragscrollable.js"></script>
 
+	 <script src="../plugins/momentjs/moment.js"></script>
+	 <script src="../js/moment-with-locales.js"></script>
+	 <script src="../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
 
 	<script>
 
 		$(document).ready(function(){
 
-
+			$('.datepicker').bootstrapMaterialDatePicker({
+	        format: 'YYYY-MM-DD',
+	        clearButton: true,
+			  lang : 'ca',
+	        weekStart: 1,
+	        time: false
+	   	});
 
 
 /*
@@ -287,19 +328,19 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 					}
 				});
 */
-	traerDisponibilidad();
+	traerDisponibilidad('','');
 
 	$('.recargar').click(function() {
-		traerDisponibilidad();
+		traerDisponibilidad($('#entrada').val(),$('#sortida').val());
 	});
 
-	function traerDisponibilidad() {
+	function traerDisponibilidad(desde, hasta) {
 		$.ajax({
 			url: '../ajax/ajax.php',
 			type: 'POST',
 			// Form data
 			//datos del formulario
-			data: {accion: 'traerDisponibilidad',any: 2019},
+			data: {accion: 'traerDisponibilidad',any: 2019, desde: desde, hasta: hasta},
 			//mientras enviamos el archivo
 			beforeSend: function(){
 				$('.contDisponibilidad').html('<div align="center"><img src="../imagenes/load13.gif" width="120"></div>');
