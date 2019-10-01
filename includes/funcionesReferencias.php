@@ -213,6 +213,7 @@ return $res;
 				((YEAR(p.desdeperiode) * 365) + (MONTH(p.desdeperiode) * 30) + DAY(p.desdeperiode) >= (YEAR('".$desde."') * 365) + (MONTH('".$desde."') * 30) + DAY('".$desde."')
 	  AND (YEAR(p.finsaperiode) * 365) + (MONTH(p.finsaperiode) * 30) + DAY(p.finsaperiode) <= (YEAR('".$hasta."') * 365) + (MONTH('".$hasta."') * 30) + DAY('".$hasta."'))
 	  OR ('".$hasta."' BETWEEN p.desdeperiode AND p.finsaperiode)
+	  OR ('".$desde."' BETWEEN p.desdeperiode AND p.finsaperiode)
 				order by p.desdeperiode ";
 
 		$res = $this->query($sql,0);
