@@ -83,14 +83,23 @@ switch ($tabla) {
 
 	break;
 	case 'clientes':
-		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerClientes();
+
+		if ($_SESSION['idlocatario_sahilices'] == '') {
+			$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerClientes();
+			$termina = 13;
+		} else {
+			$resAjax = $serviciosReferencias->traerClientesLocatarioajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir, $_SESSION['idlocatario_sahilices']);
+			$res = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
+			$termina = 12;
+		}
+
 		$label = array('btnVer','btnModificar','btnEliminar');
 		$class = array('bg-green','bg-amber','bg-red');
 		$icon = array('Ver','Modificar','Eliminar');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 12;
+
 
 		break;
 	case 'locatarios':
@@ -105,47 +114,85 @@ switch ($tabla) {
 
 		break;
 	case 'tipoubicacion':
-		$resAjax = $serviciosReferencias->traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerTipoubicacion();
+
+		if ($_SESSION['idlocatario_sahilices'] == '') {
+			$resAjax = $serviciosReferencias->traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerTipoubicacion();
+
+			$termina = 2;
+		} else {
+			$resAjax = $serviciosReferencias->traerTipoubicacionLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
+			$res = $serviciosReferencias->traerTipoubicacionPorLocatario($_SESSION['idlocatario_sahilices']);
+			$termina = 1;
+		}
+
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 1;
 
 	break;
 	case 'ubicaciones':
-		$resAjax = $serviciosReferencias->traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerUbicaciones();
+		if ($_SESSION['idlocatario_sahilices'] == '') {
+			$resAjax = $serviciosReferencias->traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerUbicaciones();
+
+			$termina = 6;
+		} else {
+			$resAjax = $serviciosReferencias->traerUbicacionesLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
+			$res = $serviciosReferencias->traerUbicacionesPorLocatario($_SESSION['idlocatario_sahilices']);
+			$termina = 5;
+		}
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 5;
+
 
 	break;
 	case 'tarifes':
-		$resAjax = $serviciosReferencias->traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerTarifas();
+
+		if ($_SESSION['idlocatario_sahilices'] == '') {
+			$resAjax = $serviciosReferencias->traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerTarifas();
+
+			$termina = 5;
+		} else {
+			$resAjax = $serviciosReferencias->traerTarifasLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
+			$res = $serviciosReferencias->traerTarifasPorLocatario($_SESSION['idlocatario_sahilices']);
+			$termina = 4;
+		}
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 4;
+
 
 	break;
 	case 'periodes':
-		$resAjax = $serviciosReferencias->traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerPeriodos();
+
+		if ($_SESSION['idlocatario_sahilices'] == '') {
+			$resAjax = $serviciosReferencias->traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerPeriodos();
+
+			$termina = 5;
+		} else {
+			$resAjax = $serviciosReferencias->traerPeriodosLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
+			$res = $serviciosReferencias->traerPeriodosPorLocatario($_SESSION['idlocatario_sahilices']);
+			$termina = 4;
+		}
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 4;
 
 	break;
 	case 'usuarios':

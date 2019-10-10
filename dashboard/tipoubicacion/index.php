@@ -55,14 +55,19 @@ $modificar = "modificarTipoubicacion";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbtipoubicacion";
 
-$lblCambio	 	= array('tipoubicacion');
-$lblreemplazo	= array('Tipo Ubicacion');
+$lblCambio	 	= array('tipoubicacion','reflocatarios');
+$lblreemplazo	= array('Tipo Ubicacion','Empresas');
+
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar1 = $serviciosReferencias->traerLocatarios();
+} else {
+	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+}
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 
-$cadRef 	= '';
-
-$refdescripcion = array();
-$refCampo 	=  array();
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array('reflocatarios');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -201,12 +206,18 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<thead>
 											<tr>
 												<th>Tipo Ubicacion</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
 												<th>Tipo Ubicacion</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

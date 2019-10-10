@@ -59,10 +59,22 @@ $lblCambio	 	= array('reftipoubicacion','refperiodos');
 $lblreemplazo	= array('Tipo Ubicacion','Periode');
 
 
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar3 = $serviciosReferencias->traerLocatarios();
+} else {
+	$resVar3 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+}
+$cadEmpresas 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
 $resVar1 = $serviciosReferencias->traerTipoubicacion();
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
-$resVar2 = $serviciosReferencias->traerPeriodos();
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar2 = $serviciosReferencias->traerPeriodos();
+} else {
+	$resVar2 = $serviciosReferencias->traerPeriodosPorLocatario($_SESSION['idlocatario_sahilices']);
+}
+
 $cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(1,2,3),' - ');
 
 $cadAny = '<option value="'.date('Y').'">'.date('Y').'</option><option value="'.(date('Y') + 1).'">'.(date('Y') + 1).'</option><option value="'.(date('Y') - 1).'">'.(date('Y') - 1).'</option><option value="'.(date('Y') - 2).'">'.(date('Y') - 2).'</option>';
@@ -202,6 +214,17 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<div class="form-line">
 													<select type="text" class="form-control show-tick" id="any" name="any" >
 														<?php echo $cadAny; ?>
+													</select>
+
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label">Seleccione una Empresa</label>
+											<div class="form-group">
+												<div class="form-line">
+													<select type="text" class="form-control show-tick" id="reflocatarios" name="reflocatarios" >
+														<?php echo $cadEmpresas; ?>
 													</select>
 
 												</div>
@@ -436,19 +459,23 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		$('#activo').prop('checked',true);
 
-		armarTablaTarifas($('#any').val());
+		armarTablaTarifas($('#any').val(),$('#reflocatarios').val());
 
 		$('#any').change(function() {
-			armarTablaTarifas($(this).val());
+			armarTablaTarifas($(this).val(),$('#reflocatarios').val());
 		});
 
-		function armarTablaTarifas(any) {
+		$('#reflocatarios').change(function() {
+			armarTablaTarifas($('#any').val(),$(this).val());
+		});
+
+		function armarTablaTarifas(any, reflocatarios) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'armarTablaTarifas',any: any},
+				data: {accion: 'armarTablaTarifas',any: any, reflocatarios: reflocatarios},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.tablaTarifas').html('');
@@ -528,7 +555,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
+						armarTablaTarifas($('#any').val(),$('#reflocatarios').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -662,7 +689,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$('#lgmModificar').modal('hide');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
+						armarTablaTarifas($('#any').val(),$('#reflocatarios').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -718,7 +745,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$('#lgmModificarTarifa').modal('hide');
 						table.ajax.reload();
-						armarTablaTarifas($('#any').val());
+						armarTablaTarifas($('#any').val(),$('#reflocatarios').val());
 					} else {
 						swal({
 								title: "Respuesta",

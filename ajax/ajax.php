@@ -1001,9 +1001,11 @@ function eliminarLloguers($serviciosReferencias) {
 
 function armarTablaTarifas($serviciosReferencias) {
    $any = $_POST['any'];
+   $reflocatario = $_POST['reflocatarios'];
 
-   $resPeriodos = $serviciosReferencias->traerPeriodosPorOrdenPorAny($any);
-   $resTipo =     $serviciosReferencias->traerTipoubicacion();
+
+   $resPeriodos = $serviciosReferencias->traerPeriodosPorOrdenPorAny($any,$reflocatario);
+   $resTipo =     $serviciosReferencias->traerTipoubicacionPorLocatario($reflocatario);
 
 
    $cad = "<table class='table table-striped' id='tblTarifas'>
@@ -1019,7 +1021,7 @@ function armarTablaTarifas($serviciosReferencias) {
       $cad .= "<tr>";
       $cad .= "<td>".$rowX['periodo']."</td>";
       $cad .= "<td>".$rowX['desdeperiode'].' - '.$rowX['finsaperiode']."</td>";
-      $resTipoAux =    $serviciosReferencias->traerTipoubicacion();
+      $resTipoAux =    $serviciosReferencias->traerTipoubicacionPorLocatario($reflocatario);
       while ($rowY = mysql_fetch_array($resTipoAux)) {
          $resTarifa = $serviciosReferencias->traerTarifasPorPeriodoTipoUbicacion($rowX[0],$rowY[0]);
 
@@ -1054,8 +1056,9 @@ function insertarClientes($serviciosReferencias) {
    $comentaris = $_POST['comentaris'];
    $telefon2 = $_POST['telefon2'];
    $email2 = $_POST['email2'];
+   $reflocatarios = $_POST['reflocatarios'];
 
-   $res = $serviciosReferencias->insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2);
+   $res = $serviciosReferencias->insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2,$reflocatarios);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1078,8 +1081,9 @@ function modificarClientes($serviciosReferencias) {
    $comentaris = $_POST['comentaris'];
    $telefon2 = $_POST['telefon2'];
    $email2 = $_POST['email2'];
+   $reflocatarios = $_POST['reflocatarios'];
 
-   $res = $serviciosReferencias->modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2);
+   $res = $serviciosReferencias->modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2,$reflocatarios);
 
    if ($res == true) {
       echo '';
@@ -1110,14 +1114,14 @@ function frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuari
 
          $idTabla = "idcliente";
 
-         $lblCambio	 	= array('codipostal','telefon2','email2');
-         $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2');
+         $lblCambio	 	= array('codipostal','telefon2','email2','reflocatarios');
+         $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2','Empresa');
 
+         $resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+         $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
-         $cadRef 	= '';
-
-         $refdescripcion = array();
-         $refCampo 	=  array();
+         $refdescripcion = array(0=>$cadRef);
+         $refCampo 	=  array('reflocatarios');
 
 
       break;
@@ -1155,31 +1159,48 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $refCampo 	=  array();
       break;
       case 'tbtipoubicacion':
+
+         $resultado = $serviciosReferencias->traerTipoubicacionPorId($id);
+
          $modificar = "modificarTipoubicacion";
          $idTabla = "idtipoubicacion";
 
-         $lblCambio	 	= array();
-         $lblreemplazo	= array();
+         $lblCambio	 	= array('reflocatarios');
+         $lblreemplazo	= array('Empresas');
 
-         $cadRef 	= '';
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+         	$resVar1 = $serviciosReferencias->traerLocatarios();
+         } else {
+         	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+         }
+         $cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reflocatarios'));
 
-         $refdescripcion = array();
-         $refCampo 	=  array();
+
+         $refdescripcion = array(0=>$cadRef);
+         $refCampo 	=  array('reflocatarios');
       break;
 
       case 'dbclientes':
 
+         $resultado = $serviciosReferencias->traerClientesPorId($id);
+
          $modificar = "modificarClientes";
          $idTabla = "idcliente";
 
-         $lblCambio	 	= array('codipostal','telefon2','email2');
-         $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2');
+         $lblCambio	 	= array('codipostal','telefon2','email2','reflocatarios');
+         $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2','Empresas');
 
 
-         $cadRef 	= '';
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+         	$resVar1 = $serviciosReferencias->traerLocatarios();
+         } else {
+         	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+         }
+         $cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reflocatarios'));
 
-         $refdescripcion = array();
-         $refCampo 	=  array();
+
+         $refdescripcion = array(0=>$cadRef);
+         $refCampo 	=  array('reflocatarios');
 
 
       break;
@@ -1214,7 +1235,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $lblCambio	 	= array('reftipoubicacion','codapartament');
          $lblreemplazo	= array('Tipo Ubicaciones','Cod. Apart.');
 
-         $resVar1 = $serviciosReferencias->traerTipoubicacion();
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+            $resVar1 = $serviciosReferencias->traerTipoubicacion();
+         } else {
+            $resVar1 = $serviciosReferencias->traerTipoubicacionPorLocatario($_SESSION['idlocatario_sahilices']);
+         }
+
          $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
 
          $refdescripcion = array(0 => $cadRef1);
@@ -1244,11 +1270,19 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarPeriodos";
          $idTabla = "idperiodo";
 
-         $lblCambio	 	= array('desdeperiode','finsaperiode');
-         $lblreemplazo	= array('Perio. Desde','Perio. Finsa');
+         $lblCambio	 	= array('desdeperiode','finsaperiode','reflocatarios');
+         $lblreemplazo	= array('Perio. Desde','Perio. Finsa','Empresas');
 
-         $refdescripcion = array();
-         $refCampo 	=  array();
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+         	$resVar1 = $serviciosReferencias->traerLocatarios();
+         } else {
+         	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+         }
+         $cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reflocatarios'));
+
+
+         $refdescripcion = array(0=>$cadRef);
+         $refCampo 	=  array('reflocatarios');
       break;
       case 'dblloguers':
          $resultado = $serviciosReferencias->traerLloguersPorId($id);
@@ -1359,38 +1393,48 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
 
 
 function insertarPeriodos($serviciosReferencias) {
-$periodo = $_POST['periodo'];
-$desdeperiode = $_POST['desdeperiode'];
-$finsaperiode = $_POST['finsaperiode'];
-$any = $_POST['any'];
-$res = $serviciosReferencias->insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Hubo un error al insertar datos';
+   $periodo = $_POST['periodo'];
+   $desdeperiode = $_POST['desdeperiode'];
+   $finsaperiode = $_POST['finsaperiode'];
+   $any = $_POST['any'];
+   $reflocatarios = $_POST['reflocatarios'];
+
+   $res = $serviciosReferencias->insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode,$reflocatarios);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
 }
-}
+
 function modificarPeriodos($serviciosReferencias) {
-$id = $_POST['id'];
-$periodo = $_POST['periodo'];
-$desdeperiode = $_POST['desdeperiode'];
-$finsaperiode = $_POST['finsaperiode'];
-$any = $_POST['any'];
-$res = $serviciosReferencias->modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode);
-if ($res == true) {
-echo '';
-} else {
-echo 'Hubo un error al modificar datos';
+   $id = $_POST['id'];
+   $periodo = $_POST['periodo'];
+   $desdeperiode = $_POST['desdeperiode'];
+   $finsaperiode = $_POST['finsaperiode'];
+   $any = $_POST['any'];
+   $reflocatarios = $_POST['reflocatarios'];
+
+   $res = $serviciosReferencias->modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode,$reflocatarios);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
 }
-}
+
 function eliminarPeriodos($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarPeriodos($id);
-if ($res == true) {
-echo '';
-} else {
-echo 'Hubo un error al modificar datos';
-}
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarPeriodos($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
 }
 
    function insertarTarifas($serviciosReferencias) {
@@ -1525,8 +1569,9 @@ echo $res;
 
    function insertarTipoubicacion($serviciosReferencias) {
       $tipoubicacion = $_POST['tipoubicacion'];
+      $reflocatarios = $_POST['reflocatarios'];
 
-      $res = $serviciosReferencias->insertarTipoubicacion($tipoubicacion);
+      $res = $serviciosReferencias->insertarTipoubicacion($tipoubicacion, $reflocatarios);
 
       if ((integer)$res > 0) {
          echo '';
@@ -1538,8 +1583,9 @@ echo $res;
    function modificarTipoubicacion($serviciosReferencias) {
       $id = $_POST['id'];
       $tipoubicacion = $_POST['tipoubicacion'];
+      $reflocatarios = $_POST['reflocatarios'];
 
-      $res = $serviciosReferencias->modificarTipoubicacion($id,$tipoubicacion);
+      $res = $serviciosReferencias->modificarTipoubicacion($id,$tipoubicacion,$reflocatarios);
 
       if ($res == true) {
          echo '';

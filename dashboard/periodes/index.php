@@ -55,12 +55,20 @@ $modificar = "modificarPeriodos";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperiodos";
 
-$lblCambio	 	= array('desdeperiode','finsaperiode');
-$lblreemplazo	= array('Perio. Desde','Perio. Finsa');
+$lblCambio	 	= array('desdeperiode','finsaperiode','reflocatarios');
+$lblreemplazo	= array('Perio. Desde','Perio. Finsa','Empresas');
 
 
-$refdescripcion = array();
-$refCampo 	=  array();
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar1 = $serviciosReferencias->traerLocatarios();
+} else {
+	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+}
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+
+
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array('reflocatarios');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -202,6 +210,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Ubicacion</th>
 												<th>Desde</th>
 												<th>Finsa</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -211,6 +222,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Ubicacion</th>
 												<th>Desde</th>
 												<th>Finsa</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -310,10 +324,21 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script src="../../js/pages/examples/sign-in.js"></script>
 
+<script src="../../plugins/momentjs/moment.js"></script>
+<script src="../../js/moment-with-locales.js"></script>
+
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="../../js/datepicker-es.js"></script>
+
+<script src="../../js/dateFormat.js"></script>
+<script src="../../js/jquery.dateFormat.js"></script>
+
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 
 <script>
@@ -323,6 +348,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$('#finsaperiode').val('<?php echo date('Y-m-d'); ?>');
 
 		var $demoMaskedInput = $('.demo-masked-input');
+
+		$('.datepicker').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'ca',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
 
 		$('#desdeperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 		$('#finsaperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
@@ -378,6 +411,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+						$('.datepicker').bootstrapMaterialDatePicker({
+							format: 'YYYY-MM-DD',
+							lang : 'ca',
+							clearButton: true,
+							weekStart: 1,
+							time: false
+						});
 					} else {
 						swal("Error!", data, "warning");
 

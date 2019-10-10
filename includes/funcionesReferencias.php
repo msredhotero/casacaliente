@@ -774,18 +774,18 @@ return $res;
 
 	/* PARA Periodos */
 
-	function insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode) {
-	$sql = "insert into dbperiodos(idperiodo,periodo,any,desdeperiode,finsaperiode)
-	values ('','".($periodo)."',".$any.",'".($desdeperiode)."','".($finsaperiode)."')";
+	function insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode,$reflocatarios) {
+	$sql = "insert into dbperiodos(idperiodo,periodo,any,desdeperiode,finsaperiode,reflocatarios)
+	values ('','".($periodo)."',".$any.",'".($desdeperiode)."','".($finsaperiode)."',".$reflocatarios.")";
 	$res = $this->query($sql,1);
 	return $res;
 	}
 
 
-	function modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode) {
+	function modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode,$reflocatarios) {
 	$sql = "update dbperiodos
 	set
-	periodo = '".($periodo)."',any = ".$any.",desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."'
+	periodo = '".($periodo)."',any = ".$any.",desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."', reflocatarios = ".$reflocatarios."
 	where idperiodo =".$id;
 	$res = $this->query($sql,0);
 	return $res;
@@ -797,6 +797,35 @@ return $res;
 	$res = $this->query($sql,0);
 	return $res;
 	}
+
+
+	function traerPeriodosLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir, $reflocatario) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and p.periodo like '%".$busqueda."%' or p.any like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+		p.idperiodo,
+		p.periodo,
+		p.any,
+		p.desdeperiode,
+		p.finsaperiode,
+		l.razonsocial
+		from dbperiodos p
+		inner join dblocatarios l ON l.idlocatario = p.reflocatarios
+		where l.idlocatario = ".$reflocatario." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
 
 	function traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
@@ -828,14 +857,32 @@ return $res;
 	p.periodo,
 	p.any,
 	p.desdeperiode,
-	p.finsaperiode
+	p.finsaperiode,
+	p.reflocatarios
 	from dbperiodos p
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
-	function traerPeriodosPorOrdenPorAny($any) {
+
+	function traerPeriodosPorLocatario($reflocatario) {
+		$sql = "select
+		p.idperiodo,
+		p.periodo,
+		p.any,
+		p.desdeperiode,
+		p.finsaperiode,
+		l.razonsocial
+		from dbperiodos p
+		inner join dblocatarios l ON l.idlocatario = p.reflocatarios
+		where l.idlocatario = ".$reflocatario."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPeriodosPorOrdenPorAny($any, $reflocatario) {
 		$sql = "select
 		p.idperiodo,
 		p.periodo,
@@ -843,7 +890,8 @@ return $res;
 		p.desdeperiode,
 		p.finsaperiode
 		from dbperiodos p
-		where p.any = ".$any."
+		inner join dblocatarios l ON l.idlocatario = p.reflocatarios
+		where p.any = ".$any." and l.idlocatario = ".$reflocatario."
 		order by 2,4,5,1";
 		$res = $this->query($sql,0);
 		return $res;
@@ -851,7 +899,7 @@ return $res;
 
 
 	function traerPeriodosPorId($id) {
-	$sql = "select idperiodo,periodo,any,desdeperiode,finsaperiode from dbperiodos where idperiodo =".$id;
+	$sql = "select idperiodo,periodo,any,desdeperiode,finsaperiode,reflocatarios from dbperiodos where idperiodo =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
@@ -883,8 +931,10 @@ function traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir) {
    c.email,
    c.comentaris,
    c.telefon2,
-   c.email2
+   c.email2,
+	l.razonsocial
    from dbclientes c
+	inner join dblocatarios l on l.idlocatario = c.reflocatarios
 	".$where."
 	ORDER BY ".$colSort." ".$colSortDir."
 	limit ".$start.",".$length;
@@ -893,18 +943,53 @@ function traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 	return $res;
 }
 
-function insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
-$sql = "insert into dbclientes(idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2)
-values ('','".$cognom."','".$nom."','".$nif."','".$carrer."','".$codipostal."','".$ciutat."','".$pais."','".$telefon."','".$email."','".$comentaris."','".$telefon2."','".$email2."')";
+
+function traerClientesLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir, $reflocatario) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " and c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or c.pais like '%".$busqueda."%' or c.telefon like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.comentaris like '%".$busqueda."%' or c.telefon2 like '%".$busqueda."%' or c.email2 like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+   c.idcliente,
+   c.cognom,
+   c.nom,
+   c.nif,
+   c.carrer,
+   c.codipostal,
+   c.ciutat,
+   c.pais,
+   c.telefon,
+   c.email,
+   c.comentaris,
+   c.telefon2,
+   c.email2,
+	l.razonsocial
+   from dbclientes c
+	inner join dblocatarios l on l.idlocatario = c.reflocatarios
+	where l.idlocatario = ".$reflocatario." ".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	$res = $this->query($sql,0);
+	return $res;
+}
+
+function insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2,$reflocatarios) {
+$sql = "insert into dbclientes(idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2,reflocatarios)
+values ('','".$cognom."','".$nom."','".$nif."','".$carrer."','".$codipostal."','".$ciutat."','".$pais."','".$telefon."','".$email."','".$comentaris."','".$telefon2."','".$email2."',".$reflocatarios.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
+function modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2, $reflocatarios) {
 $sql = "update dbclientes
 set
-cognom = '".$cognom."',nom = '".$nom."',nif = '".$nif."',carrer = '".$carrer."',codipostal = '".$codipostal."',ciutat = '".$ciutat."',pais = '".$pais."',telefon = '".$telefon."',email = '".$email."',comentaris = '".$comentaris."',telefon2 = '".$telefon2."',email2 = '".$email2."'
+cognom = '".$cognom."',nom = '".$nom."',nif = '".$nif."',carrer = '".$carrer."',codipostal = '".$codipostal."',ciutat = '".$ciutat."',pais = '".$pais."',telefon = '".$telefon."',email = '".$email."',comentaris = '".$comentaris."',telefon2 = '".$telefon2."',email2 = '".$email2."', reflocatarios = ".$reflocatarios."
 where idcliente =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -934,6 +1019,31 @@ c.comentaris,
 c.telefon2,
 c.email2
 from dbclientes c
+inner join dblocatarios l on c.reflocatarios = l.idlocatario
+order by trim(c.cognom),trim(c.nom)";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerClientesLocatario($reflocatario) {
+$sql = "select
+c.idcliente,
+c.cognom,
+c.nom,
+c.nif,
+c.carrer,
+c.codipostal,
+c.ciutat,
+c.pais,
+c.telefon,
+c.email,
+c.comentaris,
+c.telefon2,
+c.email2
+from dbclientes c
+inner join dblocatarios l on c.reflocatarios = l.idlocatario
+where l.idlocatario = ".$reflocatario."
 order by trim(c.cognom),trim(c.nom)";
 $res = $this->query($sql,0);
 return $res;
@@ -941,7 +1051,7 @@ return $res;
 
 
 function traerClientesPorId($id) {
-$sql = "select idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2 from dbclientes where idcliente =".$id;
+$sql = "select idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2,reflocatarios from dbclientes where idcliente =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
@@ -987,6 +1097,40 @@ return $res;
 }
 
 
+
+function traerTarifasLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$reflocatario) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " and t.tarifa like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%' or l.razonsocial like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+	t.idtarifa,
+	t.tarifa,
+	tip.tipoubicacion,
+	p.desdeperiode,
+	p.finsaperiode,
+	t.reftipoubicacion,
+	t.refperiodos,
+	l.razonsocial
+	from dbtarifas t
+	inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
+	inner join dbperiodos p ON p.idperiodo = t.refperiodos
+	inner join dblocatarios l ON l.idlocatario = p.reflocatarios
+	where l.idlocatario = ".$reflocatario." ".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+	return $res;
+}
+
+
+
 function traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 	$where = '';
@@ -1025,6 +1169,24 @@ t.reftipoubicacion,
 t.refperiodos
 from dbtarifas t
 inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTarifasPorLocatario($reflocatario) {
+$sql = "select
+t.idtarifa,
+t.tarifa,
+t.reftipoubicacion,
+t.refperiodos,
+l.razonsocial
+from dbtarifas t
+inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
+inner join dbperiodos p ON p.idperiodo = t.refperiodos
+inner join dblocatarios l ON l.idlocatario = p.reflocatarios
+where l.idlocatario = ".$reflocatario."
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -1101,7 +1263,56 @@ function traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 	return $res;
 }
 
+
+function traerUbicacionesLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$reflocatario) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " and u.dormitorio like '%".$busqueda."%' or u.color like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or u.codapartament like '%".$busqueda."%' or u.hutg like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+	u.idubicacion,
+	u.dormitorio,
+	u.color,
+	tip.tipoubicacion,
+	u.codapartament,
+	u.hutg,
+	l.razonsocial,
+	u.reftipoubicacion
+	from dbubicaciones u
+	inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+	inner join dblocatarios l ON l.idlocatario = tip.reflocatarios
+	where l.idlocatario = ".$reflocatario." ".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+	return $res;
+}
+
 function traerUbicaciones() {
+$sql = "select
+u.idubicacion,
+u.dormitorio,
+u.color,
+u.reftipoubicacion,
+u.codapartament,
+u.hutg,
+l.razonsocial
+from dbubicaciones u
+inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+inner join dblocatarios l ON l.idlocatario = tip.reflocatarios
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerUbicacionesPorLocatario($reflocatario) {
 $sql = "select
 u.idubicacion,
 u.dormitorio,
@@ -1111,6 +1322,8 @@ u.codapartament,
 u.hutg
 from dbubicaciones u
 inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+inner join dblocatarios l ON l.idlocatario = tip.reflocatarios
+where l.idlocatario = ".$reflocatario."
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -1177,18 +1390,19 @@ return $res;
 
 /* PARA Tipoubicacion */
 
-function insertarTipoubicacion($tipoubicacion) {
-$sql = "insert into tbtipoubicacion(idtipoubicacion,tipoubicacion)
-values ('','".$tipoubicacion."')";
+function insertarTipoubicacion($tipoubicacion, $reflocatarios) {
+$sql = "insert into tbtipoubicacion(idtipoubicacion,tipoubicacion, reflocatarios)
+values ('','".$tipoubicacion."',".$reflocatarios.")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarTipoubicacion($id,$tipoubicacion) {
+function modificarTipoubicacion($id,$tipoubicacion,$reflocatarios) {
 $sql = "update tbtipoubicacion
 set
-tipoubicacion = '".$tipoubicacion."'
+tipoubicacion = '".$tipoubicacion."',
+reflocatarios = ".$reflocatarios."
 where idtipoubicacion =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -1213,9 +1427,35 @@ function traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir)
 
 	$sql = "select
 	t.idtipoubicacion,
-	t.tipoubicacion
+	t.tipoubicacion,
+	l.razonsocial
 	from tbtipoubicacion t
+	inner join dblocatarios l on t.reflocatarios = l.idlocatario
 	".$where."
+	ORDER BY ".$colSort." ".$colSortDir."
+	limit ".$start.",".$length;
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+	return $res;
+}
+
+function traerTipoubicacionLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir, $reflocatario) {
+
+	$where = '';
+
+	$busqueda = str_replace("'","",$busqueda);
+	if ($busqueda != '') {
+		$where = " and t.tipoubicacion like '%".$busqueda."%'";
+	}
+
+	$sql = "select
+	t.idtipoubicacion,
+	t.tipoubicacion,
+	l.razonsocial
+	from tbtipoubicacion t
+	inner join dblocatarios l on t.reflocatarios = l.idlocatario
+	where l.idlocatario = ".$reflocatario." ".$where."
 	ORDER BY ".$colSort." ".$colSortDir."
 	limit ".$start.",".$length;
 
@@ -1227,8 +1467,21 @@ function traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir)
 function traerTipoubicacion() {
 $sql = "select
 t.idtipoubicacion,
-t.tipoubicacion
+t.tipoubicacion,
+t.reflocatarios
 from tbtipoubicacion t
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTipoubicacionPorLocatario($reflocatario) {
+$sql = "select
+t.idtipoubicacion,
+t.tipoubicacion,
+t.reflocatarios
+from tbtipoubicacion t
+where t.reflocatarios = ".$reflocatario."
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -1236,7 +1489,7 @@ return $res;
 
 
 function traerTipoubicacionPorId($id) {
-$sql = "select idtipoubicacion,tipoubicacion from tbtipoubicacion where idtipoubicacion =".$id;
+$sql = "select idtipoubicacion,tipoubicacion,reflocatarios from tbtipoubicacion where idtipoubicacion =".$id;
 $res = $this->query($sql,0);
 return $res;
 }

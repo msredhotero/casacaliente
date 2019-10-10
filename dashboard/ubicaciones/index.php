@@ -59,7 +59,12 @@ $lblCambio	 	= array('reftipoubicacion','codapartament');
 $lblreemplazo	= array('Tipo Ubicacion','Cod. Apart.');
 
 
-$resVar1 = $serviciosReferencias->traerTipoubicacion();
+
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar1 = $serviciosReferencias->traerTipoubicacion();
+} else {
+	$resVar1 = $serviciosReferencias->traerTipoubicacionPorLocatario($_SESSION['idlocatario_sahilices']);
+}
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 $refdescripcion = array(0 => $cadRef1);
@@ -206,6 +211,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Ubicacion</th>
 												<th>Cod. Apart.</th>
 												<th>HUTG</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -216,6 +224,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Ubicacion</th>
 												<th>Cod. Apart.</th>
 												<th>HUTG</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
