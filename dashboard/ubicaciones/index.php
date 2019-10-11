@@ -62,10 +62,12 @@ $lblreemplazo	= array('Tipo Ubicacion','Cod. Apart.');
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar1 = $serviciosReferencias->traerTipoubicacion();
+	$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1,3),' - Empresas: ');
 } else {
 	$resVar1 = $serviciosReferencias->traerTipoubicacionPorLocatario($_SESSION['idlocatario_sahilices']);
+	$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 }
-$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+
 
 $refdescripcion = array(0 => $cadRef1);
 $refCampo 	=  array('reftipoubicacion');

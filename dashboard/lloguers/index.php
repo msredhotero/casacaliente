@@ -60,12 +60,22 @@ $tabla 			= "dblloguers";
 $lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa','refestados');
 $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa','Estat');
 
-
-$resVar1 = $serviciosReferencias->traerClientes();
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar1 = $serviciosReferencias->traerClientes();
+} else {
+	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
+}
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
 
-$resVar2 = $serviciosReferencias->traerUbicaciones();
-$cadRef2 	= $serviciosFunciones->devolverSelectBox($resVar2,array(4,1,2),' - ');
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar2 = $serviciosReferencias->traerUbicaciones();
+	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2,6),array(' - Dor: ',' - Color: ',' - Empresa: ',''),'');
+} else {
+	$resVar2 = $serviciosReferencias->traerUbicacionesPorLocatario($_SESSION['idlocatario_sahilices']);
+	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2),array(' - Dor: ',' - Color: ',''),'');
+}
+
+
 
 $resVar3 = $serviciosReferencias->traerEstados();
 $cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
@@ -80,14 +90,19 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tablaCliente 			= "dbclientes";
 
-$lblCambioCliente	 	= array('codipostal','telefon2','email2');
-$lblreemplazoCliente	= array('Cod Postal','Tel. 2','Email 2');
+$lblCambioCliente	 	= array('codipostal','telefon2','email2','reflocatarios');
+$lblreemplazoCliente	= array('Cod Postal','Tel. 2','Email 2','Empresas');
 
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVarCliente = $serviciosReferencias->traerLocatarios();
+} else {
+	$resVarCliente = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+}
+$cadRefCliente 	= $serviciosFunciones->devolverSelectBox($resVarCliente,array(1),'');
 
-$cadRefCliente 	= '';
+$refdescripcionCliente = array(0=>$cadRefCliente);
+$refCampoCliente 	=  array('reflocatarios');
 
-$refdescripcionCliente = array();
-$refCampoCliente 	=  array();
 
 $frmCliente 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tablaCliente,$lblCambioCliente,$lblreemplazoCliente,$refdescripcionCliente,$refCampoCliente);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -136,6 +151,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
@@ -261,6 +277,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<th>Preu</th>
 												<th>Estat</th>
 												<th>Nro Lloguer</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Accions</th>
 											</tr>
 										</thead>
@@ -274,6 +293,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<th>Preu</th>
 												<th>Estat</th>
 												<th>Nro Lloguer</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Accions</th>
 											</tr>
 										</tfoot>
@@ -346,13 +368,13 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                         <label class="form-label">Entrada</label>
 	                         <div class="input-group">
 
-	                             <span class="input-group-addon">
-	                                 <i class="material-icons">date_range</i>
-	                             </span>
+										 <span class="input-group-addon">
+											  <i class="material-icons">date_range</i>
+										 </span>
 	                             <div class="form-line">
 										   	<input readonly="readonly" type="text" class="datepicker form-control" id="entrada" name="entrada" required />
-
 	                             </div>
+
 	                         </div>
 	                     </div>
 
@@ -955,6 +977,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 <script src="../../js/dateFormat.js"></script>
 <script src="../../js/jquery.dateFormat.js"></script>
 
+
 <script>
 	var indice = 1;
 	$(document).ready(function(){
@@ -1388,7 +1411,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				//una vez finalizado correctamente
 				success: function(data){
 
-					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.taxa));
+					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.tasapersona));
 					$('#faltapagarcliente').val(data.datos.falta);
 
 					$('#fechapagocliente2').datepicker({ dateFormat: 'dd/mm/yy' });
@@ -1433,9 +1456,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						}
 
 					} else {
-						$('#valorpagocliente1').val(data.datos.tarifa / 2);
-						$('#valorpagocliente2').val(data.datos.tarifa / 2);
-						$('#pagotaxacliente').val(data.datos.taxapersona + data.datos.taxaturistica);
+						$('#valorpagocliente1').val((data.datos.taxapersona + data.datos.tarifa) / 2);
+						$('#valorpagocliente2').val((data.datos.taxapersona + data.datos.tarifa) / 2);
+						$('#pagotaxacliente').val(data.datos.taxaturistica);
 						$( "#fechapagocliente2" ).val(formato(data.datos.fechasegundopago));
 						$( "#cargarpago1" ).val(0);
 						$( "#cargarpago2" ).val(0);
@@ -1550,6 +1573,12 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+						$('.show-tick').selectpicker({
+							liveSearch: true
+						});
+						$('.show-tick').selectpicker('refresh');
+
+
 						$('.datepicker').bootstrapMaterialDatePicker({
 				        format: 'DD/MM/YYYY',
 						  lang : 'ca',
@@ -2205,6 +2234,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 	});
 </script>
+
 
 </body>
 <?php } ?>

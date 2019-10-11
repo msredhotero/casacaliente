@@ -195,7 +195,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
 
-								<div class="row">
+								<div class="row hidden">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
@@ -248,6 +248,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Ubicacion</th>
 												<th>Desde</th>
 												<th>Finsa</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -257,6 +260,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Ubicacion</th>
 												<th>Desde</th>
 												<th>Finsa</th>
+												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+												<th>Empresa</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

@@ -72,14 +72,22 @@ switch ($tabla) {
 			$colSortDir = 'desc';
 		}
 
-		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerLloguers();
+		if ($_SESSION['idlocatario_sahilices'] == '') {
+			$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerLloguers();
+			$termina = 9;
+		} else {
+			$resAjax = $serviciosReferencias->traerLloguersLocatarioajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
+			$res = $serviciosReferencias->traerLloguersPorLocatario($_SESSION['idlocatario_sahilices']);
+			$termina = 8;
+		}
+
+
 		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos','btnAgregarPersonas');
 		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown','bg-teal');
 		$icon = array('Client','Modificar','Eliminar','Pagos','Contrats','Persones');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 8;
 
 	break;
 	case 'clientes':

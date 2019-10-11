@@ -394,22 +394,23 @@ function traerDisponibilidad($serviciosReferencias) {
 
    $desde = $_POST['desde'];
    $hasta = $_POST['hasta'];
+   $reflocatario = $_POST['reflocatario'];
 
    if ($desde != '' && $hasta != '') {
-      $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH($desde, $hasta);
+      $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH($desde, $hasta, $reflocatario);
    } else {
       if ($desde != '' && $hasta == '') {
-         $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH($desde, '2099-01-01');
+         $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH($desde, '2099-01-01', $reflocatario);
       } else {
          if ($desde == '' && $hasta != '') {
-            $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH(date('Y').'-01-01', $hasta);
+            $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidadDH(date('Y').'-01-01', $hasta, $reflocatario);
          } else {
-            $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidad($any);
+            $resPeriodos  =  $serviciosReferencias->traerPeriodosDisponibilidad($any, $reflocatario);
          }
       }
    }
 
-   $resUbicaciones   =  $serviciosReferencias->traerUbicaciones();
+   $resUbicaciones   =  $serviciosReferencias->traerUbicacionesPorLocatario($reflocatario);
 
    $ejeX = mysql_num_rows($resUbicaciones);
 
@@ -469,7 +470,7 @@ function traerDisponibilidad($serviciosReferencias) {
                //$fechaAuxYDesde = new DateTime($fechaAuxYDesde);
                $fechaAuxYHasta->add(new DateInterval('P'.$d.'D'));
 
-               $resAlquiler = $serviciosReferencias->buscarAlquilerPorFechaUbicacionPorDia($fechaAuxYHasta->format('Y-m-d'), mysql_result($resUbicaciones,$k,0));
+               $resAlquiler = $serviciosReferencias->buscarAlquilerPorFechaUbicacionPorDia($fechaAuxYHasta->format('Y-m-d'), mysql_result($resUbicaciones,$k,0), $reflocatario);
                if (mysql_num_rows($resAlquiler)>0) {
                   if (mysql_result($resAlquiler,0,'entrada') == $fechaAuxYHasta->format('Y-m-d')) {
                      $cad .= '<td bgcolor="#00FF00" class="disponibilidadLloguer" id="'.mysql_result($resAlquiler,0,'idlloguer').'"><b>'.$fechaAuxYHasta->format('m-d').'</b></td>';
@@ -799,7 +800,7 @@ function devolverTarifaArray($serviciosReferencias) {
 
    $taxaUnica = 0;
 
-   $taxa = $taxaturisticaAdicional + $totalTaxaPersona;
+   $taxa = $taxaturisticaAdicional;
 
    if (mysql_num_rows($resPagos)>0) {
       $existePago = 1;
@@ -873,7 +874,8 @@ function devolverTarifaArray($serviciosReferencias) {
                      'formapago2' => $formapago2,
                      'taxaunica' => $taxaUnica,
                      'idpago1' => $idPago1,
-                     'idpago2' => $idPago2
+                     'idpago2' => $idPago2,
+                     'tasapersona' => $totalTaxaPersona
                   );
 
    $resV['datos'] = $serviciosReferencias->calcularTarifaArray($refubicaciones,$desdeperiode,$finsaperiode,$taxa=array($totalTaxaPersona,$taxaturisticaAdicional),$total,$falta,$segundopago);
@@ -1112,12 +1114,19 @@ function frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuari
    switch ($tabla) {
       case 'dbclientes':
 
+         $resultado = $serviciosReferencias->traerClientesPorId($id);
+
          $idTabla = "idcliente";
 
          $lblCambio	 	= array('codipostal','telefon2','email2','reflocatarios');
          $lblreemplazo	= array('Cod Postal','Tel. 2','Email 2','Empresa');
 
-         $resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+            $resVar1 = $serviciosReferencias->traerLocatariosPorId(mysql_result($resultado,0,'reflocatarios'));
+         } else {
+            $resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+         }
+
          $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
          $refdescripcion = array(0=>$cadRef);
@@ -1237,11 +1246,13 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          if ($_SESSION['idlocatario_sahilices'] == '') {
             $resVar1 = $serviciosReferencias->traerTipoubicacion();
+            $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,3),' - Empresa: ',mysql_result($resultado,0,'reftipoubicacion'));
          } else {
             $resVar1 = $serviciosReferencias->traerTipoubicacionPorLocatario($_SESSION['idlocatario_sahilices']);
+            $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
          }
 
-         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
+
 
          $refdescripcion = array(0 => $cadRef1);
          $refCampo 	=  array('reftipoubicacion');
@@ -1255,8 +1266,13 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $lblCambio	 	= array('reftipoubicacion','refperiodos');
          $lblreemplazo	= array('Tipo Ubicaciones','Periodes');
 
-         $resVar1 = $serviciosReferencias->traerTipoubicacion();
-         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+            $resVar1 = $serviciosReferencias->traerTipoubicacion();
+            $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,3),' - Empresa: ',mysql_result($resultado,0,'reftipoubicacion'));
+         } else {
+            $resVar1 = $serviciosReferencias->traerTipoubicacionPorLocatario($_SESSION['idlocatario_sahilices']);
+            $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipoubicacion'));
+         }
 
          $resVar2 = $serviciosReferencias->traerPeriodos();
          $cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1,3,4),' - ',mysql_result($resultado,0,'refperiodos'));
@@ -1293,11 +1309,23 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa','refestados');
          $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa','Estat');
 
-         $resVar1 = $serviciosReferencias->traerClientes();
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+         	$resVar1 = $serviciosReferencias->traerClientes();
+         } else {
+         	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
+         }
+
          $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
 
-         $resVar2 = $serviciosReferencias->traerUbicaciones();
-         $cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(4,1,2),' - ',mysql_result($resultado,0,'refubicaciones'));
+
+         if ($_SESSION['idlocatario_sahilices'] == '') {
+         	$resVar2 = $serviciosReferencias->traerUbicaciones();
+         	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2,6),array(' - Dor: ',' - Color: ',' - Empresa: ',''),'');
+         } else {
+         	$resVar2 = $serviciosReferencias->traerUbicacionesPorLocatario($_SESSION['idlocatario_sahilices']);
+         	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2),array(' - Dor: ',' - Color: ',''),'');
+         }
+
 
          $resVar3 = $serviciosReferencias->traerEstados();
          $cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestados'));

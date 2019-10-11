@@ -153,7 +153,7 @@ return $res;
 	/* Fin */
 	/* /* Fin de la Tabla: dblocatarios*/
 
-	function buscarAlquilerPorFechaUbicacionPorDia($fecha, $idubicacion) {
+	function buscarAlquilerPorFechaUbicacionPorDia($fecha, $idubicacion, $reflocatario) {
 		$sql = "SELECT
 				    l.idlloguer, c.nom, c.cognom, c.telefon, est.estado, l.total, l.persset,
 					 est.color, DATE_FORMAT(l.entrada, '%Y-%m-%d') as entrada, DATE_FORMAT(l.sortida, '%Y-%m-%d') as sortida
@@ -163,6 +163,10 @@ return $res;
 				    dbclientes c ON l.refclientes = c.idcliente
 				        INNER JOIN
 				    tbestados est ON est.idestado = l.refestados
+					 	  INNER JOIN
+			   	 dbubicaciones u ON u.idubicacion = l.refubicaciones
+					 	  INNER JOIN
+			  	    tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion and tip.reflocatarios = ".$reflocatario."
 				WHERE
 				    CAST('".$fecha."' AS DATE) BETWEEN l.entrada AND l.sortida
 				    and l.refubicaciones = ".$idubicacion;
@@ -191,12 +195,12 @@ return $res;
 		return $res;
 	}
 
-	function traerPeriodosDisponibilidad($any) {
+	function traerPeriodosDisponibilidad($any,$reflocatarios) {
 		$sql = "SELECT
 				    p.idperiodo,p.periodo, (datediff(p.finsaperiode,p.desdeperiode) / 7) as semanas ,p.desdeperiode
 				FROM
 				    dbperiodos p
-				where p.any = ".$any."
+				where p.any = ".$any." and p.reflocatarios = ".$reflocatarios."
 				order by p.desdeperiode ";
 
 		$res = $this->query($sql,0);
@@ -204,7 +208,7 @@ return $res;
 	}
 
 
-	function traerPeriodosDisponibilidadDH($desde, $hasta) {
+	function traerPeriodosDisponibilidadDH($desde, $hasta, $reflocatarios) {
 		$sql = "SELECT
 				    p.idperiodo,p.periodo, (datediff(p.finsaperiode,p.desdeperiode) / 7) as semanas ,p.desdeperiode
 				FROM
@@ -213,7 +217,7 @@ return $res;
 				((YEAR(p.desdeperiode) * 365) + (MONTH(p.desdeperiode) * 30) + DAY(p.desdeperiode) >= (YEAR('".$desde."') * 365) + (MONTH('".$desde."') * 30) + DAY('".$desde."')
 	  AND (YEAR(p.finsaperiode) * 365) + (MONTH(p.finsaperiode) * 30) + DAY(p.finsaperiode) <= (YEAR('".$hasta."') * 365) + (MONTH('".$hasta."') * 30) + DAY('".$hasta."'))
 	  OR ('".$hasta."' BETWEEN p.desdeperiode AND p.finsaperiode)
-	  OR ('".$desde."' BETWEEN p.desdeperiode AND p.finsaperiode)
+	  OR ('".$desde."' BETWEEN p.desdeperiode AND p.finsaperiode) and p.reflocatarios = ".$reflocatarios."
 				order by p.desdeperiode ";
 
 		$res = $this->query($sql,0);
@@ -643,6 +647,34 @@ return $res;
 	return $res;
 	}
 
+	function traerLloguersPorLocatario($reflocatario) {
+	$sql = "select
+	l.idlloguer,
+	l.refclientes,
+	l.refubicaciones,
+	l.datalloguer,
+	l.entrada,
+	l.sortida,
+	l.total,
+	l.numpertax,
+	l.persset,
+	l.taxa,
+	l.maxtaxa,
+	l.refestados,
+	nrolloguer,
+	lo.razonsocial
+	from dblloguers l
+	inner join dbclientes cli ON cli.idcliente = l.refclientes
+	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
+	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+	inner join tbestados est on est.idestado = l.refestados
+	inner join dblocatarios lo on lo.idlocatario = ti.reflocatarios
+	where l.entrada is not null and lo.idlocatario = ".$reflocatario."
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
 	function traerLloguersPorIdCompleto($id) {
 	$sql = "select
 	l.idlloguer,
@@ -727,6 +759,53 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
+			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%' or lo.razonsocial like '%".$busqueda."%')";
+		}
+
+		$sql = "select
+		l.idlloguer,
+		concat(cli.cognom, ' ', cli.nom, ' - NIF:', cli.nif) as cliente,
+		ti.tipoubicacion,
+		DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
+		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
+		datediff(l.sortida, l.entrada) as dias,
+		l.total,
+		est.estado,
+		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
+		lo.razonsocial
+		from dblloguers l
+		inner join dbclientes cli ON cli.idcliente = l.refclientes
+		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
+		inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
+		inner join tbestados est on est.idestado = l.refestados
+		inner join dblocatarios lo on lo.idlocatario = ti.reflocatarios
+		where (l.entrada is not null and l.sortida is not null) ".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerLloguersLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir, $reflocatario) {
+		$where = '';
+
+		switch ($colSort) {
+			case 4:
+				$colSort = 'l.entrada';
+			break;
+			case 5:
+				$colSort = 'l.sortida';
+			break;
+			default:
+				$colSort = 'l.entrada';
+			break;
+		}
+
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
 			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%')";
 		}
 
@@ -739,13 +818,15 @@ return $res;
 		datediff(l.sortida, l.entrada) as dias,
 		l.total,
 		est.estado,
-		coalesce(nrolloguer,l.idlloguer) as nrolooguer
+		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
+		lo.razonsocial
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes
 		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 		inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
 		inner join tbestados est on est.idestado = l.refestados
-		where (l.entrada is not null and l.sortida is not null) ".$where."
+		inner join dblocatarios lo on lo.idlocatario = ti.reflocatarios
+		where (l.entrada is not null and l.sortida is not null) and lo.idlocatario = ".$reflocatario." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
 
@@ -833,7 +914,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where p.periodo like '%".$busqueda."%' or p.any like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
+			$where = " where p.periodo like '%".$busqueda."%' or p.any like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%' or l.razonsocial like '%".$busqueda."%'";
 		}
 
 		$sql = "select
@@ -841,8 +922,10 @@ return $res;
 		p.periodo,
 		p.any,
 		p.desdeperiode,
-		p.finsaperiode
+		p.finsaperiode,
+		l.razonsocial
 		from dbperiodos p
+		inner join dblocatarios l on l.idlocatario = p.reflocatarios
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
@@ -858,9 +941,11 @@ return $res;
 	p.any,
 	p.desdeperiode,
 	p.finsaperiode,
+	l.razonsocial,
 	p.reflocatarios
 	from dbperiodos p
-	order by 1";
+	inner join dblocatarios l on l.idlocatario = p.reflocatarios
+	order by p.any desc";
 	$res = $this->query($sql,0);
 	return $res;
 	}
@@ -1137,7 +1222,7 @@ function traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 	$busqueda = str_replace("'","",$busqueda);
 	if ($busqueda != '') {
-		$where = " where t.tarifa like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
+		$where = " where t.tarifa like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%' or l.razonsocial like '%".$busqueda."%'";
 	}
 
 	$sql = "select
@@ -1146,11 +1231,13 @@ function traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir) {
 	tip.tipoubicacion,
 	p.desdeperiode,
 	p.finsaperiode,
+	l.razonsocial,
 	t.reftipoubicacion,
 	t.refperiodos
 	from dbtarifas t
 	inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
 	inner join dbperiodos p ON p.idperiodo = t.refperiodos
+	inner join dblocatarios l on l.idlocatario = p.reflocatarios
 	".$where."
 	ORDER BY ".$colSort." ".$colSortDir."
 	limit ".$start.",".$length;
@@ -1241,7 +1328,7 @@ function traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 	$busqueda = str_replace("'","",$busqueda);
 	if ($busqueda != '') {
-		$where = " where u.dormitorio like '%".$busqueda."%' or u.color like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or u.codapartament like '%".$busqueda."%' or u.hutg like '%".$busqueda."%'";
+		$where = " where u.dormitorio like '%".$busqueda."%' or u.color like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or u.codapartament like '%".$busqueda."%' or u.hutg like '%".$busqueda."%' or l.razonsocial like '%".$busqueda."%'";
 	}
 
 	$sql = "select
@@ -1251,9 +1338,11 @@ function traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 	tip.tipoubicacion,
 	u.codapartament,
 	u.hutg,
+	l.razonsocial,
 	u.reftipoubicacion
 	from dbubicaciones u
 	inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+	inner join dblocatarios l on l.idlocatario = tip.reflocatarios
 	".$where."
 	ORDER BY ".$colSort." ".$colSortDir."
 	limit ".$start.",".$length;
@@ -1319,7 +1408,8 @@ u.dormitorio,
 u.color,
 u.reftipoubicacion,
 u.codapartament,
-u.hutg
+u.hutg,
+l.razonsocial
 from dbubicaciones u
 inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
 inner join dblocatarios l ON l.idlocatario = tip.reflocatarios
@@ -1468,8 +1558,10 @@ function traerTipoubicacion() {
 $sql = "select
 t.idtipoubicacion,
 t.tipoubicacion,
-t.reflocatarios
+t.reflocatarios,
+l.razonsocial
 from tbtipoubicacion t
+inner join dblocatarios l on t.reflocatarios = l.idlocatario
 order by 1";
 $res = $this->query($sql,0);
 return $res;

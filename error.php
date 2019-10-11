@@ -11,7 +11,7 @@ session_destroy();
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Logout | RIDERZ</title>
+    <title>Logout | Admin. </title>
     <!-- Favicon-->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -37,11 +37,14 @@ session_destroy();
 
 <body class="login-page">
     <div class="login-box">
-        <div class="logo">
-           <div class="col-md-12">
-             <img src="imagenes/1PNGlogosRIDERZ.png" alt="RIDERZ">
-           </div>
-        </div>
+      <div class="logo">
+          <div class="row">
+             <div class="col-md-12" align="center">
+                <img src="imagenes/error.triangle.png" alt="CASA CALIENTE">
+             </div>
+          </div>
+
+      </div>
         <div class="card">
             <div class="body">
 

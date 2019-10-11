@@ -8,6 +8,24 @@ date_default_timezone_set('Europe/Madrid');
 
 class Servicios {
 
+	function devolverSelectBoxArray($datos, $ar, $delimitador, $titulo) {
+		$cad = '';
+		if ($titulo != '') {
+			$cad		.= '<option value="">'.$titulo.'</option>';
+		}
+
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			$k=0;
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador[$k];
+				$k +=1;
+			}
+			$cad .= '<option value="'.$rowTT[0].'">'.utf8_encode($contenido).'</option>';
+		}
+		return $cad;
+	}
+
 	function devolverSelectBox($datos, $ar, $delimitador) {
 
 		$cad		= '';

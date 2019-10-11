@@ -206,8 +206,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Tarifa</th>
-												<th>Tipo Ubicacion</th>
+												<th>Periodo</th>
+												<th>Any</th>
 												<th>Desde</th>
 												<th>Finsa</th>
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
@@ -218,8 +218,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Tarifa</th>
-												<th>Tipo Ubicacion</th>
+												<th>Periodo</th>
+												<th>Any</th>
 												<th>Desde</th>
 												<th>Finsa</th>
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>

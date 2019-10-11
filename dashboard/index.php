@@ -48,12 +48,12 @@ $insertar = "";
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
-if ($_SESSION['idroll_sahilices'] == 1) {
-
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar1 = $serviciosReferencias->traerLocatarios();
 } else {
-
-
+	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
 }
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 ///////////////////////////              fin                   ////////////////////////
 
@@ -108,7 +108,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 		  .contDisponibilidad table tbody tr td { border: 1px solid #444; padding: 0 !important; width: 60px !important;overflow: auto !important; text-align: center;}
 		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important; text-align: center !important;width: 45px !important; overflow: auto !important;}
 		  .tablaInterna tbody tr td { padding: 0; width: 60px !important; height: 20px; text-align: center;}
-		  .disponibilidadLloguer { cursor: pointer; }
+		  .disponibilidadLloguer { cursor: pointer; margin-top: -30px !important; }
 		  .modal-header-ver {
 				padding:9px 15px;
 				border-bottom:1px solid #eee;
@@ -116,6 +116,9 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 				color: white;
 				font-weight: bold;
         }
+		  #tblPlaning {
+			  width: auto !important;
+		  }
 
     </style>
 
@@ -186,7 +189,19 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
 									<div class="row" style="margin-top:-15px;">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
+			                         <label class="form-label">Empresa</label>
+			                         <div class="input-group">
+			                             <div class="form-line">
+												   	<select class="form-control" id="reflocatarios" name="reflocatarios" required />
+														<?php echo $cadRef; ?>
+														</select>
+
+			                             </div>
+			                         </div>
+			                     </div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
 			                         <label class="form-label">Entrada</label>
 			                         <div class="input-group">
 
@@ -200,7 +215,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 			                         </div>
 			                     </div>
 
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display:block">
 			                         <label class="form-label">Sortida</label>
 			                         <div class="input-group">
 
@@ -328,19 +343,19 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 					}
 				});
 */
-	traerDisponibilidad('','');
+	traerDisponibilidad('','',$('#reflocatarios').val());
 
 	$('.recargar').click(function() {
-		traerDisponibilidad($('#entrada').val(),$('#sortida').val());
+		traerDisponibilidad($('#entrada').val(),$('#sortida').val(),$('#reflocatarios').val());
 	});
 
-	function traerDisponibilidad(desde, hasta) {
+	function traerDisponibilidad(desde, hasta, reflocatario) {
 		$.ajax({
 			url: '../ajax/ajax.php',
 			type: 'POST',
 			// Form data
 			//datos del formulario
-			data: {accion: 'traerDisponibilidad',any: 2019, desde: desde, hasta: hasta},
+			data: {accion: 'traerDisponibilidad',any: 2019, desde: desde, hasta: hasta, reflocatario:reflocatario},
 			//mientras enviamos el archivo
 			beforeSend: function(){
 				$('.contDisponibilidad').html('<div align="center"><img src="../imagenes/load13.gif" width="120"></div>');
