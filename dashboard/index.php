@@ -105,9 +105,9 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
     <style>
         .alert > i{ vertical-align: middle !important; }
 		  .contDisponibilidad table { table-layout: fixed !important; }
-		  .contDisponibilidad table tbody tr td { border: 1px solid #444; padding: 0 !important; width: 60px !important;overflow: auto !important; text-align: center;}
-		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important; text-align: center !important;width: 45px !important; overflow: auto !important;}
-		  .tablaInterna tbody tr td { padding: 0; width: 60px !important; height: 20px; text-align: center;}
+		  .contDisponibilidad table tbody tr td { border-color: #444; padding: 0 !important; width: 40px !important;overflow: auto !important; text-align: center; font-size: 11px;}
+		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important; text-align: center !important;width: 40px !important; overflow: auto !important; padding: 0 !important;}
+		  .tablaInterna tbody tr td { padding: 0; width: 40px !important; height: 20px; text-align: center;}
 		  .disponibilidadLloguer { cursor: pointer; margin-top: -30px !important; }
 		  .modal-header-ver {
 				padding:9px 15px;
@@ -169,7 +169,7 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 			<div class="row clearfix">
 
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<div class="card " style="height: 800px; margin-top:-30px; ">
+						<div class="card" style="height: 800px; margin-top:-30px; ">
 							<div class="header bg-red">
 								<h2 style="color:#fff">
 									PLANING
@@ -229,7 +229,7 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 			                         </div>
 			                     </div>
 									</div>
-									<div class="row contDisponibilidad div2" style="height: 580px; overflow-y: hidden; overflow-y:scroll;">
+									<div class="row contDisponibilidad div2 cardAlto" style="height: 580px; overflow-y: hidden; overflow-y:scroll;">
 									</div>
 							</form>
 						</div>
@@ -303,6 +303,10 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 	<script>
 
 		$(document).ready(function(){
+
+			var pantallaAlto = $( window ).height();
+
+			$('.cardAlto').height( pantallaAlto * 65 / 100);
 
 			$('.datepicker').bootstrapMaterialDatePicker({
 	        format: 'YYYY-MM-DD',

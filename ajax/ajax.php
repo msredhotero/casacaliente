@@ -456,7 +456,7 @@ function traerDisponibilidad($serviciosReferencias) {
          //echo $fechaAuxYHasta->format('Y-m-d') . "\n";
          //die(var_dump($fechaAuxYDesde));
          $cad .= "<tr>";
-         $cad .= "<td>".$fechaAuxYDesdeAux->format('d/m').'-'.$fechaAuxYHastaAux->format('d/m')."</td>";
+         $cad .= "<td>".$fechaAuxYDesdeAux->format('m/d').'-'.$fechaAuxYHastaAux->format('m/d')."</td>";
 
          for ($k=0; $k < $ejeX; $k++) {
             $cad .= '<td class="achique" style="'.$linea.'">';
@@ -473,10 +473,10 @@ function traerDisponibilidad($serviciosReferencias) {
                $resAlquiler = $serviciosReferencias->buscarAlquilerPorFechaUbicacionPorDia($fechaAuxYHasta->format('Y-m-d'), mysql_result($resUbicaciones,$k,0), $reflocatario);
                if (mysql_num_rows($resAlquiler)>0) {
                   if (mysql_result($resAlquiler,0,'entrada') == $fechaAuxYHasta->format('Y-m-d')) {
-                     $cad .= '<td bgcolor="#00FF00" class="disponibilidadLloguer" id="'.mysql_result($resAlquiler,0,'idlloguer').'"><b>'.$fechaAuxYHasta->format('m-d').'</b></td>';
+                     $cad .= '<td bgcolor="#00FF00" class="disponibilidadLloguer" id="'.mysql_result($resAlquiler,0,'idlloguer').'">'.$fechaAuxYHasta->format('m/d').'</td>';
                   } else {
                      if (mysql_result($resAlquiler,0,'sortida') == $fechaAuxYHasta->format('Y-m-d')) {
-                        $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer"><b>'.$fechaAuxYHasta->format('m-d').'</b></td>';
+                        $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer">'.$fechaAuxYHasta->format('m/d').'</td>';
                      } else {
                         $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer"></td>';
                      }
