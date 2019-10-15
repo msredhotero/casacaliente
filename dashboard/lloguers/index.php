@@ -1806,7 +1806,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 						$('#lgmNuevo').modal('hide');
 						$('#unidadnegocio').val('');
-						table.ajax.reload();
+						location.reload();
 						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
