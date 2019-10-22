@@ -2037,7 +2037,7 @@ return $res;
 
    function insertarUsuarios($usuario,$password,$refroles,$email,$nombrecompleto,$activo,$reflocatarios) {
    $sql = "insert into dbusuarios(idusuario,usuario,password,refroles,email,nombrecompleto,activo,reflocatarios)
-   values (null,'".$usuario."','".$password."',".$refroles.",'".$email."','".$nombrecompleto."',".$activo.",".$reflocatarios.")";
+   values (null,'".$usuario."','".$password."',".$refroles.",'".$email."','".$nombrecompleto."',".$activo.",".($reflocatarios == 0 ? 'NULL' : $reflocatarios).")";
    $res = $this->query($sql,1);
    return $res;
    }
