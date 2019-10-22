@@ -65,14 +65,17 @@ if ($_SESSION['idlocatario_sahilices'] == '') {
 } else {
 	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
 }
-$cadRef1 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
+$cadRef1		= '<option value="">-- Seleccionar --</option>';
+$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar2 = $serviciosReferencias->traerUbicaciones();
-	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2,6),array(' - Dor: ',' - Color: ',' - Empresa: ',''),'');
+	$cadRef2		= '<option value="">-- Seleccionar --</option>';
+	$cadRef2 	.= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2,6),array(' - Dor: ',' - Color: ',' - Empresa: ',''),'');
 } else {
 	$resVar2 = $serviciosReferencias->traerUbicacionesPorLocatario($_SESSION['idlocatario_sahilices']);
-	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2),array(' - Dor: ',' - Color: ',''),'');
+	$cadRef2		= '<option value="">-- Seleccionar --</option>';
+	$cadRef2 	.= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2),array(' - Dor: ',' - Color: ',''),'');
 }
 
 
@@ -151,6 +154,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+	<link rel="stylesheet" type="text/css" href="../../css/default.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/default.date.css"/>
 
 
 	<style>
@@ -273,9 +279,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<th>Ubicació</th>
 												<th>Entrada</th>
 												<th>Sortida</th>
-												<th>Dies</th>
 												<th>Preu</th>
-												<th>Estat</th>
 												<th>Nro Lloguer</th>
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
 												<th>Empresa</th>
@@ -289,9 +293,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<th>Ubicació</th>
 												<th>Entrada</th>
 												<th>Sortida</th>
-												<th>Dies</th>
 												<th>Preu</th>
-												<th>Estat</th>
 												<th>Nro Lloguer</th>
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
 												<th>Empresa</th>
@@ -347,7 +349,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 									<div class="form-line">
 										<label for="refclientes" class="control-label" style="text-align:left">Client</label>
-										<select class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes">
+										<select class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
 												<?php echo $cadRef1; ?>
 										</select>
 									</div>
@@ -356,7 +358,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 									<div class="form-line">
 										<label for="refubicaciones" class="control-label" style="text-align:left">Ubicaciones</label>
-										<select class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones">
+										<select class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones" required>
 											<?php echo $cadRef2; ?>
 										</select>
 									</div>
@@ -364,7 +366,17 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							</div>
 							<div class="row">
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
+									<label class="form-label">Data Contracte</label>
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="datalloguer" name="datalloguer" />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
 	                         <label class="form-label">Entrada</label>
 	                         <div class="input-group">
 
@@ -372,13 +384,13 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											  <i class="material-icons">date_range</i>
 										 </span>
 	                             <div class="form-line">
-										   	<input readonly="readonly" type="text" class="datepicker form-control" id="entrada" name="entrada" required />
+										   	<input readonly="readonly" type="text" class="form-control" id="entrada" name="entrada" required />
 	                             </div>
 
 	                         </div>
 	                     </div>
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
 	                         <label class="form-label">Sortida</label>
 	                         <div class="input-group">
 
@@ -386,7 +398,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                                 <i class="material-icons">date_range</i>
 	                             </span>
 	                             <div class="form-line">
-										   	<input readonly="readonly" type="text" class="datepicker form-control" id="sortida" name="sortida" required />
+										   	<input readonly="readonly" type="text" class="form-control" id="sortida" name="sortida" required />
 
 	                             </div>
 	                         </div>
@@ -417,7 +429,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 							<div class="row">
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3" style="display:block">
 									<label for="taxa" class="control-label" style="text-align:left">Taxa</label>
 									<div class="input-group">
 	                           <span class="input-group-addon">€</span>
@@ -428,7 +440,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                        </div>
 								</div>
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3" style="display:block">
 									<label for="Max Taxa" class="control-label" style="text-align:left">Max Taxa</label>
 									<div class="input-group">
 	                           <span class="input-group-addon">€</span>
@@ -439,20 +451,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                        </div>
 								</div>
 
-							</div>
-
-							<div class="row">
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-									<label class="form-label">Data Contracte</label>
-									<div class="form-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="datalloguer" name="datalloguer" />
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
 									<div class="form-line">
 										<label for="refestados" class="control-label" style="text-align:left">Estat</label>
 										<select class="form-control show-tick" id="refestados" name="refestados">
@@ -462,6 +461,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								</div>
 
 							</div>
+
 							<div class="row">
 								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display:block; color:blue; text-align:center;">
 									<h4>Declare la cantidad de personas y los dias que van a hospedarse</h4>
@@ -494,7 +494,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			                                 <i class="material-icons">date_range</i>
 			                             </span>
 			                             <div class="form-line">
-												   	<input readonly="readonly" type="text" class="datepicker form-control entradaImp" id="entradapersonas1" name="entradapersonas1" required />
+												   	<input readonly="readonly" type="text" class="form-control entradaImp" id="entradapersonas1" name="entradapersonas1" required />
 
 			                             </div>
 			                         </div>
@@ -508,7 +508,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			                                 <i class="material-icons">date_range</i>
 			                             </span>
 			                             <div class="form-line">
-												   	<input readonly="readonly" type="text" class="datepicker form-control sortidaImp" id="sortidapersonas1" name="sortidapersonas1" required />
+												   	<input readonly="readonly" type="text" class="form-control sortidaImp" id="sortidapersonas1" name="sortidapersonas1" required />
 
 			                             </div>
 			                         </div>
@@ -977,6 +977,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 <script src="../../js/dateFormat.js"></script>
 <script src="../../js/jquery.dateFormat.js"></script>
 
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
 
 <script>
 	var indice = 1;
@@ -1055,9 +1057,21 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		var cadFechaSortida = '';
 
+		if ($('#refclientes').val() == '') {
+			cadErrorValida += 'Es obligatorio seleccionar un Cliente. \
+			\n';
+			errorValida = true;
+		}
+
+		if ($('#refubicaciones').val() == '') {
+			cadErrorValida += 'Es obligatorio seleccionar una Ubicacion. \
+			\n';
+			errorValida = true;
+		}
+
 		if (devolverFechaCorrecta($('#entrada').val()) >= devolverFechaCorrecta($('#sortida').val())) {
 
-			cadErrorValida = 'La fecha de Sortida no puede ser menor que la de Entrada. \
+			cadErrorValida += 'La fecha de Sortida no puede ser menor que la de Entrada. \
 			\n';
 			errorValida = true;
 		}
@@ -1166,7 +1180,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							<i class="material-icons">date_range</i> \
 					  </span> \
 					  <div class="form-line"> \
-							<input readonly="readonly" type="text" class="datepicker form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" value="' + $('#entrada').val() + '" required /> \
+							<input readonly="readonly" type="text" class="datepickerNuevo form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" value="' + $('#entrada').val() + '" required /> \
 					  </div> \
 				 </div> \
 			</div> \
@@ -1177,7 +1191,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							<i class="material-icons">date_range</i> \
 					  </span> \
 					  <div class="form-line"> \
-							<input readonly="readonly" type="text" class="datepicker form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" value="' + $('#sortida').val() + '" required /> \
+							<input readonly="readonly" type="text" class="datepickerNuevo form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" value="' + $('#sortida').val() + '" required /> \
 					  </div> \
 				 </div> \
 			</div> \
@@ -1192,13 +1206,25 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				</div> \
 			</div></div>');
 
-			$('.datepicker').bootstrapMaterialDatePicker({
-				format: 'DD/MM/YYYY',
-				lang : 'ca',
-				clearButton: true,
-				weekStart: 1,
-				time: false
+			$('.datepickerNuevo').pickadate({
+				format: 'dd/mm/yyyy',
+				labelMonthNext: 'Siguiente mes',
+				labelMonthPrev: 'Previo mes',
+				labelMonthSelect: 'Selecciona el mes del año',
+				labelYearSelect: 'Selecciona el año',
+				selectMonths: true,
+				selectYears: 2,
+				today: 'Hoy',
+				clear: 'Borrar',
+				close: 'Cerrar',
+				monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+				weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+				editable: true
 			});
+
+			$('.datepickerNuevo').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
 		});
 
 		$("#lgmNuevo").on("change",'.personasLloguer', function(){
@@ -1252,13 +1278,83 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});
 
 
-		$('.datepicker').bootstrapMaterialDatePicker({
-        format: 'DD/MM/YYYY',
-        clearButton: false,
-		  lang : 'ca',
-        weekStart: 1,
-        time: false
-   	});
+		$('#entrada').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+		$('#sortida').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+		$('#entradapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+		$('#sortidapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+
+		$('#entrada').pickadate({
+			format: 'dd/mm/yyyy',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 2,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+			editable: true
+		});
+
+		$('#sortida').pickadate({
+			format: 'dd/mm/yyyy',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 2,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+			editable: true
+		});
+
+
+		$('#entradapersonas1').pickadate({
+			format: 'dd/mm/yyyy',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 2,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+			editable: true
+		});
+
+		$('#sortidapersonas1').pickadate({
+			format: 'dd/mm/yyyy',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 2,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+			editable: true
+		});
 
 		$( "#fechapago1" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
@@ -1298,12 +1394,13 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 
 		$('#datalloguer').val('<?php echo date('d/m/Y'); ?>');
-		$('#entrada').val('<?php echo date('d/m/Y'); ?>');
-		$('#sortida').val('<?php echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
+		/*
+		$('#entrada').val('<?php //echo date('d/m/Y'); ?>');
+		$('#sortida').val('<?php //echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
 
-		$('#entradapersonas1').val('<?php echo date('d/m/Y'); ?>');
-		$('#sortidapersonas1').val('<?php echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
-
+		$('#entradapersonas1').val('<?php //echo date('d/m/Y'); ?>');
+		$('#sortidapersonas1').val('<?php //echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
+		*/
 
 
 		$('#numpertax').val(2);

@@ -768,11 +768,12 @@ return $res;
 		ti.tipoubicacion,
 		DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
 		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
-		datediff(l.sortida, l.entrada) as dias,
 		l.total,
-		est.estado,
+
 		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
-		lo.razonsocial
+		lo.razonsocial,
+		est.estado,
+		datediff(l.sortida, l.entrada) as dias
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes
 		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
@@ -815,11 +816,11 @@ return $res;
 		ti.tipoubicacion,
 		DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
 		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
-		datediff(l.sortida, l.entrada) as dias,
 		l.total,
-		est.estado,
 		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
-		lo.razonsocial
+		lo.razonsocial,
+		est.estado,
+		datediff(l.sortida, l.entrada) as dias
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes
 		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
