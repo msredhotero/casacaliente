@@ -759,7 +759,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".utf8_encode($busqueda)."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%' or lo.razonsocial like '%".$busqueda."%')";
+			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%' or lo.razonsocial like '%".$busqueda."%')";
 		}
 
 		$sql = "select
@@ -807,7 +807,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".utf8_encode($busqueda)."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%')";
+			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%')";
 		}
 
 		$sql = "select

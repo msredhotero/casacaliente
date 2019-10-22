@@ -73,11 +73,11 @@ switch ($tabla) {
 		}
 
 		if ($_SESSION['idlocatario_sahilices'] == '') {
-			$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
+			$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
 			$res = $serviciosReferencias->traerLloguers();
 			$termina = 7;
 		} else {
-			$resAjax = $serviciosReferencias->traerLloguersLocatarioajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
+			$resAjax = $serviciosReferencias->traerLloguersLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
 			$res = $serviciosReferencias->traerLloguersPorLocatario($_SESSION['idlocatario_sahilices']);
 			$termina = 6;
 		}
