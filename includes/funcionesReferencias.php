@@ -280,6 +280,8 @@ return $res;
 	l.personas,
 	l.entrada,
 	l.sortida,
+	DATE_FORMAT(l.entrada, '%d/%m/%Y') as entradacorta,
+	DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortidacorta,
 	l.taxapersona,
 	l.taxaturistica,
 	l.menores,
@@ -374,6 +376,7 @@ return $res;
 		p.taxa,
 		p.fecha,
 		p.fechapago,
+		DATE_FORMAT( p.fechapago, '%d/%m/%Y') fechapagocorta,
 		p.usuario,
 		p.cancelado
 		from dbpagos p
@@ -689,6 +692,7 @@ return $res;
 	l.taxa,
 	l.maxtaxa,
 	l.refestados,
+	l.nrolloguer,
 	est.estado,
 	cli.nom,
 	cli.cognom,
@@ -697,6 +701,8 @@ return $res;
 	cli.carrer,
 	cli.codipostal,
 	cli.ciutat,
+	cli.telefon,
+	cli.email,
 	ubi.codapartament,
 	DATE_FORMAT(l.entrada, '%d/%m/%Y') as entradacorta,
 	DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortidacorta,
@@ -705,7 +711,8 @@ return $res;
 	ubi.dormitorio,
 	DATEDIFF(l.sortida,l.entrada) as dias,
 	ti.idtipoubicacion,
-    coalesce((max(p.personas) + max(p.menores)), l.numpertax) as personasreales
+    coalesce((max(p.personas) + max(p.menores)), l.numpertax) as personasreales,
+    ti.tipoubicacion
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
@@ -725,6 +732,7 @@ return $res;
 	l.taxa,
 	l.maxtaxa,
 	l.refestados,
+	l.nrolloguer,
 	est.estado,
 	cli.nom,
 	cli.cognom,
@@ -733,9 +741,12 @@ return $res;
 	cli.carrer,
 	cli.codipostal,
 	cli.ciutat,
+	cli.telefon,
+	cli.email,
 	ubi.codapartament,
 	ubi.dormitorio,
-	ti.idtipoubicacion
+	ti.idtipoubicacion,
+	ti.tipoubicacion
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
@@ -1463,7 +1474,7 @@ f.idformapago,
 f.formapago,
 f.abreviatura
 from tbformaspagos f
-order by 1";
+order by f.formapago";
 $res = $this->query($sql,0);
 return $res;
 }

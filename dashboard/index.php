@@ -103,22 +103,24 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 
     <style>
-        .alert > i{ vertical-align: middle !important; }
-		  .contDisponibilidad table { table-layout: fixed !important; }
-		  .contDisponibilidad table tbody tr td { border-color: #444; padding: 0 !important; width: 40px !important;overflow: auto !important; text-align: center; font-size: 11px;}
-		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important; text-align: center !important;width: 40px !important; overflow: auto !important; padding: 0 !important;}
-		  .tablaInterna tbody tr td { padding: 0; width: 40px !important; height: 20px; text-align: center;}
-		  .disponibilidadLloguer { cursor: pointer; margin-top: -30px !important; }
-		  .modal-header-ver {
-				padding:9px 15px;
-				border-bottom:1px solid #eee;
-				background-color: #0480be;
-				color: white;
-				font-weight: bold;
-        }
-		  #tblPlaning {
-			  width: auto !important;
-		  }
+		.alert > i{ vertical-align: middle !important; }
+		.contDisponibilidad table { table-layout: fixed !important; }
+		.contDisponibilidad table tbody tr td { border-color: #444; padding: 0 !important; width: 40px !important;overflow: auto !important; text-align: center; font-size: 11px;}
+		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; text-align: center !important;width: 40px !important; overflow: auto !important; padding: 0 !important;}
+		.tablaInterna tbody tr td { padding: 0; width: 40px !important; height: 20px; text-align: center;}
+		.disponibilidadLloguer { cursor: pointer; margin-top: -30px !important; }
+		.modal-header-ver {
+			padding:9px 15px;
+			border-bottom:1px solid #eee;
+			background-color: #0480be;
+			color: white;
+			font-weight: bold;
+		}
+		#tblPlaning {
+		  width: auto !important;
+		}
+
+		.tablaAux tr th { border: 1px solid #222 !important; text-align: center !important;width: 40px !important; overflow: auto !important; padding: 0 !important;}
 
     </style>
 
@@ -229,6 +231,13 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 			                         </div>
 			                     </div>
 									</div>
+									<div class="row">
+										<table class='display table table-bordered table-responsive' id='tblPlaning' style="height:auto; margin: 0;">
+											<thead class="tablaAux">
+
+											</thead>
+										</table>
+									</div>
 									<div class="row contDisponibilidad div2 cardAlto" style="height: 580px; overflow-y: hidden; overflow-y:scroll;">
 									</div>
 							</form>
@@ -249,7 +258,7 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 			  <div class="modal-dialog modal-lg" role="document">
 					<div class="modal-content">
 						 <div class="modal-header modal-header-ver">
-							  <h4 class="modal-title" id="largeModalLabel">LLOGUER</h4>
+							  <h4 class="modal-title" id="largeModalLabel"></h4>
 						 </div>
 						 <div class="modal-body">
 							 <div class="row frmVER">
@@ -299,7 +308,6 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 	 <script src="../js/moment-with-locales.js"></script>
 	 <script src="../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
-
 	<script>
 
 		$(document).ready(function(){
@@ -347,7 +355,10 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 					}
 				});
 */
-	traerDisponibilidad('','',$('#reflocatarios').val());
+	traerDisponibilidad('<?php echo date('Y-m-d'); ?>','<?php echo date('Y').'-12-31'; ?>',$('#reflocatarios').val());
+
+	$('#entrada').val('<?php echo date('Y-m-d'); ?>');
+	$('#sortida').val('<?php echo date('Y').'-12-31'; ?>');
 
 	$('.recargar').click(function() {
 		traerDisponibilidad($('#entrada').val(),$('#sortida').val(),$('#reflocatarios').val());
@@ -369,7 +380,8 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 				if (data != '') {
 					$('.contDisponibilidad').html(data);
-
+					$('.tablaAux').html($('.cabeceraPlaning').html());
+					$('.cabeceraPlaning').remove();
 
 				} else {
 					swal("Error!", data, "warning");
@@ -402,13 +414,17 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 			//mientras enviamos el archivo
 			beforeSend: function(){
 				$('.frmVER').html('');
+				$('#largeModalLabel').html();
 				$('#comentario').html('');
 			},
 			//una vez finalizado correctamente
 			success: function(data){
 
 				if (data != '') {
-					$('.frmVER').html(data.lloguer);
+					$('#largeModalLabel').html(data.header);
+					$('.frmVER').append(data.pagos);
+					$('.frmVER').append(data.personas);
+					$('.frmVER').append(data.lloguer);
 					$('#comentario').html(data.comentario);
 
 				} else {

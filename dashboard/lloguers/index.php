@@ -384,7 +384,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											  <i class="material-icons">date_range</i>
 										 </span>
 	                             <div class="form-line">
-										   	<input readonly="readonly" type="text" class="form-control" id="entrada" name="entrada" required />
+										   	<input type="text" class="form-control" id="entrada" name="entrada" required />
 	                             </div>
 
 	                         </div>
@@ -398,7 +398,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                                 <i class="material-icons">date_range</i>
 	                             </span>
 	                             <div class="form-line">
-										   	<input readonly="readonly" type="text" class="form-control" id="sortida" name="sortida" required />
+										   	<input type="text" class="form-control" id="sortida" name="sortida" required />
 
 	                             </div>
 	                         </div>
@@ -984,6 +984,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	var indice = 1;
 	$(document).ready(function(){
 
+		$('#entrada').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
+		$('#sortida').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
+
 		function validarmasivo(refclientes, refubicaciones, datalloguer, entrada, sortida, total, numpertax, persset, taxa, maxtaxa, refestados, indice) {
 		$.ajax({
 			data:  {
@@ -1278,11 +1281,11 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});
 
 
-		$('#entrada').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
-		$('#sortida').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+
 		$('#entradapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
 		$('#sortidapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
 
+		/*
 		$('#entrada').pickadate({
 			format: 'dd/mm/yyyy',
 			labelMonthNext: 'Siguiente mes',
@@ -1355,6 +1358,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 			editable: true
 		});
+		*/
 
 		$( "#fechapago1" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
@@ -1364,7 +1368,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		$( "#entrada" ).change(function() {
 			var fechaNueva = new Date(devolverFechaCorrecta( $('#entrada').val()));
-			var dias = 8; // Número de días a agregar
+			var dias = 16; // Número de días a agregar
 			fechaNueva.setDate(fechaNueva.getDate() + dias)
 			$( "#sortida" ).val($.format.date(fechaNueva, "dd/MM/yyyy"));
 
@@ -1504,6 +1508,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					$('.lblTaxaPaga2').html('');
 					$('#pagotaxacliente').val(0);
 					$('.btnFacturas').html('');
+					$("#formapago1 option:selected").attr('disabled','disabled').siblings().removeAttr('disabled');
+					$("#formapago2 option:selected").attr('disabled','disabled').siblings().removeAttr('disabled');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
@@ -1537,8 +1543,17 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 						$( "#cargarpago1" ).val(data.pagos.monto1);
 						$( "#cargarpago2" ).val(data.pagos.monto2);
+
 						$( "#formapago1" ).val(data.pagos.formapago1);
 						$( "#formapago2" ).val(data.pagos.formapago2);
+
+						if (data.pagos.formapago1 == 1) {
+							$("#formapago1 option:selected").attr('disabled','disabled').siblings().removeAttr('disabled');
+						}
+
+						if (data.pagos.formapago2 == 1) {
+							$("#formapago2 option:selected").attr('disabled','disabled').siblings().removeAttr('disabled');
+						}
 
 						$('#formapago1').selectpicker('refresh');
 						$('#formapago2').selectpicker('refresh');
@@ -1578,6 +1593,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		}
 
 		function devolverTarifa(refubicaciones, entrada, sortida, personas) {
+
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',

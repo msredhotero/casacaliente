@@ -273,46 +273,102 @@ function verLloguer($serviciosReferencias) {
    $resComentario = $serviciosReferencias->traerLloguercomentariosPorLloguer($id);
 
    $pago = 0;
-
-   while ($row = mysql_fetch_array($resPagos))
-	{
-      $pago += $row['monto'];
-   }
-
    $taxaturisticaAdicional = 0;
    $taxaturisticaAdicionalPersonas = 0;
    $totalTaxaPersona = 0;
 
+   $cadPersonas = '';
+   $cadPagos = '';
+   $cadLloguer = '';
+   $cadCliente = '';
+   $cadNro = '';
+
+
+   $cadPagos .= '<table class="table table-striped table-bordered">';
+   $cadPagos .= '<thead>';
+   $cadPagos .= '<th>Cuota</th>
+            <th>Pago</th>
+            <th>Taxa</th>
+            <th>Fecha Pago</th>';
+   $cadPagos .= '</thead>';
+   $cadPagos .= '<tbody>';
+   $cadPagos .= '<tr>';
+   while ($row = mysql_fetch_array($resPagos))
+	{
+      $pago += $row['monto'];
+      $cadPagos .= '<td>'.number_format( $row['cuota'],2,',','.').' €</td>';
+      $cadPagos .= '<td>'.number_format( $row['monto'],2,',','.').' €</td>';
+      $cadPagos .= '<td>'.$row['taxa'].'</td>';
+      $cadPagos .= '<td>'.$row['fechapagocorta'].'</td>';
+   }
+   $cadPagos .= '</tr>';
+   $cadPagos .= '</tbody></table';
+
+
+   $cadPersonas .= '<table class="table table-striped table-bordered">';
+   $cadPersonas .= '<thead>';
+   $cadPersonas .= '<th>Mayores</th>
+            <th>Menores</th>
+            <th>Entrada</th>
+            <th>Sortida</th>
+            <th>T.Per.</th>
+            <th>T.Tur</th>';
+   $cadPersonas .= '</thead>';
+   $cadPersonas .= '<tbody>';
+   $cadPersonas .= '<tr>';
    while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
    	$taxaturisticaAdicionalPersonas += $rowAd['personas'];
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
    	$totalTaxaPersona += $rowAd['taxapersona'];
-   }
 
-   $cad = '<table class="table table-striped table-bordered">';
-   $cad .= '<thead>';
-   $cad .= '<th>Client</th>
-            <th>Persones</th>
+      $cadPersonas .= '<td>'.$rowAd['personas'].'</td>';
+      $cadPersonas .= '<td>'.$rowAd['menores'].'</td>';
+      $cadPersonas .= '<td>'.$rowAd['entradacorta'].'</td>';
+      $cadPersonas .= '<td>'.$rowAd['sortidacorta'].'</td>';
+      $cadPersonas .= '<td>'.$rowAd['taxapersona'].'</td>';
+      $cadPersonas .= '<td>'.$rowAd['taxaturistica'].'</td>';
+   }
+   $cadPersonas .= '</tr>';
+   $cadPersonas .= '</tbody></table';
+
+
+   $cadLloguer = '<table class="table table-striped table-bordered">';
+   $cadLloguer .= '<thead>';
+   $cadLloguer .= '<th>Data Lloguer</th>
+            <th>Entrada</th>
+            <th>Sortida</th>
+            <th>Num</th>
+            <th>Personas</th>
             <th>Total</th>
             <th>Falta Pagar</th>';
-   $cad .= '</thead>';
-   $cad .= '<tbody>';
-   $cad .= '<tr>';
+   $cadLloguer .= '</thead>';
+   $cadLloguer .= '<tbody>';
+   $cadLloguer .= '<tr>';
    while ($row = mysql_fetch_array($res)) {
-      $cad .= '<td>'.utf8_encode($row['nom']).' '.utf8_encode($row['cognom']).'</td>';
-      $cad .= '<td>'.$row['personasreales'].'</td>';
-      $cad .= '<td>'.number_format( $row['total'] + $totalTaxaPersona + $taxaturisticaAdicional,2,',','.').' €</td>';
+
+      $cadCliente = '- Client: '.utf8_encode($row['cognom']).' '.utf8_encode($row['nom']).' Contacto: '.$row['telefon'].' '.$row['email'];
+      $cadNro = 'Nro: '.$row['nrolloguer'];
+
+      $cadLloguer .= '<td>'.$row['datalloguer'].'</td>';
+      $cadLloguer .= '<td>'.$row['entradacorta'].'</td>';
+      $cadLloguer .= '<td>'.$row['sortidacorta'].'</td>';
+      $cadLloguer .= '<td>Cod: '.$row['codapartament'].' Num: '.$row['tipoubicacion'].'</td>';
+      $cadLloguer .= '<td>'.$row['personasreales'].'</td>';
+      $cadLloguer .= '<td>'.number_format( $row['total'] + $totalTaxaPersona + $taxaturisticaAdicional,2,',','.').' €</td>';
       if (($row['total'] + $totalTaxaPersona + $taxaturisticaAdicional - $pago) < 0) {
-         $cad .= '<td>'.number_format( 0,2,',','.').' €</td>';
+         $cadLloguer .= '<td>'.number_format( 0,2,',','.').' €</td>';
       } else {
-         $cad .= '<td>'.number_format( $row['total'] + $totalTaxaPersona + $taxaturisticaAdicional - $pago,2,',','.').' €</td>';
+         $cadLloguer .= '<td>'.number_format( $row['total'] + $totalTaxaPersona + $taxaturisticaAdicional - $pago,2,',','.').' €</td>';
       }
 
    }
-   $cad .= '</tr>';
-   $cad .= '</tbody></table';
+   $cadLloguer .= '</tr>';
+   $cadLloguer .= '</tbody></table';
 
-   $resV['lloguer'] = $cad;
+   $resV['lloguer'] = $cadLloguer;
+   $resV['personas'] = $cadPersonas;
+   $resV['pagos'] = $cadPagos;
+   $resV['header'] = $cadNro.$cadCliente;
 
    if (mysql_num_rows($resComentario) > 0) {
       $resV['comentario'] = mysql_result($resComentario,0,'comentario');
@@ -425,7 +481,7 @@ function traerDisponibilidad($serviciosReferencias) {
 
 
    $cad = "<table class='display table table-bordered table-responsive' id='tblPlaning'>
-            <thead>
+            <thead class='cabeceraPlaning'>
                <th>".$any."</th>";
    while ($rowY = mysql_fetch_array($resUbicaciones)) {
       $cad .= "<th>".$rowY['codapartament']."</th>";
@@ -890,9 +946,11 @@ function devolverTarifa($serviciosReferencias) {
    $finsaperiode        =  date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
    $personas            =  $_POST['personas'];
 
-
-
-   $tarifa = $serviciosReferencias->calcularTarifa($refubicaciones,$desdeperiode,$finsaperiode,$personas);
+   if (($refubicaciones != '') && ($desdeperiode != '') && ($finsaperiode != '') && ($personas != '')) {
+      $tarifa = $serviciosReferencias->calcularTarifa($refubicaciones,$desdeperiode,$finsaperiode,$personas);
+   } else {
+      $tarifa = 0;
+   }
 
    echo round($tarifa,2);
 }
