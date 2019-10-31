@@ -1049,7 +1049,9 @@ function modificarLloguers($serviciosReferencias) {
 
 function eliminarLloguers($serviciosReferencias) {
    $id = $_POST['id'];
+   $resPagos = $serviciosReferencias->eliminarPagosPorLloguer($id);
    $resAd = $serviciosReferencias->eliminarLloguersadicionalPorLloguer($id);
+   $resComentarios = $serviciosReferencias->eliminarLloguercomentariosPorLloguer($id);
 
    $res = $serviciosReferencias->eliminarLloguers($id);
    if ($res == true) {

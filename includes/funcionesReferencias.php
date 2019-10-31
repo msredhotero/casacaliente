@@ -36,6 +36,12 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function eliminarLloguercomentariosPorLloguer($id) {
+$sql = "delete from dblloguercomentarios where reflloguers =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function traerLloguercomentarios() {
 $sql = "select
@@ -339,6 +345,12 @@ return $res;
 
 	function eliminarPagos($id) {
 		$sql = "delete from dbpagos where idpago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarPagosPorLloguer($id) {
+		$sql = "delete from dbpagos where reflloguers =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
