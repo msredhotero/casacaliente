@@ -67,9 +67,9 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 	case 'lloguers':
-		if ($busqueda == '') {
-			$colSort = 'l.entrada';
-			$colSortDir = 'desc';
+		if (($busqueda == '')) {
+			//$colSort = 'l.entrada';
+			//$colSortDir = 'desc';
 		}
 
 		if ($_SESSION['idlocatario_sahilices'] == '') {

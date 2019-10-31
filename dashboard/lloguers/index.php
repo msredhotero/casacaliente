@@ -276,10 +276,11 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										<thead>
 											<tr>
 												<th>Client</th>
-												<th>Ubicació</th>
+												<th>Num</th>
 												<th>Entrada</th>
-												<th>Sortida</th>
+												<th>Dias</th>
 												<th>Preu</th>
+												<!--<th>Falta Pagar</th>-->
 												<th>Nro Lloguer</th>
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
 												<th>Empresa</th>
@@ -290,10 +291,11 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										<tfoot>
 											<tr>
 												<th>Client</th>
-												<th>Ubicació</th>
+												<th>Num</th>
 												<th>Entrada</th>
-												<th>Sortida</th>
+												<th>Dias</th>
 												<th>Preu</th>
+												<!--<th>Falta Pagar</th>-->
 												<th>Nro Lloguer</th>
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
 												<th>Empresa</th>
@@ -349,7 +351,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 									<div class="form-line">
 										<label for="refclientes" class="control-label" style="text-align:left">Client</label>
-										<select class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
+										<select tabindex="1" class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
 												<?php echo $cadRef1; ?>
 										</select>
 									</div>
@@ -358,7 +360,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 									<div class="form-line">
 										<label for="refubicaciones" class="control-label" style="text-align:left">Ubicaciones</label>
-										<select class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones" required>
+										<select tabindex="2" class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones" required>
 											<?php echo $cadRef2; ?>
 										</select>
 									</div>
@@ -370,7 +372,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<label class="form-label">Data Contracte</label>
 									<div class="form-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="datalloguer" name="datalloguer" />
+											<input tabindex="3" type="text" class="form-control" id="datalloguer" name="datalloguer" />
 
 										</div>
 									</div>
@@ -384,7 +386,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											  <i class="material-icons">date_range</i>
 										 </span>
 	                             <div class="form-line">
-										   	<input type="text" class="form-control" id="entrada" name="entrada" required />
+										   	<input tabindex="4" type="text" class="form-control" id="entrada" name="entrada" required />
 	                             </div>
 
 	                         </div>
@@ -398,7 +400,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	                                 <i class="material-icons">date_range</i>
 	                             </span>
 	                             <div class="form-line">
-										   	<input type="text" class="form-control" id="sortida" name="sortida" required />
+										   	<input tabindex="5" type="text" class="form-control" id="sortida" name="sortida" required />
 
 	                             </div>
 	                         </div>
@@ -410,7 +412,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<label class="form-label">N° Pers Taxa</label>
 									<div class="form-group">
 										<div class="form-line">
-											<input type="number" class="form-control" id="numpertax" name="numpertax" />
+											<input tabindex="66" type="number" class="form-control" id="numpertax" name="numpertax" />
 
 										</div>
 									</div>
@@ -420,7 +422,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<label class="form-label">Pers Total</label>
 									<div class="form-group">
 										<div class="form-line">
-											<input type="number" class="form-control" id="persset" name="persset" />
+											<input tabindex="77" type="number" class="form-control" id="persset" name="persset" />
 
 										</div>
 									</div>
@@ -434,7 +436,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<div class="input-group">
 	                           <span class="input-group-addon">€</span>
 	                           <div class="form-line">
-	                              <input type="text" class="form-control" id="taxa" name="taxa" value="" >
+	                              <input tabindex="6" type="text" class="form-control" id="taxa" name="taxa" value="" >
 	                           </div>
 	                           <span class="input-group-addon">.00</span>
 	                        </div>
@@ -445,7 +447,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<div class="input-group">
 	                           <span class="input-group-addon">€</span>
 	                           <div class="form-line">
-	                              <input type="text" class="form-control" id="maxtaxa" name="maxtaxa" value="" >
+	                              <input tabindex="7" type="text" class="form-control" id="maxtaxa" name="maxtaxa" value="" >
 	                           </div>
 	                           <span class="input-group-addon">.00</span>
 	                        </div>
@@ -454,7 +456,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
 									<div class="form-line">
 										<label for="refestados" class="control-label" style="text-align:left">Estat</label>
-										<select class="form-control show-tick" id="refestados" name="refestados">
+										<select tabindex="8" class="form-control show-tick" id="refestados" name="refestados">
 											<?php echo $cadRef3; ?>
 										</select>
 									</div>
@@ -472,7 +474,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											<label class="form-label">Adultos</label>
 											<div class="form-group">
 												<div class="form-line">
-													<input type="number" value="1" class="form-control personasLloguer" id="personas1" name="personas1" required="">
+													<input tabindex="9" type="number" value="1" class="form-control personasLloguer" id="personas1" name="personas1" required="">
 												</div>
 											</div>
 										</div>
@@ -481,7 +483,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											<label class="form-label">Menores</label>
 											<div class="form-group">
 												<div class="form-line">
-													<input type="number" value="0" class="form-control menoresLloguer" id="menores1" name="menores1" required="">
+													<input tabindex="10" type="number" value="0" class="form-control menoresLloguer" id="menores1" name="menores1" required="">
 												</div>
 											</div>
 										</div>
@@ -494,7 +496,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			                                 <i class="material-icons">date_range</i>
 			                             </span>
 			                             <div class="form-line">
-												   	<input readonly="readonly" type="text" class="form-control entradaImp" id="entradapersonas1" name="entradapersonas1" required />
+												   	<input tabindex="11" type="text" class="form-control entradaImp" id="entradapersonas1" name="entradapersonas1" required />
 
 			                             </div>
 			                         </div>
@@ -508,7 +510,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			                                 <i class="material-icons">date_range</i>
 			                             </span>
 			                             <div class="form-line">
-												   	<input readonly="readonly" type="text" class="form-control sortidaImp" id="sortidapersonas1" name="sortidapersonas1" required />
+												   	<input tabindex="12" type="text" class="form-control sortidaImp" id="sortidapersonas1" name="sortidapersonas1" required />
 
 			                             </div>
 			                         </div>
@@ -518,7 +520,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 											<label class="form-label">Acciones</label>
 											<div class="form-group">
 												<div class="form-line" style="border:none;">
-													<button type="button" id="1" class="btn bg-green btn-circle waves-effect waves-circle waves-float agregarRenglon">
+													<button tabindex="13" type="button" id="1" class="btn bg-green btn-circle waves-effect waves-circle waves-float agregarRenglon">
 		                                    <i class="material-icons">add_circle</i>
 		                                </button>
 												</div>
@@ -559,8 +561,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 	               </div>
 	               <div class="modal-footer">
-	                   <button type="button" class="btn bg-green waves-effect" id="validarmasivo"><i class="material-icons">done_all</i> <span>VALIDAR CARGA</span></button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	                   <button tabindex="14" type="button" class="btn bg-green waves-effect" id="validarmasivo"><i class="material-icons">done_all</i> <span>VALIDAR CARGA</span></button>
+	                   <button tabindex="15" type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 	               </div>
 	           </div>
 	       </div>
@@ -1183,7 +1185,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							<i class="material-icons">date_range</i> \
 					  </span> \
 					  <div class="form-line"> \
-							<input readonly="readonly" type="text" class="datepickerNuevo form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" value="' + $('#entrada').val() + '" required /> \
+							<input type="text" class="datepickerNuevo form-control entradaImp" id="entradapersonas' + indice + '" name="entradapersonas' + indice + '" value="' + $('#entrada').val() + '" required /> \
 					  </div> \
 				 </div> \
 			</div> \
@@ -1194,7 +1196,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							<i class="material-icons">date_range</i> \
 					  </span> \
 					  <div class="form-line"> \
-							<input readonly="readonly" type="text" class="datepickerNuevo form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" value="' + $('#sortida').val() + '" required /> \
+							<input type="text" class="datepickerNuevo form-control sortidaImp" id="sortidapersonas' + indice + '" name="sortidapersonas' + indice + '" value="' + $('#sortida').val() + '" required /> \
 					  </div> \
 				 </div> \
 			</div> \
@@ -1209,25 +1211,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				</div> \
 			</div></div>');
 
-			$('.datepickerNuevo').pickadate({
-				format: 'dd/mm/yyyy',
-				labelMonthNext: 'Siguiente mes',
-				labelMonthPrev: 'Previo mes',
-				labelMonthSelect: 'Selecciona el mes del año',
-				labelYearSelect: 'Selecciona el año',
-				selectMonths: true,
-				selectYears: 2,
-				today: 'Hoy',
-				clear: 'Borrar',
-				close: 'Cerrar',
-				monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-				weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-				weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-				editable: true
-			});
-
-			$('.datepickerNuevo').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+			$('.datepickerNuevo').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
 		});
 
 		$("#lgmNuevo").on("change",'.personasLloguer', function(){
@@ -1376,6 +1360,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			$('.sortidaImp').val($.format.date(fechaNueva, "dd/MM/yyyy"));
 		});
 
+		$('#taxa').number(true,2,'.','');
+		$('#maxtaxa').number(true,2,'.','');
 		$('#valorpago1').number(true,2,'.','');
 		$('#valorpago2').number(true,2,'.','');
 		$('#pagotaxa').number(true,2,'.','');
@@ -1633,6 +1619,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#finsaperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 
 		var table = $('#example').DataTable({
+			"order": [[ 2, "desc" ]],
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=lloguers",

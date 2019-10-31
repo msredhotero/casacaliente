@@ -598,9 +598,25 @@ return $res;
 
 	/* PARA Lloguers */
 
+	function generarNroLloguer() {
+		$sql = "SELECT SUBSTRING(nrolloguer, -4, 4) as numero FROM dblloguers
+					where nrolloguer like '".date('y')."-%'
+					order by SUBSTRING(nrolloguer, -4, 4) desc
+					limit 1";
+		$res = $this->query($sql,0);
+
+		$cad = '';
+
+		if (mysql_num_rows($res)>0) {
+			$cad = '0000'.((integer)mysql_result($res,0,0) + 1);
+			return date('y').'-'.substr($cad,-4);
+		}
+		return date('y').'-0001';
+	}
+
 	function insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados) {
-		$sql = "insert into dblloguers(idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa, refestados)
-		values ('',".$refclientes.",".$refubicaciones.",'".($datalloguer)."','".($entrada)."','".($sortida)."',".$total.",".$numpertax.",".$persset.",".$taxa.",".$maxtaxa.",".$refestados.")";
+		$sql = "insert into dblloguers(idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa, refestados, nrolloguer)
+		values ('',".$refclientes.",".$refubicaciones.",'".($datalloguer)."','".($entrada)."','".($sortida)."',".$total.",".$numpertax.",".$persset.",".$taxa.",".$maxtaxa.",".$refestados.",'".$this->generarNroLloguer()."')";
 
 		$res = $this->query($sql,1);
 		return $res;
@@ -762,9 +778,6 @@ return $res;
 			case 5:
 				$colSort = 'l.sortida';
 			break;
-			default:
-				$colSort = 'l.entrada';
-			break;
 		}
 
 
@@ -776,15 +789,14 @@ return $res;
 		$sql = "select
 		l.idlloguer,
 		concat(cli.cognom, ' ', cli.nom, ' - NIF:', cli.nif) as cliente,
-		ti.tipoubicacion,
+		ubi.codapartament,
 		DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
-		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
+		datediff(l.sortida, l.entrada) as dias,
 		l.total,
-
 		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
 		lo.razonsocial,
 		est.estado,
-		datediff(l.sortida, l.entrada) as dias
+		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes
 		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones

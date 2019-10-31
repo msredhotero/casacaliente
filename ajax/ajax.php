@@ -1443,8 +1443,8 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
             $cadTabla .= "<tr>";
             $cadTabla .= "<td>".$row['personas']."</td>";
             $cadTabla .= "<td>".$row['menores']."</td>";
-            $cadTabla .= "<td>".$row['entrada']."</td>";
-            $cadTabla .= "<td>".$row['sortida']."</td>";
+            $cadTabla .= "<td>".$row['entradacorta']."</td>";
+            $cadTabla .= "<td>".$row['sortidacorta']."</td>";
             $cadTabla .= "<td>".$row['taxapersona']."</td>";
             $cadTabla .= "<td>".$row['taxaturistica']."</td>";
             $cadTabla .= "<td>".($row['taxaturistica'] + $row['taxapersona'])."</td>";
