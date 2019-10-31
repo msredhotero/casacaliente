@@ -292,16 +292,18 @@ function verLloguer($serviciosReferencias) {
             <th>Fecha Pago</th>';
    $cadPagos .= '</thead>';
    $cadPagos .= '<tbody>';
-   $cadPagos .= '<tr>';
+
    while ($row = mysql_fetch_array($resPagos))
 	{
+      $cadPagos .= '<tr>';
       $pago += $row['monto'];
       $cadPagos .= '<td>'.number_format( $row['cuota'],2,',','.').' €</td>';
       $cadPagos .= '<td>'.number_format( $row['monto'],2,',','.').' €</td>';
       $cadPagos .= '<td>'.$row['taxa'].'</td>';
       $cadPagos .= '<td>'.$row['fechapagocorta'].'</td>';
+      $cadPagos .= '</tr>';
    }
-   $cadPagos .= '</tr>';
+
    $cadPagos .= '</tbody></table';
 
 
@@ -315,20 +317,23 @@ function verLloguer($serviciosReferencias) {
             <th>T.Tur</th>';
    $cadPersonas .= '</thead>';
    $cadPersonas .= '<tbody>';
-   $cadPersonas .= '<tr>';
+
    while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
+      
    	$taxaturisticaAdicionalPersonas += $rowAd['personas'];
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
    	$totalTaxaPersona += $rowAd['taxapersona'];
 
+      $cadPersonas .= '<tr>';
       $cadPersonas .= '<td>'.$rowAd['personas'].'</td>';
       $cadPersonas .= '<td>'.$rowAd['menores'].'</td>';
       $cadPersonas .= '<td>'.$rowAd['entradacorta'].'</td>';
       $cadPersonas .= '<td>'.$rowAd['sortidacorta'].'</td>';
       $cadPersonas .= '<td>'.$rowAd['taxapersona'].'</td>';
       $cadPersonas .= '<td>'.$rowAd['taxaturistica'].'</td>';
+      $cadPersonas .= '</tr>';
    }
-   $cadPersonas .= '</tr>';
+
    $cadPersonas .= '</tbody></table';
 
 
@@ -688,8 +693,16 @@ function modificarPagoCliente($serviciosReferencias) {
    $fecha1 = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['fechapagocliente1'])));
    $fecha2 = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['fechapagocliente2'])));
 
-   $formapago1 = $_POST['formapago1'];
-   $formapago2 = $_POST['formapago2'];
+   if (isset($_POST['formapago1'])) {
+      $formapago1 = $_POST['formapago1'];
+   } else {
+      $formapago1 = 1;
+   }
+   if (isset($_POST['formapago2'])) {
+      $formapago2 = $_POST['formapago2'];
+   } else {
+      $formapago2 = 1;
+   }
 
    $cargarpago1 = $_POST['cargarpago1'];
    $cargarpago2 = $_POST['cargarpago2'];
@@ -748,6 +761,16 @@ function modificarPagoCliente($serviciosReferencias) {
          $error .= '';
       } else {
          $error .= ' - Hubo un error al insertar datos';
+      }
+   }
+
+   $resFaltaPagar = $serviciosReferencias->faltaPagar($reflloguers);
+
+   if (mysql_num_rows($resFaltaPagar) > 0) {
+      if (mysql_result($resFaltaPagar,0,1) == 0) {
+         $resEstado = $serviciosReferencias->modificarLloguersEstado($reflloguers,2);
+      } else {
+         $resEstado = $serviciosReferencias->modificarLloguersEstado($reflloguers,1);
       }
    }
 

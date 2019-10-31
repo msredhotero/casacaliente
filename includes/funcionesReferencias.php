@@ -175,6 +175,7 @@ return $res;
 			  	    tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion and tip.reflocatarios = ".$reflocatario."
 				WHERE
 				    CAST('".$fecha."' AS DATE) BETWEEN l.entrada AND l.sortida
+					 and l.refestados in (1,2,4)
 				    and l.refubicaciones = ".$idubicacion;
 
 		$res = $this->query($sql,0);
@@ -312,6 +313,7 @@ return $res;
 	/* /* Fin de la Tabla: dblloguersadicional*/
 
 	/* PARA Pagos */
+
 
 	function insertarPagos($reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
 		$sql = "insert into dbpagos(idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado)
@@ -644,6 +646,15 @@ return $res;
 	return $res;
 	}
 
+	function modificarLloguersEstado($id,$refestados) {
+	$sql = "update dblloguers
+	set
+	refestados = ".$refestados."
+	where idlloguer =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
 
 	function eliminarLloguers($id) {
 	$sql = "delete from dblloguers where idlloguer =".$id;
@@ -807,6 +818,7 @@ return $res;
 		l.total,
 		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
 		lo.razonsocial,
+		est.idestado,
 		est.estado,
 		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida
 		from dblloguers l

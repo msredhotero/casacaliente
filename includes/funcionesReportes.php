@@ -1,11 +1,7 @@
 <?php
 
-/**
- * @Usuarios clase en donde se accede a la base de datos
- * @ABM consultas sobre las tablas de usuarios y usarios-clientes
- */
 
-date_default_timezone_set('America/Buenos_Aires');
+date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReportes {
 
@@ -20,181 +16,81 @@ function GUID()
 }
 
 
-function rptFacturacionGeneralPorEmpresa($empresa) { 
+function rptListaTaxaPorApartamento($idlocatario, $desde, $hasta) {
 $sql = "select
-			r.nrofactura,
-			r.cliente,
-			r.referencia,
-			r.fechapago,
-			r.total,
-			r.abono,
-			r.total - r.abono as saldo
-		from
-		(
-		select 
-			f.nrofactura,
-			c.razonsocial as cliente,
-			p.referencia,
-			max(p.fechapago) as fechapago,
-			f.total,
-			coalesce(sum(p.montoapagar),0) as abono
-			
-			
-		from
-			dbfacturas f
-				left join
-			dbpagosfacturas pf ON f.idfactura = pf.reffactura
-				left join
-			dbpagos p ON pf.refpago = p.idpago
-				inner join
-			dbclientes c ON c.idcliente = f.refcliente
-				left join
-			tbestatus et ON et.idestatu = pf.refestatu
-				inner join
-			dbempresas e ON e.idempresa = f.refempresa
-		where	e.idempresa = ".$empresa."
-		group by f.nrofactura,
-			c.razonsocial,
-			p.referencia,
-			f.total
-		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
+      	r.hutg,
+      	r.datalloguer,
+      	r.nif,
+      	r.cognom,
+      	r.nom,
+          r.dias as unitatsestada,
+          r.mayores,
+          r.menores,
+          (case when r.dias <= 7 then r.dias * r.mayores else 7 * r.mayores end) as unitatssubjetes,
+          (r.dias * r.menores) as unitatsexempts,
+          ((r.dias * r.mayores) - (case when r.dias <= 7 then r.dias * r.mayores else 7 * r.mayores end)) as unitatsnosubjetes,
+          r.taxa as total
+      from (
+      	SELECT
+      		u.hutg,
+      		l.datalloguer,
+      		c.nif,
+      		c.cognom,
+      		c.nom,
+      		sum(per.personas) as mayores,
+      		sum(per.menores) as menores,
+      		DATEDIFF(l.sortida, l.entrada) AS dias,
+            p.taxa,
+            p.fechapago
+      	FROM
+      		dblloguers l
+      			INNER JOIN
+      		dbclientes c ON l.refclientes = c.idcliente
+      			INNER JOIN
+      		tbestados est ON est.idestado = l.refestados
+      			INNER JOIN
+      		dbubicaciones u ON u.idubicacion = l.refubicaciones
+      			INNER JOIN
+      		tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+      			AND tip.reflocatarios = ".$idlocatario."
+      			INNER JOIN
+      		dbpagos p ON p.reflloguers = l.idlloguer
+      			AND p.taxa > 1
+      			INNER JOIN
+      		dblloguersadicional per ON per.reflloguers = l.idlloguer
+            where '".$desde."' >= p.fechapago and '".$hasta."' <= p.fechapago
+      	group by u.hutg,
+      		l.datalloguer,
+      		c.nif,
+      		c.cognom,
+      		c.nom,
+      		l.sortida,
+      		l.entrada,
+            p.taxa,
+            p.fechapago
+          ) r";
+$res = $this->query($sql,0);
+return $res;
 }
 
 
-function rptSaldoCliente($empresa) { 
-$sql = "select
-			r.cliente,
-			r.total,
-			r.abono,
-			r.total - r.abono as saldo
-		from
-		(
-		select 
-			c.razonsocial as cliente,
-			sum(f.total) as total,
-			coalesce(sum(p.montoapagar),0) as abono
-			
-			
-		from
-			dbfacturas f
-				left join
-			dbpagosfacturas pf ON f.idfactura = pf.reffactura
-				left join
-			dbpagos p ON pf.refpago = p.idpago
-				inner join
-			dbclientes c ON c.idcliente = f.refcliente
-				left join
-			tbestatus et ON et.idestatu = pf.refestatu
-				inner join
-			dbempresas e ON e.idempresa = f.refempresa
-		where	e.idempresa = ".$empresa."
-		group by c.razonsocial
-		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
-
-
-function rptSaldoPorCliente($empresa,$idcliente) { 
-	$sql = "select
-			r.nrofactura,
-			r.referencia,
-			r.fechapago,
-			r.total,
-			r.abono,
-			r.comentarios
-		from
-		(
-		select 
-			f.nrofactura,
-			p.referencia,
-			max(p.fechapago) as fechapago,
-			f.total,
-			coalesce(sum(p.montoapagar),0) as abono,
-			p.comentarios
-			
-			
-		from
-			dbfacturas f
-				left join
-			dbpagosfacturas pf ON f.idfactura = pf.reffactura
-				left join
-			dbpagos p ON pf.refpago = p.idpago
-				inner join
-			dbclientes c ON c.idcliente = f.refcliente
-				left join
-			tbestatus et ON et.idestatu = pf.refestatu
-				inner join
-			dbempresas e ON e.idempresa = f.refempresa
-		where	e.idempresa = ".$empresa." and c.idcliente = ".$idcliente."
-		group by f.nrofactura,
-			p.comentarios,
-			p.referencia,
-			f.total
-		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
-
-
-function rptSaldoEmpresa($empresa) { 
-$sql = "select
-			r.cliente,
-			r.total,
-			r.abono,
-			r.total - r.abono as saldo
-		from
-		(
-		select 
-			e.razonsocial as cliente,
-			sum(f.total) as total,
-			coalesce(sum(p.montoapagar),0) as abono
-			
-			
-		from
-			dbfacturas f
-				left join
-			dbpagosfacturas pf ON f.idfactura = pf.reffactura
-				left join
-			dbpagos p ON pf.refpago = p.idpago
-				inner join
-			dbclientes c ON c.idcliente = f.refcliente
-				left join
-			tbestatus et ON et.idestatu = pf.refestatu
-				inner join
-			dbempresas e ON e.idempresa = f.refempresa
-		
-		group by e.razonsocial
-		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
-
-
-
 function query($sql,$accion) {
-		
-		
-		
+
+
+
 		require_once 'appconfig.php';
 
 		$appconfig	= new appconfig();
-		$datos		= $appconfig->conexion();	
+		$datos		= $appconfig->conexion();
 		$hostname	= $datos['hostname'];
 		$database	= $datos['database'];
 		$username	= $datos['username'];
 		$password	= $datos['password'];
-		
+
 		$conex = mysql_connect($hostname,$username,$password) or die ("no se puede conectar".mysql_error());
-		
+
 		mysql_select_db($database);
-		
+
 		        $error = 0;
 		mysql_query("BEGIN");
 		$result=mysql_query($sql,$conex);
@@ -212,7 +108,7 @@ function query($sql,$accion) {
 			mysql_query("COMMIT");
 			return $result;
 		}
-		
+
 	}
 
 }

@@ -170,6 +170,10 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		  padding: 0;
 		}
 
+		.highlight {
+		  background-color: #FF9;
+		}
+
 		.modal-content2 {
 		  height: auto;
 		  min-height: 100%;
@@ -285,6 +289,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
 												<th>Empresa</th>
 												<?php } ?>
+												<th>Estado</th>
 												<th>Accions</th>
 											</tr>
 										</thead>
@@ -300,6 +305,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
 												<th>Empresa</th>
 												<?php } ?>
+												<th>Estado</th>
 												<th>Accions</th>
 											</tr>
 										</tfoot>
@@ -1645,7 +1651,35 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},
+			"rowCallback": function( row, data, index ) {
+				<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+				if (data[7] == 3) {
+					$('td', row).css('background-color', 'red');
+					$('td', row).css('color', 'white');
+				}
+				if (data[7] == 4) {
+					$('td', row).css('background-color', 'orange');
+					$('td', row).css('color', 'white');
+				}
+				<?php } else { ?>
+				if (data[6] == 3) {
+					$('td', row).css('background-color', 'red');
+					$('td', row).css('color', 'white');
+				}
+				if (data[6] == 4) {
+					$('td', row).css('background-color', 'orange');
+					$('td', row).css('color', 'white');
+				}
+				<?php } ?>
+			},
+			"columnDefs": [
+            {
+               "targets": [ 7 ],
+					"visible": false,
+               "searchable": false
+            }
+			]
 		});
 
 		$("#sign_in").submit(function(e){

@@ -75,11 +75,11 @@ switch ($tabla) {
 		if ($_SESSION['idlocatario_sahilices'] == '') {
 			$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
 			$res = $serviciosReferencias->traerLloguers();
-			$termina = 7;
+			$termina = 8;
 		} else {
 			$resAjax = $serviciosReferencias->traerLloguersLocatarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idlocatario_sahilices']);
 			$res = $serviciosReferencias->traerLloguersPorLocatario($_SESSION['idlocatario_sahilices']);
-			$termina = 6;
+			$termina = 7;
 		}
 
 
