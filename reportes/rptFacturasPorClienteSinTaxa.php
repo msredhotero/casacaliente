@@ -166,8 +166,8 @@ while ($rowE = mysql_fetch_array($resDatos)) {
 	$pdf->Cell(20,5,$rowE['fechapago'],1,0,'C',false);
 	$pdf->Cell(18,5,$rowE['idpago'],1,0,'C',false);
 	$pdf->Cell(27,5,$rowE['nif'],1,0,'C',false);
-	$pdf->Cell(43,5,substr( utf8_encode($rowE['cognom']),0,25),1,0,'L',false);
-	$pdf->Cell(43,5,substr( utf8_encode($rowE['nom']),0,25),1,0,'L',false);
+	$pdf->Cell(43,5,substr( utf8_decode($rowE['cognom']),0,25),1,0,'L',false);
+	$pdf->Cell(43,5,substr( utf8_decode($rowE['nom']),0,25),1,0,'L',false);
 	$pdf->Cell(30,5,number_format( $rowE['base'],2,',','.').' '.EURO,1,0,'R',false);
 	$pdf->Cell(30,5,number_format( $rowE['iva'],2,',','.').' '.EURO,1,0,'R',false);
 	$pdf->Cell(30,5,number_format( $rowE['monto'],2,',','.').' '.EURO,1,0,'R',false);
