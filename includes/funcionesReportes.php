@@ -121,6 +121,30 @@ function rptFacturaPorClienteSinTaxa($idlocatario, $anio) {
 }
 
 
+function rptConsultaOcupacionalAnio($idlocatario, $anio) {
+   $sql = "
+      	SELECT
+      		u.codapartament,
+            l.nrolloguer,
+            DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
+            DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
+            DATEDIFF(l.sortida,l.entrada) as dias,
+            round(DATEDIFF(l.sortida,l.entrada) / 7,2) as semanas
+      	FROM
+      		dblloguers l
+      			INNER JOIN
+      		dbubicaciones u ON u.idubicacion = l.refubicaciones
+      			INNER JOIN
+      		tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+      			AND tip.reflocatarios = ".$idlocatario."
+            where year(l.entrada) = ".$anio."
+            order by u.codapartament, l.idlloguer
+      	";
+   $res = $this->query($sql,0);
+   return $res;
+}
+
+
 function query($sql,$accion) {
 
 

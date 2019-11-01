@@ -271,6 +271,59 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 					</div>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								CONSULTA OCUPACIO ANUAL
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+							<form class="form" id="formRpt">
+
+								<div class="row">
+									<div class="form-group col-md-10">
+										<label class="control-label" style="text-align:left" for="refcliente">Seleccione Empresa | Any | Baja</label>
+										<div class="input-group col-md-12">
+											<span class="input-group-addon">
+												<select class="form-control" id="reflocatarios3" name="reflocatarios3" required />
+												<?php echo $cadRef; ?>
+												</select>
+											</span>
+											<span class="input-group-addon">
+												<select class="form-control show-tick" id="any3" name="any3" required />
+
+												</select>
+											</span>
+
+										</div>
+									</div>
+									<div class="form-group col-md-2">
+										<ul class="list-inline">
+											<li>
+												<button type="button" class="btn btn-success" id="rptConsultaOcupacion" style="margin-left:0px;">Generar</button>
+											</li>
+										</ul>
+
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div><!-- fin del row clearfix -->
 	</div><!-- fin del container-fluid -->
 </section>
@@ -305,18 +358,30 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 		$('#rptFacturasPorCliente').click(function() {
 			if ($("#any2").val() != '') {
-				window.open("../../reportes/rptFacturasPorClienteSinTaxa.php?idlocatario=" + $("#reflocatarios").val() + "&any=" + $("#any2").val() + "&hasta=" + $("#hasta").val() ,'_blank');
+				window.open("../../reportes/rptFacturasPorClienteSinTaxa.php?idlocatario=" + $("#reflocatarios2").val() + "&any=" + $("#any2").val() ,'_blank');
 			}
 
 		});
 
-		traerAnyPagos($('#reflocatarios2').val());
+		$('#rptConsultaOcupacion').click(function() {
+			if ($("#any2").val() != '') {
+				window.open("../../reportes/rptConsultaOcupacionalPorAny.php?idlocatario=" + $("#reflocatarios3").val() + "&any=" + $("#any3").val() ,'_blank');
+			}
 
-		$('#reflocatarios2').change(function() {
-			traerAnyPagos($(this).val());
 		});
 
-		function traerAnyPagos(idlocatario) {
+		traerAnyPagos($('#reflocatarios2').val(), 'any2');
+		traerAnyPagos($('#reflocatarios3').val(), 'any3');
+
+		$('#reflocatarios2').change(function() {
+			traerAnyPagos($(this).val(), 'any2');
+		});
+
+		$('#reflocatarios3').change(function() {
+			traerAnyPagos($(this).val(), 'any3');
+		});
+
+		function traerAnyPagos(idlocatario, contenedor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -328,16 +393,16 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('#any2').html('');
+					$('#' + contenedor).html('');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 					if (data.datos == '') {
-						$('#any2').html('<option value="">No existen Anys con pagaments</option>');
-						$('#any2').selectpicker('refresh');
+						$('#' + contenedor).html('<option value="">No existen Anys con pagaments</option>');
+						$('#' + contenedor).selectpicker('refresh');
 					} else {
-						$('#any2').html(data.datos);
-						$('#any2').selectpicker('refresh');
+						$('#' + contenedor).html(data.datos);
+						$('#' + contenedor).selectpicker('refresh');
 					}
 
 				},
