@@ -35,7 +35,7 @@ function rptListaTaxaPorApartamento($idlocatario, $desde, $hasta) {
       	SELECT
       		u.hutg,
       		l.datalloguer,
-      		c.nif,
+      		LOWER(c.nif) as nif,
             LOWER(c.cognom) as cognom,
       		LOWER(c.nom) as nom,
       		sum(per.personas) as mayores,
