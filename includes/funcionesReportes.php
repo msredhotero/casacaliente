@@ -23,13 +23,14 @@ $sql = "select
       	r.nif,
       	r.cognom,
       	r.nom,
-          r.dias as unitatsestada,
-          r.mayores,
-          r.menores,
-          (case when r.dias <= 7 then r.dias * r.mayores else 7 * r.mayores end) as unitatssubjetes,
-          (r.dias * r.menores) as unitatsexempts,
-          ((r.dias * r.mayores) - (case when r.dias <= 7 then r.dias * r.mayores else 7 * r.mayores end)) as unitatsnosubjetes,
-          r.taxa as total
+         r.dias as unitatsestada,
+         r.mayores,
+         r.menores,
+         (case when r.dias <= 7 then r.dias * r.mayores else 7 * r.mayores end) as unitatssubjetes,
+         (r.dias * r.menores) as unitatsexempts,
+         ((r.dias * r.mayores) - (case when r.dias <= 7 then r.dias * r.mayores else 7 * r.mayores end)) as unitatsnosubjetes,
+         r.taxa as total,
+         r.idpago
       from (
       	SELECT
       		u.hutg,
@@ -41,7 +42,8 @@ $sql = "select
       		sum(per.menores) as menores,
       		DATEDIFF(l.sortida, l.entrada) AS dias,
             p.taxa,
-            p.fechapago
+            p.fechapago,
+            p.idpago
       	FROM
       		dblloguers l
       			INNER JOIN
@@ -55,10 +57,10 @@ $sql = "select
       			AND tip.reflocatarios = ".$idlocatario."
       			INNER JOIN
       		dbpagos p ON p.reflloguers = l.idlloguer
-      			AND p.taxa > 1
+      			AND p.taxa > 0
       			INNER JOIN
       		dblloguersadicional per ON per.reflloguers = l.idlloguer
-            where '".$desde."' >= p.fechapago and '".$hasta."' <= p.fechapago
+            where p.fechapago >= '".$desde."' and p.fechapago <= '".$hasta."'
       	group by u.hutg,
       		l.datalloguer,
       		c.nif,
@@ -67,7 +69,8 @@ $sql = "select
       		l.sortida,
       		l.entrada,
             p.taxa,
-            p.fechapago
+            p.fechapago,
+            p.idpago
           ) r";
 $res = $this->query($sql,0);
 return $res;

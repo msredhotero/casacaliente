@@ -72,6 +72,14 @@ $refCampo 	=  array('reflocatarios');
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resVar1 = $serviciosReferencias->traerLocatarios();
+} else {
+	$resVar1 = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
+}
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+
+
 ?>
 
 <!DOCTYPE html>
@@ -172,7 +180,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								Llistat Taxa Per Apartament
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -186,15 +194,35 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="formCountry">
+							<form class="form" id="formRpt">
 
 								<div class="row">
-									<div class="col-lg-12 col-md-12">
+									<div class="form-group col-md-10">
+										<label class="control-label" style="text-align:left" for="refcliente">Seleccione Empresa | Desde | Hasta | Baja</label>
+										<div class="input-group col-md-12">
+											<span class="input-group-addon">
+												<select class="form-control" id="reflocatarios" name="reflocatarios" required />
+												<?php echo $cadRef; ?>
+												</select>
+											</span>
+											<span class="input-group-addon">
+												<input type="date" class="form-control" name="desde" id="desde" />
+											</span>
+											<span class="input-group-addon">
+											<input type="date" class="form-control" name="hasta" id="hasta" />
+											</span>
+
+										</div>
+									</div>
+									<div class="form-group col-md-2">
+										<ul class="list-inline">
+											<li>
+												<button type="button" class="btn btn-success" id="rptListadoTaxa" style="margin-left:0px;">Generar</button>
+											</li>
+										</ul>
 
 									</div>
 								</div>
-
-
 							</form>
 							</div>
 						</div>
@@ -226,7 +254,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+		$('#rptListadoTaxa').click(function() {
+			if (($("#hasta").val() != '') && ($("#desde").val() != '')) {
+				window.open("../../reportes/rptListaTaxaPorApartamento.php?idlocatario=" + $("#reflocatarios").val() + "&desde=" + $("#desde").val() + "&hasta=" + $("#hasta").val() ,'_blank');
+			}
 
+		});
 	});
 </script>
 
