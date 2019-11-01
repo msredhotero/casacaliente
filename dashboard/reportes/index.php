@@ -101,14 +101,6 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 	<link href="../../plugins/waitme/waitMe.css" rel="stylesheet" />
 	<link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
-	<!-- VUE JS -->
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-	<!-- axios -->
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-	<script src="https://unpkg.com/vue-swal"></script>
-
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
 
@@ -123,6 +115,8 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+
+		.open ul li a { z-index: 999999999 !important; }
 	</style>
 
 
@@ -172,10 +166,7 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
 	<div class="container-fluid">
 		<div class="row clearfix">
-
 			<div class="row">
-
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
@@ -193,7 +184,7 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 								</li>
 							</ul>
 						</div>
-						<div class="body table-responsive">
+						<div class="body">
 							<form class="form" id="formRpt">
 
 								<div class="row">
@@ -224,13 +215,64 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 									</div>
 								</div>
 							</form>
-							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								FACTURES PER CLIENT SENSE TAXA
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+							<form class="form" id="formRpt">
+
+								<div class="row">
+									<div class="form-group col-md-10">
+										<label class="control-label" style="text-align:left" for="refcliente">Seleccione Empresa | Any | Baja</label>
+										<div class="input-group col-md-12">
+											<span class="input-group-addon">
+												<select class="form-control" id="reflocatarios2" name="reflocatarios2" required />
+												<?php echo $cadRef; ?>
+												</select>
+											</span>
+											<span class="input-group-addon">
+												<select class="form-control show-tick" id="any2" name="any2" required />
+
+												</select>
+											</span>
+
+										</div>
+									</div>
+									<div class="form-group col-md-2">
+										<ul class="list-inline">
+											<li>
+												<button type="button" class="btn btn-success" id="rptFacturasPorCliente" style="margin-left:0px;">Generar</button>
+											</li>
+										</ul>
+
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!-- fin del row clearfix -->
+	</div><!-- fin del container-fluid -->
 </section>
 
 
@@ -260,6 +302,52 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 			}
 
 		});
+
+		$('#rptFacturasPorCliente').click(function() {
+			if ($("#any2").val() != '') {
+				window.open("../../reportes/rptFacturasPorClienteSinTaxa.php?idlocatario=" + $("#reflocatarios").val() + "&any=" + $("#any2").val() + "&hasta=" + $("#hasta").val() ,'_blank');
+			}
+
+		});
+
+		traerAnyPagos($('#reflocatarios2').val());
+
+		$('#reflocatarios2').change(function() {
+			traerAnyPagos($(this).val());
+		});
+
+		function traerAnyPagos(idlocatario) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'traerAniosPagos',
+					idlocatario: idlocatario
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#any2').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.datos == '') {
+						$('#any2').html('<option value="">No existen Anys con pagaments</option>');
+						$('#any2').selectpicker('refresh');
+					} else {
+						$('#any2').html(data.datos);
+						$('#any2').selectpicker('refresh');
+					}
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 	});
 </script>
 

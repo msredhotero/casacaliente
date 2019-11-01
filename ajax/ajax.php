@@ -216,10 +216,33 @@ break;
 case 'eliminarLloguercomentarios':
    eliminarLloguercomentarios($serviciosReferencias);
 break;
+
+case 'traerAniosPagos':
+   traerAniosPagos($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function traerAniosPagos($serviciosReferencias) {
+   $idlocatario = $_POST['idlocatario'];
+
+   $resV['datos'] = '';
+
+   $res = $serviciosReferencias->traerAniosPagos($idlocatario);
+
+   $cad = '';
+
+   while ($row = mysql_fetch_array($res)) {
+      $cad .= "<option value='".$row[0]."'>".$row[0]."</option>";
+   }
+
+   $resV['datos'] = $cad;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function insertarLloguercomentarios($serviciosReferencias) {
    $reflloguers = $_POST['reflloguers'];
@@ -319,7 +342,7 @@ function verLloguer($serviciosReferencias) {
    $cadPersonas .= '<tbody>';
 
    while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
-      
+
    	$taxaturisticaAdicionalPersonas += $rowAd['personas'];
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
    	$totalTaxaPersona += $rowAd['taxapersona'];

@@ -49,6 +49,14 @@ $pdf->Cell(0,10,'Pagina '.$pdf->PageNo()." - Fecha: ".date('Y-m-d'),0,0,'C');
 
 
 $cantidadRegistros = 0;
+
+$totales1 = 0;
+$totales2 = 0;
+$totales3 = 0;
+$totales4 = 0;
+$totales5 = 0;
+$totales6 = 0;
+$totales7 = 0;
 #Establecemos los márgenes izquierda, arriba y derecha:
 //$pdf->SetMargins(2, 2 , 2);
 
@@ -67,31 +75,31 @@ $pdf->SetAutoPageBreak(false,1);
 	$pdf->Ln();
 	$pdf->SetY(5);
 	$pdf->SetX(5);
-	$pdf->Cell(282,20,'LLISTA TAXA GENERALITAT',1,0,'L',true);
+	$pdf->Cell(285,20,'LLISTA TAXA GENERALITAT',1,0,'L',true);
 	$pdf->Ln();
 	$pdf->SetX(5);
 
 	$pdf->SetFont('Arial','',8);
-	$pdf->Cell(145,5,'',1,0,'L',true);
-	$pdf->Cell(30,5,'PERSONES',1,0,'C',true);
-	$pdf->Cell(92,5,'UNITATS',1,0,'C',true);
-	$pdf->Cell(15,5,'',1,0,'C',true);
+	$pdf->Cell(154,5,'',1,0,'L',true);
+	$pdf->Cell(20,5,'PERSONES',1,0,'C',true);
+	$pdf->Cell(86,5,'UNITATS',1,0,'C',true);
+	$pdf->Cell(25,5,'',1,0,'C',true);
 	$pdf->Ln();
 	$pdf->SetX(5);
 
 
 	$pdf->Cell(22,5,'TRIMESTRE',1,0,'C',true);
 	$pdf->Cell(20,5,'DATA',1,0,'C',true);
-	$pdf->Cell(23,5,'NIF',1,0,'C',true);
-	$pdf->Cell(40,5,'COGNOM',1,0,'C',true);
-   $pdf->Cell(40,5,'NOM',1,0,'C',true);
-   $pdf->Cell(15,5,'>17',1,0,'C',true);
-   $pdf->Cell(15,5,'<=16',1,0,'C',true);
-   $pdf->Cell(23,5,'ESTADA',1,0,'C',true);
+	$pdf->Cell(26,5,'NIF',1,0,'C',true);
+	$pdf->Cell(43,5,'COGNOM',1,0,'C',true);
+   $pdf->Cell(43,5,'NOM',1,0,'C',true);
+   $pdf->Cell(10,5,'>17',1,0,'C',true);
+   $pdf->Cell(10,5,'<=16',1,0,'C',true);
+   $pdf->Cell(17,5,'ESTADA',1,0,'C',true);
    $pdf->Cell(23,5,'SUBJECTES',1,0,'C',true);
    $pdf->Cell(23,5,'EXEMPTES',1,0,'C',true);
    $pdf->Cell(23,5,'NO SUBJECTES',1,0,'C',true);
-   $pdf->Cell(15,5,'TOTAL',1,0,'C',true);
+   $pdf->Cell(25,5,'TOTAL',1,0,'C',true);
 
 
 	$i=0;
@@ -120,31 +128,31 @@ while ($rowE = mysql_fetch_array($resDatos)) {
 		$pdf->Ln();
 		$pdf->SetY(5);
 		$pdf->SetX(5);
-		$pdf->Cell(282,20,'LLISTA TAXA GENERALITAT',1,0,'L',true);
+		$pdf->Cell(285,20,'LLISTA TAXA GENERALITAT',1,0,'L',true);
 		$pdf->Ln();
 		$pdf->SetX(5);
 
 		$pdf->SetFont('Arial','',8);
-		$pdf->Cell(145,5,'',1,0,'L',true);
-		$pdf->Cell(30,5,'PERSONES',1,0,'C',true);
-		$pdf->Cell(92,5,'UNITATS',1,0,'C',true);
-		$pdf->Cell(15,5,'',1,0,'C',true);
+		$pdf->Cell(154,5,'',1,0,'L',true);
+		$pdf->Cell(20,5,'PERSONES',1,0,'C',true);
+		$pdf->Cell(86,5,'UNITATS',1,0,'C',true);
+		$pdf->Cell(25,5,'',1,0,'C',true);
 		$pdf->Ln();
 		$pdf->SetX(5);
 
 
 		$pdf->Cell(22,5,'TRIMESTRE',1,0,'C',true);
 		$pdf->Cell(20,5,'DATA',1,0,'C',true);
-		$pdf->Cell(23,5,'NIF',1,0,'C',true);
-		$pdf->Cell(40,5,'COGNOM',1,0,'C',true);
-	   $pdf->Cell(40,5,'NOM',1,0,'C',true);
-	   $pdf->Cell(15,5,'>17',1,0,'C',true);
-	   $pdf->Cell(15,5,'<=16',1,0,'C',true);
-	   $pdf->Cell(23,5,'ESTADA',1,0,'C',true);
+		$pdf->Cell(26,5,'NIF',1,0,'C',true);
+		$pdf->Cell(43,5,'COGNOM',1,0,'C',true);
+	   $pdf->Cell(43,5,'NOM',1,0,'C',true);
+	   $pdf->Cell(10,5,'>17',1,0,'C',true);
+	   $pdf->Cell(10,5,'<=16',1,0,'C',true);
+	   $pdf->Cell(17,5,'ESTADA',1,0,'C',true);
 	   $pdf->Cell(23,5,'SUBJECTES',1,0,'C',true);
 	   $pdf->Cell(23,5,'EXEMPTES',1,0,'C',true);
 	   $pdf->Cell(23,5,'NO SUBJECTES',1,0,'C',true);
-	   $pdf->Cell(15,5,'TOTAL'.EURO,1,0,'C',true);
+	   $pdf->Cell(25,5,'TOTAL',1,0,'C',true);
 
 		$i=0;
 
@@ -156,17 +164,24 @@ while ($rowE = mysql_fetch_array($resDatos)) {
 	$pdf->SetFont('Arial','',10);
 	$pdf->Cell(22,5,$rowE['idpago'],1,0,'C',false);
 	$pdf->Cell(20,5,$rowE['datalloguer'],1,0,'C',false);
-	$pdf->Cell(23,5,$rowE['nif'],1,0,'C',false);
-	$pdf->Cell(40,5,substr($rowE['cognom'],0,28),1,0,'L',false);
-	$pdf->Cell(40,5,substr($rowE['nom'],0,28),1,0,'L',false);
-	$pdf->Cell(15,5,$rowE['mayores'],1,0,'C',false);
-	$pdf->Cell(15,5,$rowE['menores'],1,0,'C',false);
-	$pdf->Cell(23,5,$rowE['unitatsestada'],1,0,'C',false);
+	$pdf->Cell(26,5,$rowE['nif'],1,0,'C',false);
+	$pdf->Cell(43,5,substr($rowE['cognom'],0,28),1,0,'L',false);
+	$pdf->Cell(43,5,substr($rowE['nom'],0,28),1,0,'L',false);
+	$pdf->Cell(10,5,$rowE['mayores'],1,0,'C',false);
+	$pdf->Cell(10,5,$rowE['menores'],1,0,'C',false);
+	$pdf->Cell(17,5,$rowE['unitatsestada'],1,0,'C',false);
 	$pdf->Cell(23,5,$rowE['unitatssubjetes'],1,0,'C',false);
 	$pdf->Cell(23,5,$rowE['unitatsexempts'],1,0,'C',false);
 	$pdf->Cell(23,5,$rowE['unitatsnosubjetes'],1,0,'C',false);
-	$pdf->Cell(15,5,$rowE['total'],1,0,'R',false);
+	$pdf->Cell(25,5,number_format( $rowE['total'],2,',','.').' '.EURO,1,0,'R',false);
 
+	$totales1 += $rowE['mayores'];
+	$totales2 += $rowE['menores'];
+	$totales3 += $rowE['unitatsestada'];
+	$totales4 += $rowE['unitatssubjetes'];
+	$totales5 += $rowE['unitatsexempts'];
+	$totales6 += $rowE['unitatsnosubjetes'];
+	$totales7 += $rowE['total'];
 
 	$contadorY1 += 4;
 
@@ -177,6 +192,17 @@ while ($rowE = mysql_fetch_array($resDatos)) {
 
 
 $pdf->Ln();
+$pdf->Ln();
+$pdf->SetX(5);
+$pdf->SetFont('Arial','',10);
+$pdf->Cell(154,5,'Totales',1,0,'L',false);
+$pdf->Cell(10,5,$totales1,1,0,'C',false);
+$pdf->Cell(10,5,$totales2,1,0,'C',false);
+$pdf->Cell(17,5,$totales3,1,0,'C',false);
+$pdf->Cell(23,5,$totales4,1,0,'C',false);
+$pdf->Cell(23,5,$totales5,1,0,'C',false);
+$pdf->Cell(23,5,$totales6,1,0,'C',false);
+$pdf->Cell(25,5,number_format( $totales7,2,',','.').' '.EURO,1,0,'R',false);
 $pdf->Ln();
 $pdf->Ln();
 

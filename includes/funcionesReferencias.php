@@ -313,7 +313,24 @@ return $res;
 	/* /* Fin de la Tabla: dblloguersadicional*/
 
 	/* PARA Pagos */
+	function traerAniosPagos($idlocatario) {
+		$sql = "SELECT DISTINCT
+				    YEAR(p.fechapago)
+				FROM
+				    dbpagos p
+				        INNER JOIN
+				    dblloguers l ON l.idlloguer = p.reflloguers
+				        INNER JOIN
+				    dbclientes c ON c.idcliente = l.refclientes
+				WHERE
+				    YEAR(p.fechapago) > 0
+				        AND c.reflocatarios = ".$idlocatario."
+				GROUP BY YEAR(p.fechapago)
+				ORDER BY YEAR(p.fechapago)";
 
+		$res = $this->query($sql,0);
+		return $res;
+	}
 
 	function insertarPagos($reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
 		$sql = "insert into dbpagos(idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado)

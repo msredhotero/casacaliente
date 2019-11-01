@@ -17,7 +17,7 @@ function GUID()
 
 
 function rptListaTaxaPorApartamento($idlocatario, $desde, $hasta) {
-$sql = "select
+   $sql = "select
       	r.hutg,
       	r.datalloguer,
       	r.nif,
@@ -36,8 +36,8 @@ $sql = "select
       		u.hutg,
       		l.datalloguer,
       		c.nif,
-      		c.cognom,
-      		c.nom,
+            LOWER(c.cognom) as cognom,
+      		LOWER(c.nom) as nom,
       		sum(per.personas) as mayores,
       		sum(per.menores) as menores,
       		DATEDIFF(l.sortida, l.entrada) AS dias,
@@ -72,8 +72,52 @@ $sql = "select
             p.fechapago,
             p.idpago
           ) r";
-$res = $this->query($sql,0);
-return $res;
+   $res = $this->query($sql,0);
+   return $res;
+}
+
+
+
+function rptFacturaPorClienteSinTaxa($idlocatario, $anio) {
+   $sql = "
+      	SELECT
+      		u.hutg,
+      		l.datalloguer,
+      		c.nif,
+      		LOWER(c.cognom) as cognom,
+      		LOWER(c.nom) as nom,
+            p.monto as monto,
+            (case when p.fechapago < '09/01/2012' then p.monto / 1.08
+                  when p.fechapago > '31/05/2017' then p.monto else
+                  p.monto / 1.1 end) as base,
+            (p.monto - (case when p.fechapago < '09/01/2012' then p.monto / 1.08
+                  when p.fechapago > '31/05/2017' then p.monto else
+                  p.monto / 1.1 end)) as iva,
+            p.taxa,
+            DATE_FORMAT(p.fechapago, '%d/%m/%Y') as fechapago,
+            p.idpago,
+            (case when month(p.fechapago) in (1,2,3) then 'T1 ".$anio."'
+                  when month(p.fechapago) in (4,5,6) then 'T2 ".$anio."'
+                  when month(p.fechapago) in (7,8,9) then 'T3 ".$anio."'
+                  when month(p.fechapago) in (10,11,12) then 'T4 ".$anio."' end) trimestre
+      	FROM
+      		dblloguers l
+      			INNER JOIN
+      		dbclientes c ON l.refclientes = c.idcliente
+      			INNER JOIN
+      		tbestados est ON est.idestado = l.refestados
+      			INNER JOIN
+      		dbubicaciones u ON u.idubicacion = l.refubicaciones
+      			INNER JOIN
+      		tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+      			AND tip.reflocatarios = ".$idlocatario."
+      			INNER JOIN
+      		dbpagos p ON p.reflloguers = l.idlloguer
+            where year(p.fechapago) = ".$anio."
+            order by p.fechapago
+      	";
+   $res = $this->query($sql,0);
+   return $res;
 }
 
 
