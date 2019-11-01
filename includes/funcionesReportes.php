@@ -87,11 +87,11 @@ function rptFacturaPorClienteSinTaxa($idlocatario, $anio) {
       		LOWER(c.cognom) as cognom,
       		LOWER(c.nom) as nom,
             p.monto as monto,
-            (case when p.fechapago < '09/01/2012' then p.monto / 1.08
-                  when p.fechapago > '31/05/2017' then p.monto else
+            (case when p.fechapago < '2012-01-09' then p.monto / 1.08
+                  when p.fechapago > '2017-05-31' then p.monto else
                   p.monto / 1.1 end) as base,
-            (p.monto - (case when p.fechapago < '09/01/2012' then p.monto / 1.08
-                  when p.fechapago > '31/05/2017' then p.monto else
+            (p.monto - (case when p.fechapago < '2012-01-09' then p.monto / 1.08
+                  when p.fechapago > '2017-05-31' then p.monto else
                   p.monto / 1.1 end)) as iva,
             p.taxa,
             DATE_FORMAT(p.fechapago, '%d/%m/%Y') as fechapago,
