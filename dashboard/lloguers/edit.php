@@ -29,6 +29,15 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../lloguers/
 //$dias = $serviciosReferencias->calcularTarifa(25,'2019-06-26','2019-06-30',3);
 //die(var_dump($dias));
 
+if (isset($_GET['id'])) {
+	$id = $_GET['id'];
+} else {
+	$id = 0;
+}
+
+
+
+
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
@@ -41,9 +50,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Lloguer";
+$singular = "Lloguer - Edit";
 
-$plural = "Lloguers";
+$plural = "Lloguers - Edit";
 
 $eliminar = "eliminarLloguers";
 
@@ -53,6 +62,14 @@ $modificar = "modificarLloguers";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
+$resultado = $serviciosReferencias->traerLloguersPorIdCompleto($id);
+
+$nro 			= mysql_result($resultado,0,'nrolloguer');
+$entredaR 	= mysql_result($resultado,0,'entradacorta');
+$sortidaR 	= mysql_result($resultado,0,'sortidacorta');
+$totalR		= mysql_result($resultado,0,'total');
+
+$plural .= $plural.' - Nro: '.$nro;
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dblloguers";
@@ -65,29 +82,27 @@ if ($_SESSION['idlocatario_sahilices'] == '') {
 } else {
 	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
 }
-$cadRef1		= '<option value="">-- Seleccionar --</option>';
-$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
+
+$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar2 = $serviciosReferencias->traerUbicaciones();
-	$cadRef2		= '<option value="">-- Seleccionar --</option>';
-	$cadRef2 	.= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2,6),array(' - Dor: ',' - Color: ',' - Empresa: ',''),'');
+	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2,6),array(' - Dor: ',' - Color: ',' - Empresa: ',''),'');
 } else {
 	$resVar2 = $serviciosReferencias->traerUbicacionesPorLocatario($_SESSION['idlocatario_sahilices']);
-	$cadRef2		= '<option value="">-- Seleccionar --</option>';
-	$cadRef2 	.= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2),array(' - Dor: ',' - Color: ',''),'');
+	$cadRef2 	= $serviciosFunciones->devolverSelectBoxArray($resVar2,array(4,1,2),array(' - Dor: ',' - Color: ',''),'');
 }
 
 
 
 $resVar3 = $serviciosReferencias->traerEstados();
-$cadRef3 	= $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+$cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestados'));
 
 
 $refdescripcion = array(0 => $cadRef1,1=>$cadRef2, 2=>$cadRef3);
 $refCampo 	=  array('refclientes','refubicaciones','refestados');
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id, 'idlloguer',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
@@ -255,61 +270,146 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							<form class="form" id="formCountry">
 
 								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NOU</span>
-											</button>
-											<button type="button" class="btn bg-teal waves-effect btnDisponibilidad hidden" data-toggle="modal" data-target="#lgmDisponibilidad">
-												<i class="material-icons">date_range</i>
-												<span>DISPONIBILITAT</span>
-											</button>
-											<button type="button" class="btn bg-green waves-effect btnNuevoCliente" data-toggle="modal" data-target="#lgmNuevoCliente">
-												<i class="material-icons">add</i>
-												<span>NOU CLIENT</span>
-											</button>
+									<div class="row">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<div class="form-line">
+												<label for="refclientes" class="control-label" style="text-align:left">Client</label>
+												<select tabindex="1" class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
+														<?php echo $cadRef1; ?>
+												</select>
+											</div>
+										</div>
 
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<div class="form-line">
+												<label for="refubicaciones" class="control-label" style="text-align:left">Ubicaciones</label>
+												<select tabindex="2" class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones" required>
+													<?php echo $cadRef2; ?>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
+											<label class="form-label">Data Contracte</label>
+											<div class="form-group">
+												<div class="form-line">
+													<input tabindex="3" type="text" class="form-control" id="datalloguer" name="datalloguer" />
+
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
+			                         <label class="form-label">Entrada</label>
+			                         <div class="input-group">
+
+												 <span class="input-group-addon">
+													  <i class="material-icons">date_range</i>
+												 </span>
+			                             <div class="form-line">
+												   	<input tabindex="4" type="text" class="form-control" id="entradaR" name="entradaR" value="<?php echo $entredaR; ?>" required />
+			                             </div>
+
+			                         </div>
+			                     </div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
+			                         <label class="form-label">Sortida</label>
+			                         <div class="input-group">
+
+			                             <span class="input-group-addon">
+			                                 <i class="material-icons">date_range</i>
+			                             </span>
+			                             <div class="form-line">
+												   	<input tabindex="5" type="text" class="form-control" id="sortidaR" name="sortidaR" value="<?php echo $sortidaR; ?>" required />
+
+			                             </div>
+			                         </div>
+			                     </div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
+											<label class="form-label">N° Pers Taxa</label>
+											<div class="form-group">
+												<div class="form-line">
+													<input tabindex="66" type="number" class="form-control" id="numpertax" name="numpertax" />
+
+												</div>
+											</div>
+										</div>
+
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
+											<label class="form-label">Pers Total</label>
+											<div class="form-group">
+												<div class="form-line">
+													<input tabindex="77" type="number" class="form-control" id="persset" name="persset" />
+
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3" style="display:block">
+											<label for="taxa" class="control-label" style="text-align:left">Taxa</label>
+											<div class="input-group">
+			                           <span class="input-group-addon">€</span>
+			                           <div class="form-line">
+			                              <input tabindex="6" type="text" class="form-control" id="taxa" name="taxa" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3" style="display:block">
+											<label for="Max Taxa" class="control-label" style="text-align:left">Max Taxa</label>
+											<div class="input-group">
+			                           <span class="input-group-addon">€</span>
+			                           <div class="form-line">
+			                              <input tabindex="7" type="text" class="form-control" id="maxtaxa" name="maxtaxa" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
+											<div class="form-line">
+												<label for="refestados" class="control-label" style="text-align:left">Estat</label>
+												<select tabindex="8" class="form-control show-tick" id="refestados" name="refestados">
+													<?php echo $cadRef3; ?>
+												</select>
+											</div>
+										</div>
+
+									</div>
+
+									<div class="row">
+
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;font-size:16px;">
+											<label for="total" class="control-label" style="text-align:left; color:red;">Total</label>
+											<div class="input-group">
+			                           <span class="input-group-addon">€</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="total" name="total" value="<?php echo $totalR; ?>" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
 										</div>
 									</div>
 								</div>
+								<div class="row">
+									<button tabindex="14" type="button" class="btn bg-orange waves-effect" id="validarmasivo"><i class="material-icons">done_all</i> <span>MODIFICAR</span></button>
+								</div>
+								<hr>
+								<div class="row frmAjaxGrilla">
 
-								<div class="row" style="padding: 5px 20px;">
+								</div>
+								<div class="row frmAjaxNuevo">
 
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Client</th>
-												<th>Num</th>
-												<th>Entrada</th>
-												<th>Dias</th>
-												<th>Preu</th>
-												<!--<th>Falta Pagar</th>-->
-												<th>Nro Lloguer</th>
-												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
-												<th>Empresa</th>
-												<?php } ?>
-												<th>Estado</th>
-												<th>Accions</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Client</th>
-												<th>Num</th>
-												<th>Entrada</th>
-												<th>Dias</th>
-												<th>Preu</th>
-												<!--<th>Falta Pagar</th>-->
-												<th>Nro Lloguer</th>
-												<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
-												<th>Empresa</th>
-												<?php } ?>
-												<th>Estado</th>
-												<th>Accions</th>
-											</tr>
-										</tfoot>
-									</table>
 								</div>
 							</form>
 							</div>
@@ -914,10 +1014,10 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				                   <h4 class="modal-title" id="largeModalLabel"><span class="tituloNuevo"></span></h4>
 				               </div>
 				               <div class="modal-body demo-masked-input">
-										<div class="row frmAjaxGrilla">
+										<div class="row frmAjaxGrilla2">
 
 										</div>
-										<div class="row frmAjaxNuevo">
+										<div class="row frmAjaxNuevo2">
 
 										</div>
 				               </div>
@@ -992,8 +1092,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	var indice = 1;
 	$(document).ready(function(){
 
-		$('#entrada').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
-		$('#sortida').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
+		$('#entradaR').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
+		$('#sortidaR').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
 
 		function validarmasivo(refclientes, refubicaciones, datalloguer, entrada, sortida, total, numpertax, persset, taxa, maxtaxa, refestados, indice) {
 		$.ajax({
@@ -1080,7 +1180,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			errorValida = true;
 		}
 
-		if (devolverFechaCorrecta($('#entrada').val()) >= devolverFechaCorrecta($('#sortida').val())) {
+		if (devolverFechaCorrecta($('#entradaR').val()) >= devolverFechaCorrecta($('#sortidaR').val())) {
 
 			cadErrorValida += 'La fecha de Sortida no puede ser menor que la de Entrada. \
 			\n';
@@ -1356,14 +1456,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$( "#fechapago2" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago2" ).val('<?php echo date('d/m/Y', strtotime($date.' + 30 days')); ?>');
 
-		$( "#entrada" ).change(function() {
-			var fechaNueva = new Date(devolverFechaCorrecta( $('#entrada').val()));
-			var dias = 14; // Número de días a agregar
-			fechaNueva.setDate(fechaNueva.getDate() + dias)
-			$( "#sortida" ).val($.format.date(fechaNueva, "dd/MM/yyyy"));
-
-			$('.entradaImp').val($('#entrada').val());
-			$('.sortidaImp').val($.format.date(fechaNueva, "dd/MM/yyyy"));
+		$( "#entradaR" ).change(function() {
+			$('#entrada').val($('#entradaR').val());
 		});
 
 		$('#taxa').number(true,2,'.','');
@@ -1405,26 +1499,18 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#maxtaxa').val(<?php echo $maxTaxaTur; ?>);
 		$('#taxa').val(<?php echo $taxaTur; ?>);
 
-		$('.frmNuevoPrincipal #sortida').change(function() {
-			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
+		$('#sortidaR').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());
 		});
 
-		$('.frmNuevoPrincipal #entrada').change(function() {
-			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
+		$('#entradaR').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());
 		});
 
-		$('.frmNuevoPrincipal #refubicaciones').change(function() {
-			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
+		$('#refubicaciones').change(function() {
+			devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());
 		});
 
-		$('.frmNuevoPrincipal #numpertax').change(function() {
-			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
-			$('.frmNuevoPrincipal #persset').val($('.frmNuevoPrincipal #numpertax').val());
-		});
-
-		$('.btnNuevo').click(function() {
-			devolverTarifa($('.frmNuevoPrincipal #refubicaciones').val(), $('.frmNuevoPrincipal #entrada').val(), $('.frmNuevoPrincipal #sortida').val(), $('.frmNuevoPrincipal #numpertax').val());
-		});
 
 		function formato(texto){
 			return texto.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
@@ -1605,7 +1691,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				},
 				//una vez finalizado correctamente
 				success: function(data){
-					$('.frmNuevoPrincipal #total').val(data);
+					$('#total').val(data);
 					$('.frmAjaxModificar #total').val(data);
 
 				},
@@ -2293,7 +2379,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});
 
 
-
+		frmAjaxNuevo(<?php echo $id; ?>, 'dblloguersadicional');
 		$("#example").on("click",'.btnAgregarPersonas', function(){
 
 			var tabla =  'dblloguersadicional';
@@ -2311,7 +2397,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			var id = $(this).attr("id");
 			$('.tituloNuevo').html('PERSONES ADDICIONALS');
 			$('#accion').html('insertarLloguersadicional');
-			$('#lgmNuevoCualquiera').modal();
+			//$('#lgmNuevoCualquiera').modal();
 			frmAjaxNuevo(id, tabla);
 
 		});//fin del boton nuevo planata
@@ -2328,8 +2414,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				//mientras enviamos el archivo
 				beforeSend: function(){
 
-					$('.frmAjaxNuevo').html('');
-					$('.frmAjaxGrilla').html('');
+					$('.frmAjaxNuevo2').html('');
+					$('.frmAjaxGrilla2').html('');
 				},
 				//una vez finalizado correctamente
 				success: function(data){

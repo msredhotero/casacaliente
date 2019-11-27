@@ -901,7 +901,7 @@ return $res;
 
 
 	function traerLloguersPorId($id) {
-	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa,refestados from dblloguers where idlloguer =".$id;
+	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa,refestados,nrolloguer from dblloguers where idlloguer =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}

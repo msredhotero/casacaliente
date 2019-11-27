@@ -998,7 +998,10 @@ function devolverTarifa($serviciosReferencias) {
       $tarifa = 0;
    }
 
+   //$resV['valor'] = round($tarifa,2);
    echo round($tarifa,2);
+   //header('Content-type: application/json');
+   //echo json_encode($resV);
 }
 
 function insertarLloguers($serviciosReferencias) {
