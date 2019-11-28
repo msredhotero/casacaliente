@@ -1078,8 +1078,15 @@ function modificarLloguers($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
    $refubicaciones = $_POST['refubicaciones'];
    $datalloguer = $_POST['datalloguer'];
-   $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
-   $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
+
+   if (isset($_POST['entrada'])) {
+      $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
+      $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
+   } else {
+      $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entradaR'])));
+      $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortidaR'])));
+   }
+
    $total = $_POST['total'];
    $numpertax = $_POST['numpertax'];
    $persset = $_POST['persset'];

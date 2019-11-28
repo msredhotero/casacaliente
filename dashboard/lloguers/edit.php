@@ -106,23 +106,22 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id, 'idlloguer'
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tablaCliente 			= "dbclientes";
+$tablaP 			= "dblloguersadicional";
 
-$lblCambioCliente	 	= array('codipostal','telefon2','email2','reflocatarios');
-$lblreemplazoCliente	= array('Cod Postal','Tel. 2','Email 2','Empresas');
+$insertarP = "insertarLloguersadicional";
+$idTablaP = "idllogueradicional";
 
-if ($_SESSION['idlocatario_sahilices'] == '') {
-	$resVarCliente = $serviciosReferencias->traerLocatarios();
-} else {
-	$resVarCliente = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
-}
-$cadRefCliente 	= $serviciosFunciones->devolverSelectBox($resVarCliente,array(1),'');
+$lblCambioP	 	= array("reflloguers",'personas');
+$lblreemplazoP	= array("Lloguer",'Adultos');
 
-$refdescripcionCliente = array(0=>$cadRefCliente);
-$refCampoCliente 	=  array('reflocatarios');
+$resVar1P = $serviciosReferencias->traerLloguersPorIdAux($id);
+$cadRef1P 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1P,array(4,5),' - ', $id);
 
 
-$frmCliente 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tablaCliente,$lblCambioCliente,$lblreemplazoCliente,$refdescripcionCliente,$refCampoCliente);
+$refdescripcionP = array(0=>$cadRef1P);
+$refCampoP 	=  array('reflloguers');
+
+$formularioPersones = $serviciosFunciones->camposTablaViejo($insertarP ,$tablaP,$lblCambioP,$lblreemplazoP,$refdescripcionP,$refCampoP);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -267,7 +266,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="formCountry">
+							<form class="form" id="frmModificar">
 
 								<div class="row">
 									<div class="row">
@@ -402,14 +401,168 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									</div>
 								</div>
 								<div class="row">
-									<button tabindex="14" type="button" class="btn bg-orange waves-effect" id="validarmasivo"><i class="material-icons">done_all</i> <span>MODIFICAR</span></button>
+									<div class="alert bg-deep-orange alert-dismissible">
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+										¡Recuerde que si modifica el <b>Total</b> y tiene pagos realizados deberá modificarlos!.
+									</div>
 								</div>
+								<div class="row">
+									<button tabindex="14" type="button" class="btn bg-orange waves-effect" id="btnModificarLloguer"><i class="material-icons">edit</i> <span>MODIFICAR</span></button>
+								</div>
+								<input type="hidden" name="accion" id="accion" value="modificarLloguers" />
+								<input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
+							</form>
+
+							<div class="row">
 								<hr>
+								<h4>Persones</h4>
+							</div>
+							<form class="formulario" role="form" id="frmPersones">
 								<div class="row frmAjaxGrilla">
 
 								</div>
 								<div class="row frmAjaxNuevo">
 
+								</div>
+								<div class="row">
+									<button tabindex="16" type="button" class="btn bg-green waves-effect" id="btnNuevoPersones"><i class="material-icons">add</i> <span>AGREGAR</span></button>
+								</div>
+								<input type="hidden" name="accion" id="accion" value="insertarLloguersadicional" />
+								<input type="hidden" name="reflloguers" id="reflloguers" value="<?php echo $id; ?>" />
+
+							</form>
+							<hr>
+							<div class="row">
+								<hr>
+								<h4>Pagos Realitzat</h4>
+							</div>
+							<form class="formulario" role="form" id="sign_in frmPagosRealizados">
+								<div class="row">
+									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+										<div class="row">
+											<label class="form-label">Total a Pagar</label>
+											<div class="form-line">
+												<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="totalapagarcliente" name="totalapagarcliente" required />
+											</div>
+										</div>
+										<div class="row">
+											<label class="form-label">Falta Pagar</label>
+											<div class="form-line">
+												<input readonly="readonly" style="width:200px;border:0;" value="0" type="text" class="form-control" id="faltapagarcliente" name="faltapagarcliente" required />
+											</div>
+										</div>
+									</div>
+
+
+
+									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+										<div class="row">
+											<label class="form-label">Realitzat Pag. 1°</label>
+											<div class="form-line" style="width:250px;">
+												<div class="input-group input-group-lg">
+													<span class="input-group-addon">
+														<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico1" value="1">
+														<label for="pagotaxaunico1"></label>
+													</span>
+													<div class="form-line">
+														<input value="0" type="text" class="form-control" id="cargarpago1" name="cargarpago1" required />
+
+													</div>
+													<span class="input-group-addon">
+														<span style="color:green; text-align:left;" class="lblTaxaPaga1"></span>
+													</span>
+
+												</div>
+
+											</div>
+										</div>
+
+										<div class="row">
+											<label class="form-label">Realitzat Pag. 2°</label>
+											<div class="form-line" style="width:250px;">
+												<div class="input-group input-group-lg">
+
+													<span class="input-group-addon">
+														<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico2" value="2">
+														<label for="pagotaxaunico2"></label>
+													</span>
+													<div class="form-line">
+														<input value="0" type="text" class="form-control" id="cargarpago2" name="cargarpago2" required />
+													</div>
+													<span class="input-group-addon">
+														<label style="color:green; text-align:left;" class="lblTaxaPaga2"></label>
+													</span>
+
+												</div>
+
+											</div>
+										</div>
+
+
+									</div>
+
+									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+
+										<div class="row">
+											<label class="form-label">Forma de Pag. 1°</label>
+											<div class="form-line">
+												<select type="text" class="form-control" id="formapago1" name="formapago1" required />
+												<?php echo $cadFormaPago; ?>
+												</select>
+											</div>
+										</div>
+
+										<div class="row">
+											<label class="form-label">Forma de Pag. 2°</label>
+											<div class="form-line">
+												<select type="text" class="form-control" id="formapago2" name="formapago2" required />
+												<?php echo $cadFormaPago; ?>
+												</select>
+											</div>
+										</div>
+
+									</div>
+
+								</div>
+								<div class="row">
+									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+										<div class="row">
+											<label class="form-label">Fecha Pag. 1°</label>
+											<div class="form-line">
+												<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente1" name="fechapagocliente1" required />
+											</div>
+										</div>
+										<div class="row">
+											<label class="form-label">Fecha Pag. 2°</label>
+											<div class="form-line">
+												<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente2" name="fechapagocliente2" required />
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
+										<div class="row">
+											<label class="form-label">Valor Pag. 1°</label>
+											<div class="form-line">
+												<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente1" name="valorpagocliente1" required />
+											</div>
+										</div>
+										<div class="row">
+											<label class="form-label">Valor Pag. 2°</label>
+											<div class="form-line">
+												<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente2" name="valorpagocliente2" required />
+											</div>
+										</div>
+										<div class="row">
+											<label class="form-label">Taxa</label>
+											<div class="form-line">
+												<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="pagotaxacliente" name="pagotaxacliente" required />
+											</div>
+										</div>
+									</div>
+								</div><!-- fin del ultimo row -->
+								<div class="row">
+									<button tabindex="16" type="button" class="btn bg-orange waves-effect" id="btnModificarPagos"><i class="material-icons">edit</i> <span>MODIFICAR</span></button>
 								</div>
 							</form>
 							</div>
@@ -420,287 +573,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		</div>
 	</div>
 </section>
-
-	<div class="modal fade modal-admin" id="lgmDisponibilidad" tabindex="-1" role="dialog" style="overflow-y: scroll;">
-		 <div class="modal-dialog modal-lg modalDisponibilidad" role="document">
-			  <div class="modal-content modalDisp">
-					<div class="modal-header">
-						 <h4 class="modal-title" id="largeModalLabel">DISPONIBILITAT</h4>
-					</div>
-					<div class="modal-body">
-						<div class="container-fluid">
-							<div class="row">
-								<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 contDisponibilidad">
-
-								</div>
-							</div>
-						</div>
-
-
-					</div>
-					<div class="modal-footer">
-						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-					</div>
-			  </div>
-		 </div>
-	</div>
-<!-- NUEVO -->
-	<form class="formulario frmLloguer" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">NOU <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body frmNuevoPrincipal">
-							<div class="row">
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-									<div class="form-line">
-										<label for="refclientes" class="control-label" style="text-align:left">Client</label>
-										<select tabindex="1" class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
-												<?php echo $cadRef1; ?>
-										</select>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-									<div class="form-line">
-										<label for="refubicaciones" class="control-label" style="text-align:left">Ubicaciones</label>
-										<select tabindex="2" class="form-control show-tick" data-live-search="true" id="refubicaciones" name="refubicaciones" required>
-											<?php echo $cadRef2; ?>
-										</select>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
-									<label class="form-label">Data Contracte</label>
-									<div class="form-group">
-										<div class="form-line">
-											<input tabindex="3" type="text" class="form-control" id="datalloguer" name="datalloguer" />
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
-	                         <label class="form-label">Entrada</label>
-	                         <div class="input-group">
-
-										 <span class="input-group-addon">
-											  <i class="material-icons">date_range</i>
-										 </span>
-	                             <div class="form-line">
-										   	<input tabindex="4" type="text" class="form-control" id="entrada" name="entrada" required />
-	                             </div>
-
-	                         </div>
-	                     </div>
-
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
-	                         <label class="form-label">Sortida</label>
-	                         <div class="input-group">
-
-	                             <span class="input-group-addon">
-	                                 <i class="material-icons">date_range</i>
-	                             </span>
-	                             <div class="form-line">
-										   	<input tabindex="5" type="text" class="form-control" id="sortida" name="sortida" required />
-
-	                             </div>
-	                         </div>
-	                     </div>
-							</div>
-
-							<div class="row">
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
-									<label class="form-label">N° Pers Taxa</label>
-									<div class="form-group">
-										<div class="form-line">
-											<input tabindex="66" type="number" class="form-control" id="numpertax" name="numpertax" />
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
-									<label class="form-label">Pers Total</label>
-									<div class="form-group">
-										<div class="form-line">
-											<input tabindex="77" type="number" class="form-control" id="persset" name="persset" />
-
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="row">
-
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3" style="display:block">
-									<label for="taxa" class="control-label" style="text-align:left">Taxa</label>
-									<div class="input-group">
-	                           <span class="input-group-addon">€</span>
-	                           <div class="form-line">
-	                              <input tabindex="6" type="text" class="form-control" id="taxa" name="taxa" value="" >
-	                           </div>
-	                           <span class="input-group-addon">.00</span>
-	                        </div>
-								</div>
-
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-3" style="display:block">
-									<label for="Max Taxa" class="control-label" style="text-align:left">Max Taxa</label>
-									<div class="input-group">
-	                           <span class="input-group-addon">€</span>
-	                           <div class="form-line">
-	                              <input tabindex="7" type="text" class="form-control" id="maxtaxa" name="maxtaxa" value="" >
-	                           </div>
-	                           <span class="input-group-addon">.00</span>
-	                        </div>
-								</div>
-
-								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6" style="display:block">
-									<div class="form-line">
-										<label for="refestados" class="control-label" style="text-align:left">Estat</label>
-										<select tabindex="8" class="form-control show-tick" id="refestados" name="refestados">
-											<?php echo $cadRef3; ?>
-										</select>
-									</div>
-								</div>
-
-							</div>
-
-							<div class="row">
-								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display:block; color:blue; text-align:center;">
-									<h4>Declare la cantidad de personas y los dias que van a hospedarse</h4>
-								</div>
-								<div class="row lstPersonaLloguer">
-									<div class="row" style="padding-left: 20px;">
-										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
-											<label class="form-label">Adultos</label>
-											<div class="form-group">
-												<div class="form-line">
-													<input tabindex="9" type="number" value="1" class="form-control personasLloguer" id="personas1" name="personas1" required="">
-												</div>
-											</div>
-										</div>
-
-										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
-											<label class="form-label">Menores</label>
-											<div class="form-group">
-												<div class="form-line">
-													<input tabindex="10" type="number" value="0" class="form-control menoresLloguer" id="menores1" name="menores1" required="">
-												</div>
-											</div>
-										</div>
-
-										<div class="col-lg-3 col-md-3 col-sm-4 col-xs-4" style="display:block">
-			                         <label class="form-label">Entrada</label>
-			                         <div class="input-group">
-
-			                             <span class="input-group-addon">
-			                                 <i class="material-icons">date_range</i>
-			                             </span>
-			                             <div class="form-line">
-												   	<input tabindex="11" type="text" class="form-control entradaImp" id="entradapersonas1" name="entradapersonas1" required />
-
-			                             </div>
-			                         </div>
-			                     </div>
-
-										<div class="col-lg-3 col-md-3 col-sm-4 col-xs-4" style="display:block">
-			                         <label class="form-label">Sortida</label>
-			                         <div class="input-group">
-
-			                             <span class="input-group-addon">
-			                                 <i class="material-icons">date_range</i>
-			                             </span>
-			                             <div class="form-line">
-												   	<input tabindex="12" type="text" class="form-control sortidaImp" id="sortidapersonas1" name="sortidapersonas1" required />
-
-			                             </div>
-			                         </div>
-			                     </div>
-
-										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="display:block">
-											<label class="form-label">Acciones</label>
-											<div class="form-group">
-												<div class="form-line" style="border:none;">
-													<button tabindex="13" type="button" id="1" class="btn bg-green btn-circle waves-effect waves-circle waves-float agregarRenglon">
-		                                    <i class="material-icons">add_circle</i>
-		                                </button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="row">
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;font-size:16px;">
-									<label for="total" class="control-label" style="text-align:left; color:red;">Total</label>
-									<div class="input-group">
-	                           <span class="input-group-addon">€</span>
-	                           <div class="form-line">
-	                              <input type="text" class="form-control" id="total" name="total" value="" >
-	                           </div>
-	                           <span class="input-group-addon">.00</span>
-	                        </div>
-								</div>
-
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:none">
-									<label class="form-label">Nrolloguer</label>
-									<div class="form-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nrolloguer" name="nrolloguer" />
-
-										</div>
-									</div>
-								</div>
-
-								<input type="hidden" id="accion" name="accion" value="insertarLloguers"/>
-								<input type="hidden" id="indice" name="indice" value="1"/>
-
-							</div>
-
-	               </div>
-	               <div class="modal-footer">
-	                   <button tabindex="14" type="button" class="btn bg-green waves-effect" id="validarmasivo"><i class="material-icons">done_all</i> <span>VALIDAR CARGA</span></button>
-	                   <button tabindex="15" type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-	</form>
-
-
-
-	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
 
 
 	<!-- ELIMINAR -->
@@ -727,131 +599,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		</form>
 
 
-
-		<!-- ver -->
-			<form class="formulario" role="form" id="sign_in">
-			   <div class="modal fade" id="lgmVer" tabindex="-1" role="dialog">
-			       <div class="modal-dialog modal-lg" role="document">
-			           <div class="modal-content">
-			               <div class="modal-header">
-			                   <h4 class="modal-title" id="largeModalLabelVer"></h4>
-			               </div>
-			               <div class="modal-body">
-									<div class="row modalVer">
-
-									</div>
-
-			               </div>
-			               <div class="modal-footer">
-			                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-			               </div>
-			           </div>
-			       </div>
-			   </div>
-				<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-			</form>
-
-		<!-- NUEVO -->
-			<form class="formulario" role="form" id="sign_in">
-				<div class="modal fade" id="lgmNuevoCliente" tabindex="-1" role="dialog">
-					 <div class="modal-dialog modal-lg" role="document">
-						  <div class="modal-content">
-								<div class="modal-header">
-									 <h4 class="modal-title" id="largeModalLabel">NOU CLIENT</h4>
-								</div>
-								<div class="modal-body">
-									<div class="row">
-										<?php echo $frmCliente; ?>
-									</div>
-
-								</div>
-								<div class="modal-footer">
-									 <button type="button" class="btn btn-primary waves-effect nuevoCliente">GUARDAR</button>
-									 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-								</div>
-						  </div>
-					 </div>
-				</div>
-				<input type="hidden" id="accion" name="accion" value="insertarClientes"/>
-			</form>
-
-
-		<!-- Pagos -->
-			<form class="formulario" role="form" id="sign_in">
-				<div class="modal fade" id="lgmNuevoPago" tabindex="-1" role="dialog">
-					 <div class="modal-dialog modal-lg" role="document">
-						  <div class="modal-content">
-								<div class="modal-header">
-									 <h4 class="modal-title" id="largeModalLabel">PAGAMENTS</h4>
-								</div>
-								<div class="modal-body">
-									<div class="row">
-										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-											<div class="row">
-												<label class="form-label">Total a Pagar</label>
-												<div class="form-line">
-													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="totalapagar" name="totalapagar" required />
-												</div>
-											</div>
-											<div class="row">
-												<label class="form-label">Falta Pagar</label>
-												<div class="form-line">
-													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="faltapagar" name="faltapagar" required />
-												</div>
-											</div>
-										</div>
-
-										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-											<div class="row">
-												<label class="form-label">Valor Pago 1°</label>
-												<div class="form-line">
-													<input value="0" style="width:200px;" type="text" class="form-control" id="valorpago1" name="valorpago1" required />
-												</div>
-											</div>
-											<div class="row">
-												<label class="form-label">Valor Pago 2°</label>
-												<div class="form-line">
-													<input value="0" style="width:200px;" type="text" class="form-control" id="valorpago2" name="valorpago2" required />
-												</div>
-											</div>
-											<div class="row">
-												<label class="form-label">Taxa</label>
-												<div class="form-line">
-													<input value="0" style="width:200px;" type="text" class="form-control" id="pagotaxa" name="pagotaxa" required />
-												</div>
-											</div>
-										</div>
-
-										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-											<div class="row">
-												<label class="form-label">Fecha Pago 1°</label>
-												<div class="form-line">
-													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="fechapago1" name="fechapago1" required />
-												</div>
-											</div>
-											<div class="row">
-												<label class="form-label">Fecha Pago 2°</label>
-												<div class="form-line">
-													<input readonly="readonly" style="width:200px;" value="0" type="text" class="form-control" id="fechapago2" name="fechapago2" required />
-												</div>
-											</div>
-										</div>
-
-									</div>
-
-
-								</div>
-								<div class="modal-footer">
-									 <button type="button" class="btn btn-primary waves-effect nuevoPagare">GUARDAR</button>
-									 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-								</div>
-						  </div>
-					 </div>
-				</div>
-				<input type="hidden" id="accion" name="accion" value="insertarPagare"/>
-				<input type="hidden" id="idlloguerpagare" name="idlloguerpagare" value="0"/>
-			</form>
-
 			<!-- Pagos -->
 				<form class="formulario" role="form" id="sign_in">
 					<div class="modal fade" id="lgmNuevoPagoCliente" tabindex="-1" role="dialog">
@@ -861,131 +608,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										 <h4 class="modal-title" id="largeModalLabel">PAG. REALITZATS</h4>
 									</div>
 									<div class="modal-body">
-										<div class="row">
-											<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-												<div class="row">
-													<label class="form-label">Total a Pagar</label>
-													<div class="form-line">
-														<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="totalapagarcliente" name="totalapagarcliente" required />
-													</div>
-												</div>
-												<div class="row">
-													<label class="form-label">Falta Pagar</label>
-													<div class="form-line">
-														<input readonly="readonly" style="width:200px;border:0;" value="0" type="text" class="form-control" id="faltapagarcliente" name="faltapagarcliente" required />
-													</div>
-												</div>
-											</div>
 
-
-
-											<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-												<div class="row">
-													<label class="form-label">Realitzat Pag. 1°</label>
-													<div class="form-line" style="width:250px;">
-														<div class="input-group input-group-lg">
-															<span class="input-group-addon">
-																<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico1" value="1">
-																<label for="pagotaxaunico1"></label>
-															</span>
-															<div class="form-line">
-																<input value="0" type="text" class="form-control" id="cargarpago1" name="cargarpago1" required />
-
-															</div>
-															<span class="input-group-addon">
-																<span style="color:green; text-align:left;" class="lblTaxaPaga1"></span>
-															</span>
-
-														</div>
-
-													</div>
-												</div>
-
-												<div class="row">
-													<label class="form-label">Realitzat Pag. 2°</label>
-													<div class="form-line" style="width:250px;">
-														<div class="input-group input-group-lg">
-
-															<span class="input-group-addon">
-																<input type="radio" class="with-gap" name="pagotaxaunico" id="pagotaxaunico2" value="2">
-																<label for="pagotaxaunico2"></label>
-															</span>
-															<div class="form-line">
-																<input value="0" type="text" class="form-control" id="cargarpago2" name="cargarpago2" required />
-															</div>
-															<span class="input-group-addon">
-																<label style="color:green; text-align:left;" class="lblTaxaPaga2"></label>
-															</span>
-
-														</div>
-
-													</div>
-												</div>
-
-
-											</div>
-
-											<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-
-												<div class="row">
-													<label class="form-label">Forma de Pag. 1°</label>
-													<div class="form-line">
-														<select type="text" class="form-control" id="formapago1" name="formapago1" required />
-														<?php echo $cadFormaPago; ?>
-														</select>
-													</div>
-												</div>
-
-												<div class="row">
-													<label class="form-label">Forma de Pag. 2°</label>
-													<div class="form-line">
-														<select type="text" class="form-control" id="formapago2" name="formapago2" required />
-														<?php echo $cadFormaPago; ?>
-														</select>
-													</div>
-												</div>
-
-											</div>
-
-										</div>
-										<div class="row">
-											<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-												<div class="row">
-													<label class="form-label">Fecha Pag. 1°</label>
-													<div class="form-line">
-														<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente1" name="fechapagocliente1" required />
-													</div>
-												</div>
-												<div class="row">
-													<label class="form-label">Fecha Pag. 2°</label>
-													<div class="form-line">
-														<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="fechapagocliente2" name="fechapagocliente2" required />
-													</div>
-												</div>
-											</div>
-
-											<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
-												<div class="row">
-													<label class="form-label">Valor Pag. 1°</label>
-													<div class="form-line">
-														<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente1" name="valorpagocliente1" required />
-													</div>
-												</div>
-												<div class="row">
-													<label class="form-label">Valor Pag. 2°</label>
-													<div class="form-line">
-														<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="valorpagocliente2" name="valorpagocliente2" required />
-													</div>
-												</div>
-												<div class="row">
-													<label class="form-label">Taxa</label>
-													<div class="form-line">
-														<input value="0" style="width:200px;border: 0;" type="text" class="form-control" id="pagotaxacliente" name="pagotaxacliente" required />
-													</div>
-												</div>
-											</div>
-
-										</div>
 
 
 									</div>
@@ -1095,7 +718,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#entradaR').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
 		$('#sortidaR').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
 
-		function validarmasivo(refclientes, refubicaciones, datalloguer, entrada, sortida, total, numpertax, persset, taxa, maxtaxa, refestados, indice) {
+		function validarmasivo(refclientes, refubicaciones, datalloguer, entrada, sortida, total, numpertax, persset, taxa, maxtaxa, refestados) {
 		$.ajax({
 			data:  {
 				refclientes: refclientes,
@@ -1109,16 +732,16 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				taxa: taxa,
 				maxtaxa: maxtaxa,
 				refestados: refestados,
-				indice: indice,
-				accion: 'insertarLloguers'},
+				id: <?php echo $id; ?>,
+				accion: 'modificarLloguers'},
 			url:   '../../ajax/ajax.php',
 			type:  'post',
 			beforeSend: function () {
-				$('.validarmasivo').hide();
+				$('.btnModificarLloguer').hide();
 			},
 			success:  function (response) {
 
-				$('.validarmasivo').show();
+				$('.btnModificarLloguer').show();
 				if (response.error) {
 					swal("Error!", response.data, "warning");
 				} else {
@@ -1162,7 +785,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		return cadNuevaFecha[2] + '-' + cadNuevaFecha[1] + '-' + cadNuevaFecha[0];
 	}
 
-	$('#validarmasivo').click(function() {
+	$('#btnModificarLloguer').click(function() {
 		var errorValida = false;
 		var cadErrorValida = '';
 
@@ -1187,40 +810,18 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			errorValida = true;
 		}
 
-		$( ".lstPersonaLloguer .entradaImp" ).each(function( index ) {
-			if ($( this ).val() == '') {
-				cadErrorValida += 'Debe ingresar una fecha de entrada valida. \
-				\n';
-			} else {
-				if ((devolverFechaCorrecta($( this ).val()) < devolverFechaCorrecta($('#entrada').val())) || (devolverFechaCorrecta($( this ).val()) >= devolverFechaCorrecta($('#sortida').val()))) {
-
-					cadErrorValida += 'La fecha de Entrada de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
-					\n';
-					errorValida = true;
-				}
-			}
-
-		});
-
-		$( ".lstPersonaLloguer .sortidaImp" ).each(function( index ) {
-			if ((devolverFechaCorrecta($( this ).val()) <= devolverFechaCorrecta($('#entrada').val())) || (devolverFechaCorrecta($( this ).val()) > devolverFechaCorrecta($('#sortida').val()))) {
-				cadErrorValida += 'La fecha de Sortida de las personas no puede ser menor a la de la Entrada cargada en el alquiler ni mayor a la de la salida. \
-				\n';
-				errorValida = true;
-			}
-		});
 
 		if (errorValida) {
 			swal("Error!", cadErrorValida, "warning");
 		} else {
-			$('#indice').val(indice);
+
 			swal({
-			  title: ' Desea guardar el Alquiler?',
-			  text: "Una vez guardado finalizara su carga",
+			  title: ' Desea modificar el Lloguer?',
+			  text: "Una vez modificado finalizara su carga",
 			  type: "success",
 			  showCancelButton: true,
 			  confirmButtonColor: "#28a745",
-			  confirmButtonText: "Si, deseo guardar el Alquiler",
+			  confirmButtonText: "Si, deseo modificar el Lloguer",
 			  cancelButtonText: "No!",
 			  closeOnConfirm: false,
 			  closeOnCancel: false,
@@ -1371,84 +972,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		});
 
 
-
 		$('#entradapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
 		$('#sortidapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
-
-		/*
-		$('#entrada').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-
-		$('#sortida').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-
-
-		$('#entradapersonas1').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-
-		$('#sortidapersonas1').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-		*/
 
 		$( "#fechapago1" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
@@ -1686,14 +1211,11 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('.frmNuevoPrincipal #total').val(0);
-					$('.frmAjaxModificar #total').val(0);
+					$('#total').val(0);
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#total').val(data);
-					$('.frmAjaxModificar #total').val(data);
-
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1703,70 +1225,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			});
 		}
 
-		devolverTarifa($('#refubicaciones').val(), $('#entrada').val(), $('#sortida').val(), $('#numpertax').val());
+		devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());
 
 		var $demoMaskedInput = $('.demo-masked-input');
 
 		$('#desdeperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 		$('#finsaperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 
-		var table = $('#example').DataTable({
-			"order": [[ 2, "desc" ]],
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=lloguers",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			},
-			"rowCallback": function( row, data, index ) {
-				<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
-				if (data[7] == 3) {
-					$('td', row).css('background-color', 'red');
-					$('td', row).css('color', 'white');
-				}
-				if (data[7] == 4) {
-					$('td', row).css('background-color', 'orange');
-					$('td', row).css('color', 'white');
-				}
-				<?php } else { ?>
-				if (data[6] == 3) {
-					$('td', row).css('background-color', 'red');
-					$('td', row).css('color', 'white');
-				}
-				if (data[6] == 4) {
-					$('td', row).css('background-color', 'orange');
-					$('td', row).css('color', 'white');
-				}
-				<?php } ?>
-			},
-			"columnDefs": [
-            {
-               "targets": [ 7 ],
-					"visible": false,
-               "searchable": false
-            }
-			]
-		});
+
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
@@ -1933,11 +1399,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						});
 						$('#' + contenedor).modal('toggle');
 
-						if (contenedor == 'lgmEliminarLA') {
-							$('#lgmNuevoCualquiera').modal('toggle');
-						}
-
-						table.ajax.reload();
+						frmAjaxNuevo(<?php echo $id; ?>, 'dblloguersadicional');
 
 					} else {
 						swal({
@@ -1995,7 +1457,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		function guardarLloguer() {
 
 			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
+			var formData = new FormData($("#frmModificar")[0]);
 			var message = "";
 			//hacemos la petición ajax
 			$.ajax({
@@ -2018,16 +1480,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					if (data == '') {
 						swal({
 								title: "Respuesta",
-								text: "Registro Creado con exito!!",
+								text: "Registro Modificado con exito!!",
 								type: "success",
 								timer: 1500,
 								showConfirmButton: false
 						});
+						devolverTarifaArrayPagament(<?php echo $id; ?>);
+						devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());
 
-						$('#lgmNuevo').modal('hide');
-						$('#unidadnegocio').val('');
-						location.reload();
-						armarTablaTarifas($('#any').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -2323,11 +1783,15 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			});
 		});
 
+		$('#btnNuevoPersones2').click(function(){
+			var formData = new FormData($("#frmPersones").val());
+			alert(formData.personas);
+		});
 
-		$('.nuevoCualquiera').click(function(){
+		$('#btnNuevoPersones').click(function(){
 
 			//información del formulario
-			var formData = new FormData($(".formulario")[7]);
+			var formData = new FormData($("#frmPersones")[0]);
 			var message = "";
 			//hacemos la petición ajax
 			$.ajax({
@@ -2380,6 +1844,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 
 		frmAjaxNuevo(<?php echo $id; ?>, 'dblloguersadicional');
+
 		$("#example").on("click",'.btnAgregarPersonas', function(){
 
 			var tabla =  'dblloguersadicional';
@@ -2450,6 +1915,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			});
 
 		}
+
+		devolverTarifaArrayPagament(<?php echo $id; ?>);
 
 
 	});
