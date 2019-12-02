@@ -279,6 +279,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
+												<th>Data</th>
 												<th>Client</th>
 												<th>Num</th>
 												<th>Entrada</th>
@@ -295,6 +296,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										</thead>
 										<tfoot>
 											<tr>
+												<th>Data</th>
 												<th>Client</th>
 												<th>Num</th>
 												<th>Entrada</th>
@@ -1625,7 +1627,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		$('#finsaperiode').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 
 		var table = $('#example').DataTable({
-			"order": [[ 2, "desc" ]],
+			"order": [[ 0, "desc" ]],
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=lloguers",
@@ -1654,20 +1656,20 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			},
 			"rowCallback": function( row, data, index ) {
 				<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
+				if (data[8] == 3) {
+					$('td', row).css('background-color', 'red');
+					$('td', row).css('color', 'white');
+				}
+				if (data[8] == 4) {
+					$('td', row).css('background-color', 'orange');
+					$('td', row).css('color', 'white');
+				}
+				<?php } else { ?>
 				if (data[7] == 3) {
 					$('td', row).css('background-color', 'red');
 					$('td', row).css('color', 'white');
 				}
 				if (data[7] == 4) {
-					$('td', row).css('background-color', 'orange');
-					$('td', row).css('color', 'white');
-				}
-				<?php } else { ?>
-				if (data[6] == 3) {
-					$('td', row).css('background-color', 'red');
-					$('td', row).css('color', 'white');
-				}
-				if (data[6] == 4) {
 					$('td', row).css('background-color', 'orange');
 					$('td', row).css('color', 'white');
 				}
@@ -1902,8 +1904,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable);
-			$('#lgmModificar').modal();
+			$(location).attr('href','edit.php?id=' + idTable);
 		});//fin del boton modificar
 
 		function guardarLloguer() {

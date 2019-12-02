@@ -436,7 +436,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<hr>
 								<h4>Pagos Realitzat</h4>
 							</div>
-							<form class="formulario" role="form" id="sign_in frmPagosRealizados">
+							<form class="formulario" role="form" id="frmPagosRealizados">
 								<div class="row">
 									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
 										<div class="row">
@@ -564,6 +564,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="row">
 									<button tabindex="16" type="button" class="btn bg-orange waves-effect" id="btnModificarPagos"><i class="material-icons">edit</i> <span>MODIFICAR</span></button>
 								</div>
+								<input type="hidden" name="accion" id="accion" value="modificarPagoCliente" />
+								<input type="hidden" name="idlloguerpagarecliente" id="idlloguerpagarecliente" value="<?php echo $id; ?>" />
 							</form>
 							</div>
 						</div>
@@ -616,7 +618,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										<div class="btnFacturas" style="float:left;">
 
 										</div>
-										<button type="button" class="btn btn-primary waves-effect nuevoPagareCliente">GUARDAR</button>
+										<button type="button" class="btn btn-primary waves-effect nuevoPagareCliente2">GUARDAR</button>
 										<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 									</div>
 							  </div>
@@ -1729,10 +1731,10 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			});
 		});
 
-		$('.nuevoPagareCliente').click(function(){
+		$('#btnModificarPagos').click(function(){
 
 			//información del formulario
-			var formData = new FormData($(".formulario")[6]);
+			var formData = new FormData($("#frmPagosRealizados")[0]);
 			var message = "";
 			//hacemos la petición ajax
 			$.ajax({
@@ -1761,7 +1763,6 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								showConfirmButton: false
 						});
 
-						$('#lgmNuevo').modal('hide');
 						location.reload();
 					} else {
 						swal({

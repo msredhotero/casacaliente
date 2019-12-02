@@ -555,14 +555,30 @@ function traerDisponibilidad($serviciosReferencias) {
                $fechaAuxYHasta->add(new DateInterval('P'.$d.'D'));
 
                $resAlquiler = $serviciosReferencias->buscarAlquilerPorFechaUbicacionPorDia($fechaAuxYHasta->format('Y-m-d'), mysql_result($resUbicaciones,$k,0), $reflocatario);
+
+
                if (mysql_num_rows($resAlquiler)>0) {
+                  switch (mysql_result($resAlquiler,0,'color')) {
+                     case 'blue':
+                        $colorLBL = '7793F8';
+                     break;
+                     case 'green':
+                        $colorLBL = '7FF877';
+                     break;
+                     case 'red':
+                        $colorLBL = 'FF3A3A';
+                     break;
+                     case 'black':
+                        $colorLBL = 'BDBDBD';
+                     break;
+                  }
                   if (mysql_result($resAlquiler,0,'entrada') == $fechaAuxYHasta->format('Y-m-d')) {
-                     $cad .= '<td bgcolor="#00FF00" class="disponibilidadLloguer" id="'.mysql_result($resAlquiler,0,'idlloguer').'">'.$fechaAuxYHasta->format('m/d').'</td>';
+                     $cad .= '<td bgcolor="#'.$colorLBL.'" class="disponibilidadLloguer" id="'.mysql_result($resAlquiler,0,'idlloguer').'">'.$fechaAuxYHasta->format('m/d').'</td>';
                   } else {
                      if (mysql_result($resAlquiler,0,'sortida') == $fechaAuxYHasta->format('Y-m-d')) {
-                        $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer">'.$fechaAuxYHasta->format('m/d').'</td>';
+                        $cad .= '<td bgcolor="#'.$colorLBL.'" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer">'.$fechaAuxYHasta->format('m/d').'</td>';
                      } else {
-                        $cad .= '<td bgcolor="#00FF00" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer"></td>';
+                        $cad .= '<td bgcolor="#'.$colorLBL.'" id="'.mysql_result($resAlquiler,0,'idlloguer').'" class="disponibilidadLloguer"></td>';
                      }
                   }
 

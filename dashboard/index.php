@@ -426,6 +426,7 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 					$('.frmVER').append(data.personas);
 					$('.frmVER').append(data.lloguer);
 					$('#comentario').html(data.comentario);
+					$('.frmVER').append(" Para acceder al contenido completo hacer click <a href='lloguers/edit.php?id=" + id + "'>AQUI</a>");
 
 				} else {
 					swal("Error!", data, "warning");
