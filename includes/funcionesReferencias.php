@@ -332,9 +332,25 @@ return $res;
 		return $res;
 	}
 
+	function generarNroFactura() {
+		$sql = "SELECT SUBSTRING(nrofactura, -4, 4) as numero FROM dbpagos
+					where nrofactura like '".date('y')."-%'
+					order by SUBSTRING(nrofactura, -4, 4) desc
+					limit 1";
+		$res = $this->query($sql,0);
+
+		$cad = '';
+
+		if (mysql_num_rows($res)>0) {
+			$cad = '0000'.((integer)mysql_result($res,0,0) + 1);
+			return date('y').'-'.substr($cad,-4);
+		}
+		return date('y').'-0001';
+	}
+
 	function insertarPagos($reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
-		$sql = "insert into dbpagos(idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado)
-		values ('',".$reflloguers.",".$refformaspagos.",".$cuota.",".$monto.",".$taxa.",'".($fecha)."','".($fechapago)."','".($usuario)."',".$cancelado.")";
+		$sql = "insert into dbpagos(idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado,nrofactura)
+		values ('',".$reflloguers.",".$refformaspagos.",".$cuota.",".$monto.",".$taxa.",'".($fecha)."','".($fechapago)."','".($usuario)."',".$cancelado.",'".$this->generarNroFactura()."')";
 
 		$res = $this->query($sql,1);
 		return $res;
@@ -839,8 +855,9 @@ return $res;
 		l.total,
 		coalesce(nrolloguer,l.idlloguer) as nrolooguer,
 		lo.razonsocial,
-		est.idestado,
 		est.estado,
+		est.idestado,
+
 		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida
 		from dblloguers l
 		inner join dbclientes cli ON cli.idcliente = l.refclientes

@@ -15,6 +15,56 @@ function GUID()
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
 }
 
+function rptFaltaPagar($any) {
+   $sql = "
+select
+*
+from (
+	SELECT
+      		u.hutg,
+      		l.datalloguer,
+      		LOWER(c.nif) as nif,
+            LOWER(c.cognom) as cognom,
+      		LOWER(c.nom) as nom,
+      		sum(per.personas) as mayores,
+      		sum(per.menores) as menores,
+            max(per.taxapersona) as taxapersona,
+            max(per.taxaturistica) as taxaturistica,
+            l.total,
+      		DATEDIFF(l.sortida, l.entrada) AS dias,
+            max(p.taxa) as taxapagada,
+            sum(p.monto) as montopagado,
+            l.idlloguer
+      	FROM
+      		dblloguers l
+      			INNER JOIN
+      		dbclientes c ON l.refclientes = c.idcliente
+      			INNER JOIN
+      		tbestados est ON est.idestado = l.refestados
+      			INNER JOIN
+      		dbubicaciones u ON u.idubicacion = l.refubicaciones
+      			INNER JOIN
+      		tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+      			AND tip.reflocatarios = 3
+      			LEFT JOIN
+      		dbpagos p ON p.reflloguers = l.idlloguer
+      			LEFT JOIN
+      		dblloguersadicional per ON per.reflloguers = l.idlloguer
+
+      	group by u.hutg,
+      		l.datalloguer,
+      		c.nif,
+      		c.cognom,
+      		c.nom,
+      		l.sortida,
+      		l.entrada,
+            l.total,
+            l.idlloguer
+		) r";
+   $res = $this->query($sql,0);
+   return $res;
+}
+
 
 function rptListaTaxaPorApartamento($idlocatario, $desde, $hasta) {
    $sql = "select

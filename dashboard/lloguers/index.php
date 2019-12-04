@@ -1656,20 +1656,20 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			},
 			"rowCallback": function( row, data, index ) {
 				<?php if ($_SESSION['idlocatario_sahilices'] == '') { ?>
-				if (data[8] == 3) {
+				if (data[8] == 'Cancelado') {
 					$('td', row).css('background-color', 'red');
 					$('td', row).css('color', 'white');
 				}
-				if (data[8] == 4) {
+				if (data[8] == 'Cancelado-previo') {
 					$('td', row).css('background-color', 'orange');
 					$('td', row).css('color', 'white');
 				}
 				<?php } else { ?>
-				if (data[7] == 3) {
+				if (data[7] == 'Cancelado') {
 					$('td', row).css('background-color', 'red');
 					$('td', row).css('color', 'white');
 				}
-				if (data[7] == 4) {
+				if (data[7] == 'Cancelado-previo') {
 					$('td', row).css('background-color', 'orange');
 					$('td', row).css('color', 'white');
 				}
