@@ -15,52 +15,98 @@ function GUID()
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
 }
 
-function rptFaltaPagar($any) {
-   $sql = "
-select
-*
-from (
-	SELECT
-      		u.hutg,
-      		l.datalloguer,
-      		LOWER(c.nif) as nif,
-            LOWER(c.cognom) as cognom,
-      		LOWER(c.nom) as nom,
-      		sum(per.personas) as mayores,
-      		sum(per.menores) as menores,
-            max(per.taxapersona) as taxapersona,
-            max(per.taxaturistica) as taxaturistica,
-            l.total,
-      		DATEDIFF(l.sortida, l.entrada) AS dias,
-            max(p.taxa) as taxapagada,
-            sum(p.monto) as montopagado,
-            l.idlloguer
-      	FROM
-      		dblloguers l
-      			INNER JOIN
-      		dbclientes c ON l.refclientes = c.idcliente
-      			INNER JOIN
-      		tbestados est ON est.idestado = l.refestados
-      			INNER JOIN
-      		dbubicaciones u ON u.idubicacion = l.refubicaciones
-      			INNER JOIN
-      		tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
-      			AND tip.reflocatarios = 3
-      			LEFT JOIN
-      		dbpagos p ON p.reflloguers = l.idlloguer
-      			LEFT JOIN
-      		dblloguersadicional per ON per.reflloguers = l.idlloguer
+function rptFaltaPagar($idlocatario,$any) {
+   $sql = "select
+         	 r.hutg,
+             SUBSTRING(r.datalloguer,1,10) as datalloguer,
+             r.cognom,
+             r.nom,
+             r.total + r.taxapersona + r.taxaturistica AS total,
+             r.montopagado ,
+             r.taxapagada,
+         	 r.total + r.taxapersona + r.taxaturistica - r.montopagado as faltapagar,
+             r.idlloguer,
+             r.nrolloguer,
+             DATE_FORMAT(r.entrada, '%d/%m/%Y') as entrada,
+             r.nrolloguer,
+             r.nif
+               from (
+               	select
+         			m.hutg,
+         			m.datalloguer,
+         			m.nif,
+         			m.cognom,
+         			m.nom,
+         			m.total,
+         			m.dias,
+         			m.taxapagada,
+         			m.montopagado,
+         			m.idlloguer,
+         			m.nrolloguer,
+         			coalesce( sum(per.personas),0) as mayores,
+         			coalesce( sum(per.menores),0) as menores,
+         			coalesce( max(per.taxapersona),0) as taxapersona,
+         			coalesce( sum(per.taxaturistica),0) as taxaturistica,
+                  m.entrada
+         		from	(
 
-      	group by u.hutg,
-      		l.datalloguer,
-      		c.nif,
-      		c.cognom,
-      		c.nom,
-      		l.sortida,
-      		l.entrada,
-            l.total,
-            l.idlloguer
-		) r";
+         				SELECT
+         					u.hutg,
+         					l.datalloguer,
+         					LOWER(c.nif) as nif,
+         					LOWER(c.cognom) as cognom,
+         					LOWER(c.nom) as nom,
+         					coalesce( l.total,0) as total,
+         					coalesce( DATEDIFF(l.sortida, l.entrada),0) AS dias,
+         					coalesce( sum(p.taxa),0) as taxapagada,
+         					coalesce( sum(p.monto),0) as montopagado,
+         					l.idlloguer,
+         					l.nrolloguer,
+                        l.entrada
+         				FROM
+         					dblloguers l
+         						INNER JOIN
+         					dbclientes c ON l.refclientes = c.idcliente
+         						INNER JOIN
+         					tbestados est ON est.idestado = l.refestados
+         						INNER JOIN
+         					dbubicaciones u ON u.idubicacion = l.refubicaciones
+         						INNER JOIN
+         					tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
+         						AND tip.reflocatarios = ".$idlocatario."
+         						LEFT JOIN
+         					dbpagos p ON p.reflloguers = l.idlloguer
+
+         					where year(l.entrada) = ".$any." /*and l.idlloguer = 2889*/
+         					group by u.hutg,
+         					l.datalloguer,
+         					c.nif,
+         					c.cognom,
+         					c.nom,
+         					l.sortida,
+         					l.entrada,
+         					l.total,
+         					l.idlloguer,
+         					l.nrolloguer,
+                        l.entrada
+         				) m
+         				LEFT JOIN
+         					dblloguersadicional per ON per.reflloguers = m.idlloguer
+         				group by m.hutg,
+         			m.datalloguer,
+         			m.nif,
+         			m.cognom,
+         			m.nom,
+         			m.total,
+         			m.dias,
+         			m.taxapagada,
+         			m.montopagado,
+         			m.idlloguer,
+         			m.nrolloguer,
+                  m.entrada
+         		) r
+               where r.total + r.taxapersona + r.taxaturistica - r.montopagado > 0
+                 order by r.total + r.taxapersona + r.taxaturistica - r.montopagado desc";
    $res = $this->query($sql,0);
    return $res;
 }
@@ -136,10 +182,10 @@ function rptFacturaPorClienteSinTaxa($idlocatario, $anio) {
       		c.nif,
       		LOWER(c.cognom) as cognom,
       		LOWER(c.nom) as nom,
-            p.monto as monto,
+            p.monto - p.taxa as monto,
             (case when p.fechapago < '2012-01-09' then p.monto / 1.08
                   when p.fechapago > '2017-05-31' then p.monto else
-                  p.monto / 1.1 end) as base,
+                  p.monto / 1.1 end) - p.taxa as base,
             (p.monto - (case when p.fechapago < '2012-01-09' then p.monto / 1.08
                   when p.fechapago > '2017-05-31' then p.monto else
                   p.monto / 1.1 end)) as iva,

@@ -345,7 +345,10 @@ function verLloguer($serviciosReferencias) {
 
    	$taxaturisticaAdicionalPersonas += $rowAd['personas'];
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
-   	$totalTaxaPersona += $rowAd['taxapersona'];
+      if ($rowAd['taxapersona'] > $totalTaxaPersona ) {
+         $totalTaxaPersona = $rowAd['taxapersona'];
+      }
+
 
       $cadPersonas .= '<tr>';
       $cadPersonas .= '<td>'.$rowAd['personas'].'</td>';
@@ -890,8 +893,10 @@ function devolverTarifaArray($serviciosReferencias) {
    while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 
    	$taxaturisticaAdicional += $rowAd['taxaturistica'];
+      if ($rowAd['taxapersona'] > $totalTaxaPersona) {
+         $totalTaxaPersona = $rowAd['taxapersona'];
+      }
 
-   	$totalTaxaPersona += $rowAd['taxapersona'];
 
    }
 

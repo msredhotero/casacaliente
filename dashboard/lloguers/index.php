@@ -120,6 +120,8 @@ $maxTaxaTur = mysql_result($resTaxa,0,3);
 $resFormaPago = $serviciosReferencias->traerFormaspagos();
 $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),'');
 
+$nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
+
 ?>
 
 <!DOCTYPE html>
@@ -352,7 +354,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">NOU <?php echo strtoupper($singular); ?></h4>
+	                   <h4 class="modal-title" id="largeModalLabel">NOU <?php echo strtoupper($singular); ?> - NRO: <?php echo $nroContratoFicticio; ?></h4>
 	               </div>
 	               <div class="modal-body frmNuevoPrincipal">
 							<div class="row">
@@ -958,6 +960,26 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 					</form>
 
 
+		<div class="modal fade" id="lgmContratos" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header">
+							 <h4 class="modal-title" id="largeModalLabel2">SELECCIONE EL IDIOMA DEL CONTRATO</h4>
+						</div>
+						<div class="modal-body">
+							<button id="0" type="button" class="btn btn-lg bg-indigo waves-effect rptAlemany inputContratos">Alemany</button>
+							<button id="0" type="button" class="btn btn-lg bg-indigo waves-effect rptFrances inputContratos">Francès</button>
+							<button id="0" type="button" class="btn btn-lg bg-indigo waves-effect rptAngles inputContratos">Anglès</button>
+							<button id="0" type="button" class="btn btn-lg bg-indigo waves-effect rptCatala inputContratos">Català</button>
+							<button id="0" type="button" class="btn btn-lg bg-indigo waves-effect rptHolandes inputContratos">Holandès</button>
+							<button id="0" type="button" class="btn btn-lg bg-indigo waves-effect rptEspanyol inputContratos">Espanyol</button>
+						</div>
+						<div class="modal-footer">
+							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+				  </div>
+			 </div>
+		</div>
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -1769,12 +1791,16 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 
 		}
 
+		$('.inputContratos').click(function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=catalan" ,'_blank');
+		});
 
 		$("#example").on("click",'.btnContratos', function(){
-
-			idTable =  $(this).attr("id");
-
-			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=catalan" ,'_blank');
+			$('.inputContratos').attr("id",$(this).attr("id"));
+			//idTable =  $(this).attr("id");
+			$('#lgmContratos').modal();
+			//window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=catalan" ,'_blank');
 		});
 
 

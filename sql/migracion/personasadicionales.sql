@@ -31,18 +31,15 @@ SELECT
         END) * DATEDIFF(r.sortida, r.entrada) / 7 * 20 end) as taxapersona,
     (CASE
         WHEN
-            1 * DATEDIFF(r.sortida, r.entrada) * (CASE
-                WHEN r.N_PERSONES = 0 THEN r.numpertax
-                ELSE r.N_PERSONES
-            END) > r.maxtaxa
+            1 * DATEDIFF(r.sortida, r.entrada) * 1 * r.taxa > r.maxtaxa
         THEN
             (CASE
-                WHEN r.N_PERSONES = 0 THEN r.numpertax
-                ELSE r.N_PERSONES
+                WHEN r.numpertax = 0 THEN r.N_PERSONES
+                ELSE r.numpertax
             END) * r.maxtaxa
         ELSE (CASE
-            WHEN r.N_PERSONES = 0 THEN r.numpertax
-            ELSE r.N_PERSONES
+            WHEN r.numpertax = 0 THEN r.N_PERSONES
+            ELSE r.numpertax
         END) * r.taxa * DATEDIFF(r.sortida, r.entrada)
     END) as taxaturistica,
     (CASE

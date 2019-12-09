@@ -448,7 +448,9 @@ return $res;
 
 	   	$taxaturisticaAdicional += $rowAd['taxaturistica'];
 
-	   	$totalTaxaPersona += $rowAd['taxapersona'];
+			if ($rowAd['taxapersona'] > $totalTaxaPersona) {
+				$totalTaxaPersona = $rowAd['taxapersona'];
+			}
 
 	   }
 
@@ -784,13 +786,15 @@ return $res;
 	DATEDIFF(l.sortida,l.entrada) as dias,
 	ti.idtipoubicacion,
     coalesce((max(p.personas) + max(p.menores)), l.numpertax) as personasreales,
-    ti.tipoubicacion
+    ti.tipoubicacion,
+	 lc.idlocatario
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
 	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
 	inner join tbestados est on est.idestado = l.refestados
 	left join dblloguersadicional p ON p.reflloguers = l.idlloguer
+	inner join dblocatarios lc ON lc.idlocatario = ti.reflocatarios
 	where l.idlloguer = ".$id."
 	group by l.idlloguer,
 	l.refclientes,

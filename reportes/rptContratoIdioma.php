@@ -77,7 +77,10 @@ while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 
 	$taxaturisticaAdicional += $rowAd['taxaturistica'];
 
-	$totalTaxaPersona += $rowAd['taxapersona'];
+	if ($rowAd['taxapersona'] > $totalTaxaPersona) {
+		$totalTaxaPersona = $rowAd['taxapersona'];
+	}
+
 	/*
 	if ($rowAd['dias'] < 7) {
 		$totalTaxaPersona += $rowAd['personas'] * 1 * mysql_result($resLloguer,0,'taxa');
@@ -90,6 +93,7 @@ while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 
 $fechaInicio	=	strtotime(mysql_result($resLloguer,0,'entrada'));
 $fechaFin		=	strtotime(mysql_result($resLloguer,0,'sortida'));
+$idlocatario   = mysql_result($resLloguer,0,'idlocatario');
 
 $periodoLbl = '';
 $totalTarifa = 0;
@@ -126,8 +130,8 @@ if (isset($_GET['any'])) {
 	$any = date('Y',strtotime( mysql_result($resLloguer,0,'entrada')));
 }
 
-$resPeriodos = $serviciosReferencias->traerPeriodosPorOrdenPorAny($any);
-$resTipo =     $serviciosReferencias->traerTipoubicacion();
+$resPeriodos = $serviciosReferencias->traerPeriodosPorOrdenPorAny($any,$idlocatario);
+$resTipo =     $serviciosReferencias->traerTipoubicacionPorLocatario($idlocatario);
 
 $countX = mysql_num_rows($resTipo);
 
@@ -504,7 +508,7 @@ while ($rowY = mysql_fetch_array($resTipo)) {
 
 while ($rowX = mysql_fetch_array($resPeriodos)) {
 
-	$resTipoAux =    $serviciosReferencias->traerTipoubicacion();
+	$resTipoAux =    $serviciosReferencias->traerTipoubicacionPorLocatario($idlocatario);
 
 	$pdf->setX(5);
 	$pdf->SetFont('Arial','B',9);
