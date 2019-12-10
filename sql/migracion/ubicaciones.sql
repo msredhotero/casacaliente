@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente`.`dbubicaciones`
+INSERT INTO `casacaliente_05122019`.`dbubicaciones`
 (`idubicacion`,
 `dormitorio`,
 `color`,
@@ -6,11 +6,13 @@ INSERT INTO `casacaliente`.`dbubicaciones`
 `codapartament`,
 `hutg`)
 
-SELECT `ubicacions`.`ID UBICACIO`,
-    `ubicacions`.`DORMITORIS`,
-    `ubicacions`.`COLOR`,
-    `ubicacions`.`ID TIPUSUBICACIO`,
-    `ubicacions`.`COD APARTAMENT`,
-    `ubicacions`.`HUTG`
-FROM `migracioncasacaliente`.`ubicacions`;
+SELECT u.`ID UBICACIO`,
+    u.`DORMITORIS`,
+    u.`COLOR`,
+    tt.idtipoubicacion,
+    /*u.`ID TIPUSUBICACIO`,*/
+    u.`COD APARTAMENT`,
+    u.`HUTG`
+FROM `casacalientew`.`ubicacions` u
+inner join tbtipoubicacion tt on tt.idviejo = u.`ID TIPUSUBICACIO`
 

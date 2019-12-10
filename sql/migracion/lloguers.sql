@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente`.`dblloguers`
+INSERT INTO `casacaliente_05122019`.`dblloguers`
 (`idlloguer`,
 `refclientes`,
 `refubicaciones`,
@@ -11,19 +11,25 @@ INSERT INTO `casacaliente`.`dblloguers`
 `taxa`,
 `maxtaxa`,
 `refestados`,
-nrolloguer)
-SELECT `lloguers`.`ID LLOGUER`,
-    `lloguers`.`ID CLIENT`,
-    `lloguers`.`ID UBICACIO`,
-    `lloguers`.`DATALLOGUER`,
-    `lloguers`.`ENTRADA`,
-    `lloguers`.`SORTIDA`,
-    `lloguers`.`TOTALLLOGUER`,
-    `lloguers`.`N_PERS_TAX`,
-    `lloguers`.`PERS_SET`,
-    `lloguers`.`TAXA`,
-    `lloguers`.`MAX_TAXA`,
+nrolloguer,
+idviejo)
+SELECT '',
+	c.idcliente,
+    u.idubicacion,
+    /*l.`ID CLIENT`,
+    l.`ID UBICACIO`,*/
+    l.`DATALLOGUER`,
+    l.`ENTRADA`,
+    l.`SORTIDA`,
+    l.`TOTALLLOGUER`,
+    l.`N_PERS_TAX`,
+    l.`PERS_SET`,
+    l.`TAXA`,
+    l.`MAX_TAXA`,
     1,
-    `lloguers`.`N_LLOGUER`
-FROM `migracioncasacaliente`.`lloguers`;
+    l.`N_LLOGUER`,
+    l.`ID LLOGUER`
+FROM `casacalientew`.`lloguers` l
+inner join dbclientes c on l.`ID CLIENT` = c.idclientew
+inner join dbubicaciones u on l.`ID UBICACIO` = u.idubicacion
 

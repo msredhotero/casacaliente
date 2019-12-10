@@ -1,8 +1,12 @@
-INSERT INTO `casacaliente`.`tbtipoubicacion`
+INSERT INTO `casacaliente_05122019`.`tbtipoubicacion`
 (`idtipoubicacion`,
-`tipoubicacion`)
+`tipoubicacion`,
+reflocatarios,
+idviejo)
 
-SELECT `tipusubicacio`.`ID TIPUSUBICACIO`,
-    `tipusubicacio`.`TIPUSUBICACIO`
-FROM `migracioncasacaliente`.`tipusubicacio`;
+SELECT '',
+    `tipusubicacio`.`TIPUSUBICACIO`,
+    4,
+    `tipusubicacio`.`ID TIPUSUBICACIO`
+FROM `casacalientew`.`tipusubicacio`;
 

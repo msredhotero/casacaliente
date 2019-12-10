@@ -61,5 +61,6 @@ FROM
             l.taxa
     FROM
         `casacaliente_05122019`.`dblloguers` l
-    LEFT JOIN `casacalientem`.`detall lloguer` dl ON l.idlloguer = dl.`ID LLOGUER`
+    LEFT JOIN `casacalientew`.`detall lloguer` dl ON l.idviejo = dl.`ID LLOGUER`
+    where l.idviejo is not null
     GROUP BY l.idlloguer , l.numpertax , l.entrada , l.sortida , l.maxtaxa , l.taxa) r
