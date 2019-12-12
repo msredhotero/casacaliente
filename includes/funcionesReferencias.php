@@ -1721,6 +1721,23 @@ return $res;
 			   return 0;
 	}
 
+	function reemplazarIdioma($string, $idioma) {
+		$string = trim($string);
+
+		switch ($idioma) {
+			case 'aleman':
+				$string = str_replace(
+					array('DORM', 'GROC', 'VERM'),
+					array('SCHL', 'GELB', 'ROT'),
+					$string
+				);
+			break;
+		}
+
+		return $string;
+
+	}
+
 	function sanear_string($string)
    {
 
