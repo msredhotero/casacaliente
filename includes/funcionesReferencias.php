@@ -1739,6 +1739,20 @@ return $res;
 					$string
 				);
 			break;
+			case 'frances':
+				$string = str_replace(
+					array('DORM', 'GROC', 'VERM'),
+					array('CHAM', 'JAUNE', 'ROUGE'),
+					$string
+				);
+			break;
+			case 'holandes':
+				$string = str_replace(
+					array('DORM', 'GROC', 'VERM'),
+					array('SLAAP', 'GEEL', 'ROOD'),
+					$string
+				);
+			break;
 		}
 
 		return $string;

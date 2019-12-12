@@ -1791,9 +1791,34 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 
 		}
 
-		$('.inputContratos').click(function() {
+		$('.rptAlemany').click(function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=aleman" ,'_blank');
+		});
+
+		$('.rptAngles').click(function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=ingles" ,'_blank');
+		});
+
+		$('.rptEspanyol').click(function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=espanol" ,'_blank');
+		});
+
+		$('.rptCatala').click(function() {
 			idTable =  $(this).attr("id");
 			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=catalan" ,'_blank');
+		});
+
+		$('.rptHolandes').click(function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=holandes" ,'_blank');
+		});
+
+		$('.rptFrances').click(function() {
+			idTable =  $(this).attr("id");
+			window.open("../../reportes/rptContratoIdioma.php?id=" + idTable + "&idioma=frances" ,'_blank');
 		});
 
 		$("#example").on("click",'.btnContratos', function(){
