@@ -653,7 +653,7 @@ switch ($idioma) {
 
 		$pdf->Ln();
 		$pdf->setX(130);
-		$pdf->Cell(70,5,mysql_result($resLloguer,0,'codipostal').'  '.utf8_decode(mysql_result($resLloguer,0,'ciutat')),0,0,'L',false);
+		$pdf->Cell(70,5,mysql_result($resLloguer,0,'codipostal').'  '.(mysql_result($resLloguer,0,'ciutat')),0,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->setX(130);
@@ -1480,7 +1480,7 @@ switch ($idioma) {
 		$pdf->SetFont('Arial','B',14);
 		$pdf->Ln();
 		$pdf->SetX(5);
-		$pdf->Cell(130,5,utf8_decode('CONTRATO Nº: ').$id,0,0,'L',false);
+		$pdf->Cell(130,5,utf8_decode('RENTAL AGREEMENT Nº: ').$id,0,0,'L',false);
 
 		$pdf->SetFont('Arial','',11);
 		$pdf->SetTextColor(0,0,0);
@@ -1506,34 +1506,41 @@ switch ($idioma) {
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(70,5,'Estimado/a Sr. / Sra '.utf8_decode(mysql_result($resLloguer,0,'nom')),0,0,'L',false);
+		$pdf->Cell(70,5,'Dear Mrs/Mr. '.utf8_decode(mysql_result($resLloguer,0,'nom')),0,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->MultiCell(200,5,utf8_decode('Tenemos reservado para usted el apartamento N° '.mysql_result($resLloguer,0,'codapartament').' de '.mysql_result($resLloguer,0,'dormitorio').' dormitorio/s '.mysql_result($resLloguer,0,'dias').' dias, del '.mysql_result($resLloguer,0,'entradacorta').' (17h) hasta '.mysql_result($resLloguer,0,'sortidacorta').' (9h). Pueden pagar por transferencia bancaria'),0,'L',false);
+		$pdf->Cell(70,5,'Thank you very much for your booking confirmation.',0,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(70,5,'Atentamente, Apartaments Casa Caliente',0,0,'L',false);
-
-		$pdf->Ln();
-		$pdf->Line(5, 112, 200, 112);
+		$pdf->MultiCell(200,5,utf8_decode('We have reserved for you a '.mysql_result($resLloguer,0,'dormitorio').' bedroom-apartment. Nr. '.mysql_result($resLloguer,0,'codapartament').' for the period, '.mysql_result($resLloguer,0,'entradacorta').' (17h) till '.mysql_result($resLloguer,0,'sortidacorta').' (9h), that is for '.mysql_result($resLloguer,0,'dias').' days. You can pay by bank.'),0,'L',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(70,5,'Detalle del pago',0,0,'L',false);
+		$pdf->Cell(70,5,'Should you require any further information, please do not hesitate to contact us',0,0,'L',false);
+
+		$pdf->Ln();
+		$pdf->setX(5);
+		$pdf->Cell(70,5,'Looking forward to welcoming you, Yours Sincerely, Apartaments Casa Caliente',0,0,'L',false);
+
+
+
+		$pdf->Ln();
+		$pdf->setX(5);
+		$pdf->Cell(70,5,'Rental agreement details',0,0,'L',false);
 
 		$pdf->SetFillColor(195,195,195);
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(40,5,'PERIODO',0,0,'C',true);
-		$pdf->Cell(40,5,'DIAS',0,0,'C',true);
-		$pdf->Cell(40,5,'TARIFA',0,0,'C',true);
-		$pdf->Cell(40,5,'PERSONAS',0,0,'C',true);
-		$pdf->Cell(40,5,'PRECIO',0,0,'C',true);
+		$pdf->Cell(40,5,'PERIOD',0,0,'C',true);
+		$pdf->Cell(40,5,'DAYS',0,0,'C',true);
+		$pdf->Cell(40,5,'PRICE LIST',0,0,'C',true);
+		$pdf->Cell(40,5,'PERSONS',0,0,'C',true);
+		$pdf->Cell(40,5,'PRICE',0,0,'C',true);
 
 		$totalTarifaParcial = 0;
 
@@ -1555,17 +1562,17 @@ switch ($idioma) {
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(170,6,utf8_decode('Apart. N°').mysql_result($resLloguer,0,'codapartament').' x '.mysql_result($resLloguer,0,'dias').utf8_decode(' días = '),0,0,'R',false);
+		$pdf->Cell(170,6,utf8_decode('Apart. N°').mysql_result($resLloguer,0,'codapartament').' x '.mysql_result($resLloguer,0,'dias').utf8_decode(' days = '),0,0,'R',false);
 		$pdf->Cell(30,6,number_format( $totalTarifaParcial,2,',','.').' '.EURO,0,0,'R',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(170,6,utf8_decode('Nº personas. x Nº semanas x 20 = '),0,0,'R',false);
+		$pdf->Cell(170,6,utf8_decode('Nº persons. x Nº weeks x 20 = '),0,0,'R',false);
 		$pdf->Cell(30,6,number_format( $totalTaxaPersona,2,',','.').' '.EURO,0,0,'R',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(170,6,utf8_decode('(Impuesto sobre estancias en establecimientos turísticos) '.$taxaturisticaAdicionalPersonas.' personas mayores de 16 años x '.mysql_result($resLloguer,0,'dias').' días x ').$taxaTur.EURO.' = ',0,0,'R',false);
+		$pdf->Cell(170,6,utf8_decode('(Tax on stays in tourist establishments) '.$taxaturisticaAdicionalPersonas.' people older than 16 years x '.mysql_result($resLloguer,0,'dias').' days ').$taxaTur.EURO.' = ',0,0,'R',false);
 		$pdf->Cell(30,6,number_format( $taxaturisticaAdicional,2,',','.').' '.EURO,0,0,'R',false);
 
 		$pdf->SetFont('Arial','B',12);
@@ -1575,7 +1582,7 @@ switch ($idioma) {
 
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(170,6,utf8_decode('Suma total = '),0,0,'R',false);
+		$pdf->Cell(170,6,utf8_decode('Total amount = '),0,0,'R',false);
 		$pdf->Cell(30,6,number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional,2,',','.').' '.EURO,0,0,'R',false);
 
 		$pdf->Ln();
@@ -1586,7 +1593,7 @@ switch ($idioma) {
 			$k += 1;
 			$pdf->Ln();
 			$pdf->setX(5);
-			$pdf->Cell(200,6,$k.utf8_decode('º Pago de ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
+			$pdf->Cell(200,6,$k.utf8_decode('º payment ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' before '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
 		}
 
 
@@ -1595,7 +1602,7 @@ switch ($idioma) {
 		$pdf->SetFont('Arial','',9);
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(200,6,utf8_decode('(Posibles gastos bancarios a cargo del inquilino)'),0,0,'R',false);
+		$pdf->Cell(200,6,utf8_decode('(Possible commissions at the expense of the tenant.)'),0,0,'R',false);
 
 		$pdf->SetFont('Arial','',11);
 		$pdf->Ln();
@@ -1617,7 +1624,7 @@ switch ($idioma) {
 		//$pdf->SetY($contadorY1);
 
 		/******************************************************************************** fin primera pagina *********************/
-
+		Footer($pdf);
 
 
 		$pdf->AddPage();
@@ -1666,7 +1673,7 @@ switch ($idioma) {
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->SetX(5);
-		$pdf->Cell(130,5,utf8_decode('PRECIOS Y CONDICIONES'),0,0,'L',false);
+		$pdf->Cell(130,5,utf8_decode('Prices and Conditions'),0,0,'L',false);
 
 
 		$pdf->SetTextColor(0,0,0);
@@ -1677,98 +1684,81 @@ switch ($idioma) {
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','BU',11);
-		$pdf->Cell(23,5,utf8_decode('Los precios'),0,0,'L',false);
+		$pdf->Cell(50,5,utf8_decode('The mentioned prices'),0,0,'L',false);
 		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(177,5,utf8_decode('incluyen el uso completo del inventario, sábanas una plaza de aparcamiento y de la piscina.'),0,0,'L',false);
+		$pdf->Cell(150,5,utf8_decode('Are inclusive the use of the complete inventory, one parking and the swimmingpools'),0,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(180,5,utf8_decode('En invierno una estufa de gas butano o eléctrica'),0,0,'L',false);
-
-		$pdf->Ln();
-		$pdf->Ln();
-		$pdf->setX(5);
-		$pdf->SetFont('Arial','BU',11);
-		$pdf->Cell(28,5,utf8_decode('No se incluyen'),0,0,'L',false);
-		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(172,5,utf8_decode('las toallas y trapos de cocina.'),0,0,'L',false);
-
+		$pdf->Cell(180,5,utf8_decode('During the wintermonths a buta-gas and Elect. stove is provided for heating'),0,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','BU',11);
-		$pdf->Cell(46,5,utf8_decode('Los periodos de alquiler'),0,0,'L',false);
+		$pdf->Cell(28,5,utf8_decode('Not included'),0,0,'L',false);
 		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(70,5,utf8_decode('empiezan el sábado de su llegada a las'),0,0,'L',false);
-		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(10,5,utf8_decode('17 h'),0,0,'L',false);
-		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(40,5,utf8_decode('y terminan el sábado de su salida'),0,0,'L',false);
+		$pdf->Cell(172,5,utf8_decode('Are towels and kitchen-towels. No towels and kitchen-towels service.'),0,0,'L',false);
+
+		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->Cell(9,5,utf8_decode('a las'),0,0,'L',false);
-		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(10,5,utf8_decode('9h.'),0,0,'L',false);
+		$pdf->SetFont('Arial','BU',11);
+		$pdf->Cell(28,5,utf8_decode('Rentperiods'),0,0,'L',false);
+		$pdf->SetFont('Arial','',11);
+		$pdf->Cell(172,5,utf8_decode('Begin on Saturday and end on Saturday, occupation of an apartment to commence a 5 pm'),0,0,'L',false);
+		$pdf->Ln();
+		$pdf->setX(5);
+		$pdf->Cell(180,5,utf8_decode('on the day of arrival and to terminate a 9 am on the day of departure.'),0,0,'L',false);
 
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','BU',11);
-		$pdf->Cell(12,5,utf8_decode('Pago'),0,0,'L',false);
+		$pdf->Cell(28,5,utf8_decode('Payment'),0,0,'L',false);
 		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(35,5,utf8_decode('50 % en el plazo de'),0,0,'L',false);
-		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(4,5,utf8_decode('5'),0,0,'C',false);
-		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(151,5,utf8_decode(' dias después de recibir nuestra confirmación de reserva y el resto 30 dias'),0,0,'L',false);
+		$pdf->Cell(172,5,utf8_decode('50 % within 5 days after receiving our notice of reservation, the remaining 50 % to be pai 21 days'),0,0,'L',false);
 		$pdf->Ln();
 		$pdf->setX(5);
-		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(200,5,utf8_decode('antes del comienzo del periodo de alquiler.'),0,0,'L',false);
+		$pdf->Cell(180,5,utf8_decode('before the beginning of the rentperiod.'),0,0,'L',false);
+
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(200,5,utf8_decode('En caso de no cumplir con nuestras condiciones, nos reservamos el derecho de cancelar su reserva, sin'),0,0,'L',false);
-		$pdf->Ln();
-		$pdf->setX(5);
-		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(200,5,utf8_decode('previo aviso.'),0,0,'L',false);
+		$pdf->Cell(200,5,utf8_decode('In case of not complying with our conditions, we have the right to cancel the reservation, without further notice'),0,0,'L',false);
+
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(200,5,utf8_decode('Les aconsejamos que contraten un seguro de anulacion - vacaciones.'),0,0,'L',false);
-
-		$pdf->Ln();
-		$pdf->Ln();
-		$pdf->setX(5);
-		$pdf->SetFont('Arial','',11);
-		$pdf->Cell(200,5,utf8_decode('Animales de compañia, no se admiten.'),0,0,'L',false);
+		$pdf->Cell(200,5,utf8_decode('Pets are not permitted in our residences.'),0,0,'L',false);
 
 
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(200,5,utf8_decode('Precios por semana (I.V.A. incluido)'),1,0,'C',false);
+		$pdf->Cell(200,5,utf8_decode('Prices in ').EURO.(' per week (Including V.A.T.)'),1,0,'C',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',14);
-		$pdf->MultiCell(40,5,utf8_decode('Temporada ').$any,1,'C',false);
+		$pdf->MultiCell(40,5,utf8_decode('SEASON YEAR ').$any,1,'C',false);
 
 		$yAux = $pdf->getY() - 10;
 
 		$pdf->SetFont('Arial','B',9);
 		$yC = 1;
+
+		$tipoUbacacionIdioma = '';
 		while ($rowY = mysql_fetch_array($resTipo)) {
+			$tipoUbacacionIdioma = $serviciosReferencias->reemplazarIdioma($rowY['tipoubicacion'],$idioma);
 			$pdf->setY($yAux);
 			$pdf->setX(($yC * $withX) + 25);
-			$pdf->MultiCell($withX,5,$rowY['tipoubicacion'],1,'C',false);
+			$pdf->MultiCell($withX,5,$tipoUbacacionIdioma,1,'C',false);
 			$yC += 1;
 		}
 
@@ -1796,22 +1786,22 @@ switch ($idioma) {
 
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(200,5,utf8_decode('Suplemento por persona: 20 ').EURO.utf8_decode(' por persona y semana. (adulto, niño o bebé).'),1,0,'L',false);
+		$pdf->Cell(200,5,'For using gas, water, electricity and sheets we charge 20 '.EURO.' per person/week.',1,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(200,5,utf8_decode('No se admiten animales de compañia.'),1,0,'L',false);
+		$pdf->Cell(200,5,utf8_decode('Pets are not permitted in our residences.'),1,0,'L',false);
 
 		$pdf->Ln();
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(200,6,utf8_decode('A los precios indicados hay que añadir el impuesto sobre estancias en establecimientos turísticos, a '),0,0,'L',false);
+		$pdf->Cell(200,6,'Supplementary tax on stays in tourist establishments from 17 years: 0,90 '.EURO.' per person, per day, with a ',0,0,'L',false);
 		$pdf->Ln();
 		$pdf->setX(5);
 		$pdf->SetFont('Arial','B',11);
-		$pdf->Cell(200,6,utf8_decode('partir de 17 años: 0,90 ').EURO.utf8_decode(' pers / día con un máximo de 7 unidades de estancia por persona (= 6,30').EURO.utf8_decode(' / pers)'),0,0,'L',false);
+		$pdf->Cell(200,6,'maximum o 6,30'.EURO.' per person per stay.',0,0,'L',false);
 
 
 
@@ -1860,7 +1850,7 @@ switch ($idioma) {
 		$pdf->Ln();
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetX(5);
-		$pdf->MultiCell(200,5,utf8_decode('De conformidad con lo establecido en el Art. 12.2 del R.D. 1720/2007, de 21 de diciembre, por el que se aprueba el Reglamento de desarrollo de la Ley Orgánica 15/1999, de 13 de diciembre, de Protección de Datos de carácter personal, Vd. queda informado y consiente expresamente que los datos de carácter personal que proporciona al rellenar el presente Contrato, serán incorporados a los ficheros de IJsselstein Krom C.B, con domicilio en Rahola Molinas 5, 17480 Roses, para que éste pueda efectuar el tratamiento, automatizado o no, de los mismos con la finalidad de recabar los datos básicos del cliente, prestando su consentimiento expreso para que dichos datos puedan ser comunicados para su utilización con los fines anteriores a otras Entidades. Así mismo, queda informado que podrá ejercer los derechos de acceso, rectificación, cancelación y oposición dirigiéndose a la dirección indicada anteriormente.'),0,'L',false);
+		$pdf->MultiCell(200,5,utf8_decode('In accordance with the provisions of the current regulations on Personal Data Protection, we inform you that the personal data provided by you will become part of IJSSELSTEIN KROM CB, Carrer Rahola Molina N/5, 17480 Roses,for the provision of the services you have hired us. Your data will not be transferred to third parties except legal obligation. Likewise, we inform you that your data will not be used for the automatic decision making, nor elaboration of profiles.All the personal data collected will be kept following the guidelines of the current tax legislation.From any of the previous sections, you can exercise the rights of access, rectification, limitation, deletion and opposition, indicating it in writing to the company .(Regulation (EU) 2016/679 of the European Parliament and of the Council of April 27, 2016).'),0,'L',false);
 
 		$pdf->Ln();
 		$pdf->Ln();

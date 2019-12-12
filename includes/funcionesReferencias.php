@@ -1732,6 +1732,13 @@ return $res;
 					$string
 				);
 			break;
+			case 'ingles':
+				$string = str_replace(
+					array('DORM', 'GROC', 'VERM'),
+					array('BED R.', 'YELLOW', 'RED'),
+					$string
+				);
+			break;
 		}
 
 		return $string;
