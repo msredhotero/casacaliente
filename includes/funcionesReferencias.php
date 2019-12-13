@@ -509,7 +509,8 @@ return $res;
 					fechapago,
 					usuario,
 					cancelado,
-					fp.formapago
+					fp.formapago,
+					p.nrofactura
 				from dbpagos p
 				inner
 				join 		tbformaspagos fp
@@ -1553,7 +1554,7 @@ f.idformapago,
 f.formapago,
 f.abreviatura
 from tbformaspagos f
-order by f.formapago";
+order by f.idformapago";
 $res = $this->query($sql,0);
 return $res;
 }

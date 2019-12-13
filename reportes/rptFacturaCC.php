@@ -39,6 +39,7 @@ if (mysql_num_rows($resPagos) > 0) {
 	$taxa				=		mysql_result($resPagos,0,'taxa');
 	$fechapago		=		mysql_result($resPagos,0,'fechapago');
 	$formapago		=		mysql_result($resPagos,0,'formapago');
+	$nrofactura		=		mysql_result($resPagos,0,'nrofactura');
 
 	$resLloguer =  $serviciosReferencias->traerLloguersPorIdCompleto($idlloguer);
 
@@ -54,7 +55,10 @@ if (mysql_num_rows($resPagos) > 0) {
 
 		$taxaturisticaAdicionalPersonas += $rowAd['personas'];
 
-		$taxaturisticaAdicional += $rowAd['taxaturistica'];
+		if ($rowAd['taxaturistica'] > $taxaturisticaAdicional) {
+			$taxaturisticaAdicional = $rowAd['taxaturistica'];
+		}
+
 
 		$totalTaxaPersona += $rowAd['taxapersona'];
 
@@ -143,7 +147,7 @@ if (mysql_num_rows($resPagos) > 0) {
 	$pdf->Ln();
 	$pdf->SetX(5);
 	$pdf->Cell(18,5,$fechapago,1,0,'C',false);
-	$pdf->Cell(18,5,$id,1,0,'R',false);
+	$pdf->Cell(18,5,$nrofactura,1,0,'R',false);
 	$pdf->Cell(25,5,$cuit,1,0,'C',false);
 	$pdf->Cell(40,5,$nom,1,0,'L',false);
 	$pdf->Cell(40,5,$cognom,1,0,'L',false);
