@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente_05122019`.`dbpagos`
+INSERT INTO `casacaliente_022020`.`dbpagos`
 (`idpago`,
 `reflloguers`,
 `refformaspagos`,
@@ -22,7 +22,8 @@ SELECT '',
     'marcos migracion w',
     0,
     p.`ID PAGAMENT`
-FROM `casacalientew`.`pagaments` p
+FROM `casacaliente02w`.`pagaments` p
 inner join dblloguers ll on ll.idviejo = p.`ID LLOGUER`
-left join casacaliente_05122019.dblloguersadicional pe on pe.reflloguers = ll.idlloguer
+/*inner join dblloguers ll on ll.idlloguer = p.`ID LLOGUER`*/
+left join casacaliente_022020.dblloguersadicional pe on pe.reflloguers = ll.idlloguer
 

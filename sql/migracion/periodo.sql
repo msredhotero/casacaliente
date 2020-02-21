@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente_05122019`.`dbperiodos`
+INSERT INTO `casacaliente_022020`.`dbperiodos`
 (`idperiodo`,
 `periodo`,
 `any`,
@@ -15,5 +15,5 @@ SELECT '',
     4,
     p.`ID PERIODE`
 FROM `casacalientew`.`periodes` p
-inner join `casacalientew`.`anys` a on a.`ID ANYS` = p.`ID ANY`
+inner join `casacaliente02w`.`anys` a on a.`ID ANYS` = p.`ID ANY`
 

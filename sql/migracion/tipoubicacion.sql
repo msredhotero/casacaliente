@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente_05122019`.`tbtipoubicacion`
+INSERT INTO `casacaliente_022020`.`tbtipoubicacion`
 (`idtipoubicacion`,
 `tipoubicacion`,
 reflocatarios,
@@ -8,5 +8,5 @@ SELECT '',
     `tipusubicacio`.`TIPUSUBICACIO`,
     4,
     `tipusubicacio`.`ID TIPUSUBICACIO`
-FROM `casacalientew`.`tipusubicacio`;
+FROM `casacaliente02w`.`tipusubicacio`;
 

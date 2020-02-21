@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente_05122019`.`dblloguers`
+INSERT INTO `casacaliente_022020`.`dblloguers`
 (`idlloguer`,
 `refclientes`,
 `refubicaciones`,
@@ -13,7 +13,8 @@ INSERT INTO `casacaliente_05122019`.`dblloguers`
 `refestados`,
 nrolloguer,
 idviejo)
-SELECT '',
+SELECT /*l.`ID LLOGUER`,*/
+'',
 	c.idcliente,
     u.idubicacion,
     /*l.`ID CLIENT`,
@@ -29,7 +30,8 @@ SELECT '',
     1,
     l.`N_LLOGUER`,
     l.`ID LLOGUER`
-FROM `casacalientew`.`lloguers` l
+    /*0*/
+FROM `casacaliente02w`.`lloguers` l
 inner join dbclientes c on l.`ID CLIENT` = c.idclientew
 inner join dbubicaciones u on l.`ID UBICACIO` = u.idubicacion
 

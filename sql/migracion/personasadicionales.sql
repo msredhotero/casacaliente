@@ -1,6 +1,6 @@
 
 
-	INSERT INTO `casacaliente_05122019`.`dblloguersadicional`
+	INSERT INTO `casacaliente_022020`.`dblloguersadicional`
 (`idllogueradicional`,
 `reflloguers`,
 `personas`,
@@ -60,7 +60,9 @@ FROM
             l.maxtaxa,
             l.taxa
     FROM
-        `casacaliente_05122019`.`dblloguers` l
-    LEFT JOIN `casacalientew`.`detall lloguer` dl ON l.idviejo = dl.`ID LLOGUER`
-    where l.idviejo is not null
+        `casacaliente_022020`.`dblloguers` l
+    inner JOIN `casacaliente02w`.`detall lloguer` dl ON l.idviejo = dl.`ID LLOGUER`
+    /* dl ON l.idlloguer = dl.`ID LLOGUER` */
+    /*  dl ON l.idviejo = dl.`ID LLOGUER` */
+    where l.idviejo <> 0
     GROUP BY l.idlloguer , l.numpertax , l.entrada , l.sortida , l.maxtaxa , l.taxa) r

@@ -1,4 +1,4 @@
-INSERT INTO `casacaliente`.`dbclientes`
+INSERT INTO `casacaliente_022020`.`dbclientes`
 (`idcliente`,
 `cognom`,
 `nom`,
@@ -11,19 +11,24 @@ INSERT INTO `casacaliente`.`dbclientes`
 `email`,
 `comentaris`,
 `telefon2`,
-`email2`)
-SELECT `clients`.`ID CLIENT`,
-    `clients`.`COGNOM`,
-    `clients`.`NOM`,
-    `clients`.`NIF`,
-    `clients`.`CARRER`,
-    `clients`.`CODI POSTAL`,
-    `clients`.`CIUTAT`,
-    `clients`.`PAIS`,
-    `clients`.`TELEFON`,
-    `clients`.`EMAIL`,
-    `clients`.`COMENTARIS`,
-    `clients`.`TELEFON 2`,
-    `clients`.`EMAIL 2`
-FROM `migracioncasacaliente`.`clients`;
+`email2`,
+reflocatarios,
+idclientew)
+SELECT '',
+/*`clientsw`.`ID CLIENT`,*/
+    `clientsw`.`COGNOM`,
+    `clientsw`.`NOM`,
+    `clientsw`.`NIF`,
+    `clientsw`.`CARRER`,
+    `clientsw`.`CODI POSTAL`,
+    `clientsw`.`CIUTAT`,
+    `clientsw`.`PAIS`,
+    `clientsw`.`TELEFON`,
+    `clientsw`.`EMAIL`,
+    `clientsw`.`COMENTARIS`,
+    `clientsw`.`TELEFON 2`,
+    `clientsw`.`EMAIL 2`,
+    4,
+    `clientsw`.`ID CLIENT`
+FROM `casacaliente02w`.`clientsw`;
 
