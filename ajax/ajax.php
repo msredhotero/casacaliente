@@ -878,7 +878,7 @@ function insertarPagare($serviciosReferencias) {
 function devolverTarifaArray($serviciosReferencias) {
    $id = $_POST['id'];
 
-   $resLloguer = $serviciosReferencias->traerLloguersPorId($id);
+   $resLloguer = $serviciosReferencias->traerLloguersPorIdCompleto($id);
 
    $resPagos   = $serviciosReferencias->traerPagosPorLloguers($id);
 
@@ -906,6 +906,8 @@ function devolverTarifaArray($serviciosReferencias) {
    $personas            =  mysql_result($resLloguer,0,'numpertax');
    $total               =  mysql_result($resLloguer,0,'total');
    $sortida             =  mysql_result($resLloguer,0,'sortida');
+   $datalloguer	      =	strtotime(mysql_result($resLloguer,0,'datalloguerdate'));
+
 
    $segundopago = strtotime ( '-30 day' , strtotime ( $sortida ) ) ;
 
@@ -974,7 +976,7 @@ function devolverTarifaArray($serviciosReferencias) {
       $pago1 = 0;
       $pago2 = 0;
 
-      $primerpago = 0;
+      $primerpago          = date('Y-m-d',strtotime ( '5 day' ,  ( $datalloguer ) )) ;
       $monto1 = 0;
       $monto2 = 0;
 

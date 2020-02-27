@@ -1479,11 +1479,11 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 						$('#pagotaxa').val(data.pagos.taxa);
 
 						if (data.pagos.primerpago != 0) {
-							alert('asd');
+
 							$( "#fechapago1" ).val(formato(data.pagos.primerpago));
 						}
 						if (data.pagos.segundopago != 0) {
-							alert('asd2');
+
 							$( "#fechapago2" ).val(formato(data.pagos.segundopago));
 						}
 
@@ -1530,7 +1530,7 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 				//una vez finalizado correctamente
 				success: function(data){
 
-					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.tasapersona));
+					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.tasapersona) + parseFloat(data.pagos.taxa));
 					$('#faltapagarcliente').val(data.datos.falta);
 
 					$('#fechapagocliente2').datepicker({ dateFormat: 'dd/mm/yy' });
@@ -1588,6 +1588,7 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 						$('#valorpagocliente2').val((data.datos.taxapersona + data.datos.tarifa) / 2);
 						$('#pagotaxacliente').val(data.datos.taxaturistica);
 						$( "#fechapagocliente2" ).val(formato(data.datos.fechasegundopago));
+						$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));
 						$( "#cargarpago1" ).val(0);
 						$( "#cargarpago2" ).val(0);
 						$( "#formapago1" ).val(1);

@@ -90,10 +90,14 @@ while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
 	*/
 }
 
-
+$datalloguer	=	strtotime(mysql_result($resLloguer,0,'datalloguerdate'));
 $fechaInicio	=	strtotime(mysql_result($resLloguer,0,'entrada'));
 $fechaFin		=	strtotime(mysql_result($resLloguer,0,'sortida'));
 $idlocatario   = mysql_result($resLloguer,0,'idlocatario');
+
+//die(var_dump($datalloguer));
+$segundopago = strtotime ( '-30 day' ,  ( $fechaFin ) ) ;
+$primerpago = strtotime ( '5 day' ,  ( $datalloguer ) ) ;
 
 $periodoLbl = '';
 $totalTarifa = 0;
@@ -315,12 +319,22 @@ switch ($idioma) {
 			$pdf->Ln();
 			$k = 0;
 			$pdf->SetFont('Arial','',11);
+
 			while ($row = mysql_fetch_array($resPagos))
 			{
 				$k += 1;
 				$pdf->Ln();
 				$pdf->setX(5);
 				$pdf->Cell(200,6,$k.utf8_decode('º Pago de ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
+			}
+
+			if ($k == 0) {
+				$pdf->Ln();
+				$pdf->setX(5);
+				$pdf->Cell(200,6,utf8_decode('1º Pago de ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional + 7,2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',$primerpago),0,0,'R',false);
+				$pdf->Ln();
+				$pdf->setX(5);
+				$pdf->Cell(200,6,utf8_decode('2º Pago de ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',$segundopago),0,0,'R',false);
 			}
 
 
@@ -753,7 +767,14 @@ switch ($idioma) {
 			$pdf->Cell(200,6,$k.utf8_decode('º Zahlung ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' bevor '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
 		}
 
-
+		if ($k == 0) {
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('1º Zahlung ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional + 7,2,',','.').' '.EURO.' bevor '.date('d/m/Y',$primerpago),0,0,'R',false);
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('2º Zahlung ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' bevor '.date('d/m/Y',$segundopago),0,0,'R',false);
+		}
 
 
 		$pdf->SetFont('Arial','',9);
@@ -1183,7 +1204,14 @@ switch ($idioma) {
 			$pdf->Cell(200,6,$k.utf8_decode('º payement ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' avant '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
 		}
 
-
+		if ($k == 0) {
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('1º payement ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional + 7,2,',','.').' '.EURO.' avant '.date('d/m/Y',$primerpago),0,0,'R',false);
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('2º payement ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' avant '.date('d/m/Y',$segundopago),0,0,'R',false);
+		}
 
 
 		$pdf->SetFont('Arial','B',9);
@@ -1611,7 +1639,14 @@ switch ($idioma) {
 			$pdf->Cell(200,6,$k.utf8_decode('º payment ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' before '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
 		}
 
-
+		if ($k == 0) {
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('1º payment ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional + 7,2,',','.').' '.EURO.' before '.date('d/m/Y',$primerpago),0,0,'R',false);
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('2º payment ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' before '.date('d/m/Y',$segundopago),0,0,'R',false);
+		}
 
 
 		$pdf->SetFont('Arial','',9);
@@ -2017,7 +2052,14 @@ switch ($idioma) {
 			$pdf->Cell(200,6,$k.utf8_decode('º betaling ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' voor '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
 		}
 
-
+		if ($k == 0) {
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('1º betaling ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional + 7,2,',','.').' '.EURO.' voor '.date('d/m/Y',$primerpago),0,0,'R',false);
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('2º betaling ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' voor '.date('d/m/Y',$segundopago),0,0,'R',false);
+		}
 
 
 		$pdf->SetFont('Arial','',9);
@@ -2430,7 +2472,14 @@ switch ($idioma) {
 			$pdf->Cell(200,6,$k.utf8_decode('º Pagament de ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' abans del dia '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
 		}
 
-
+		if ($k == 0) {
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('1º Pagament de ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional + 7,2,',','.').' '.EURO.' abans del dia '.date('d/m/Y',$primerpago),0,0,'R',false);
+			$pdf->Ln();
+			$pdf->setX(5);
+			$pdf->Cell(200,6,utf8_decode('2º Pagament de ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' abans del dia '.date('d/m/Y',$segundopago),0,0,'R',false);
+		}
 
 
 		$pdf->SetFont('Arial','',9);

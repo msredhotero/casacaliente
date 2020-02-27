@@ -788,7 +788,8 @@ return $res;
 	ti.idtipoubicacion,
     coalesce((max(p.personas) + max(p.menores)), l.numpertax) as personasreales,
     ti.tipoubicacion,
-	 lc.idlocatario
+	 lc.idlocatario,
+	 STR_TO_DATE(l.datalloguer, '%d/%m/%Y') as datalloguerdate
 	from dblloguers l
 	inner join dbclientes cli ON cli.idcliente = l.refclientes
 	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
