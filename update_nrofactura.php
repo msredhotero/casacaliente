@@ -2,10 +2,10 @@
 
 	function query($sql,$accion) {
 
-		$hostname	= 'localhost';
-		$database	= 'casacaliente_05122019';
-		$username	= 'root';
-		$password	= '';
+		$hostname = "localhost";
+		$database = "u235498999_casa";
+		$username = "u235498999_casa";
+		$password = "rhcp7575";
 
 		$conex = mysql_connect($hostname,$username,$password) or die ("no se puede conectar".mysql_error());
 
