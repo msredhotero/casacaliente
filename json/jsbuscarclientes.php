@@ -52,11 +52,11 @@ switch ($cantidad) {
 
 $resTraerClientes = $serviciosReferencias->nuevoBuscador($busqueda);
 
-
+/* utf8_decode */
 $cad = '';
 	while ($row = mysql_fetch_array($resTraerClientes)) {
 
-		array_push($ar,array('id'=>$row['idcliente'], 'apellido'=> $row['apellido'], 'nombre'=> $row['nombre'], 'cuit'=> $row['cuit']));
+		array_push($ar,array('id'=>$row['idcliente'], 'cognom'=> ($row['cognom']), 'nom'=> ($row['nom']), 'nif'=> $row['nif'], 'locatario'=> $row['razonsocial']));
 	}
 
 }

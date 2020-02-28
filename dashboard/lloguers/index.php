@@ -62,11 +62,14 @@ $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','P
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar1 = $serviciosReferencias->traerClientes();
+	$cadRef1		= '<option value="">-- Seleccionar --</option>';
+	$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2,13),' ');
 } else {
 	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
+	$cadRef1		= '<option value="">-- Seleccionar --</option>';
+	$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
 }
-$cadRef1		= '<option value="">-- Seleccionar --</option>';
-$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
+
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar2 = $serviciosReferencias->traerUbicaciones();
@@ -160,11 +163,17 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 	<link rel="stylesheet" type="text/css" href="../../css/default.css"/>
 	<link rel="stylesheet" type="text/css" href="../../css/default.date.css"/>
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.contDisponibilidad table tbody tr td { border: 1px solid #444; }
 		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		.modal-dialog2 {
 		  width: 100%;
 		  height: 100%;
@@ -181,6 +190,15 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 		  min-height: 100%;
 		  border-radius: 0;
 		}
+
+		.bs-searchbox {
+			margin-left:25px !important;
+		}
+
+		.dropdown-menu .inner {
+			margin-left:25px !important;
+		}
+		#refclientesaux { width: 400px; }
 
 	</style>
 
@@ -360,10 +378,11 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 							<div class="row">
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 									<div class="form-line">
+										<!-- show-tick  data-live-search="true"-->
 										<label for="refclientes" class="control-label" style="text-align:left">Client</label>
-										<select tabindex="1" class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
-												<?php echo $cadRef1; ?>
-										</select>
+										<input tabindex="1" id="refclientesaux" name="refclientesaux" required>
+										<input type="hidden" id="refclientes" name="refclientes" value='0'/>
+
 									</div>
 								</div>
 
@@ -1012,9 +1031,49 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 <script src="../../js/picker.js"></script>
 <script src="../../js/picker.date.js"></script>
 
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+
 <script>
 	var indice = 1;
 	$(document).ready(function(){
+
+		var options = {
+
+			url: "../../json/jsbuscarclientes.php",
+
+			getValue: function(element) {
+				return element.cognom + ' ' + element.nom + ' ' + element.locatario;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#refclientesaux").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#refclientesaux").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#refclientesaux").getSelectedItemData().id;
+					//alert(value);
+					$("#refclientes").val(value);
+
+				}
+			}
+		};
+
+
+		$("#refclientesaux").easyAutocomplete(options);
 
 		$('#entrada').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
 		$('#sortida').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });

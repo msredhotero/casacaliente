@@ -355,10 +355,10 @@ $cadRef 	= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 					}
 				});
 */
-	traerDisponibilidad('<?php echo date('Y-m-d'); ?>','<?php echo date('Y').'-12-31'; ?>',$('#reflocatarios').val());
+	traerDisponibilidad('<?php echo date('Y-m-d'); ?>','<?php echo date('Y-m-d', strtotime(date('Y-m-d').' + 90 days')); ?>',$('#reflocatarios').val());
 
 	$('#entrada').val('<?php echo date('Y-m-d'); ?>');
-	$('#sortida').val('<?php echo date('Y').'-12-31'; ?>');
+	$('#sortida').val('<?php echo date('Y-m-d', strtotime(date('Y-m-d').' + 90 days')); ?>');
 
 	$('.recargar').click(function() {
 		traerDisponibilidad($('#entrada').val(),$('#sortida').val(),$('#reflocatarios').val());

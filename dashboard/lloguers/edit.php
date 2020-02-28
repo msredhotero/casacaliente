@@ -79,11 +79,13 @@ $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','P
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar1 = $serviciosReferencias->traerClientes();
+	$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2,13),' ',mysql_result($resultado,0,'refclientes'));
 } else {
 	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
+	$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
 }
 
-$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
+
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
 	$resVar2 = $serviciosReferencias->traerUbicaciones();
@@ -192,6 +194,14 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		  height: auto;
 		  min-height: 100%;
 		  border-radius: 0;
+		}
+
+		.bs-searchbox {
+			margin-left:25px !important;
+		}
+
+		.dropdown-menu .inner {
+			margin-left:25px !important;
 		}
 
 	</style>
