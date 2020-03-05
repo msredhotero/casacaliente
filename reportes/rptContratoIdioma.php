@@ -106,6 +106,7 @@ $dias = 0;
 
 for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
 	$resPeriodo = $serviciosReferencias->calcularCoeficienteTarifa(mysql_result($resLloguer,0,'idtipoubicacion'),date("Y-m-d", $i));
+	//die(var_dump(date("Y-m-d", $i)));
 	//echo $resPeriodo['periodo'];
 	if ($resPeriodo['periodo'] != $periodoLbl) {
 		$totalTarifa = 0;
@@ -322,10 +323,12 @@ switch ($idioma) {
 
 			while ($row = mysql_fetch_array($resPagos))
 			{
+				$pagoTotalParcial = 0;
 				$k += 1;
 				$pdf->Ln();
 				$pdf->setX(5);
 				$pdf->Cell(200,6,$k.utf8_decode('º Pago de ').number_format( ($row['cuota'] + $row['taxa']),2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',strtotime( $row['fechapago'])),0,0,'R',false);
+				$pagoTotalParcial = $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - ($row['cuota'] + $row['taxa']);
 			}
 
 			if ($k == 0) {
@@ -335,6 +338,12 @@ switch ($idioma) {
 				$pdf->Ln();
 				$pdf->setX(5);
 				$pdf->Cell(200,6,utf8_decode('2º Pago de ').number_format( $totalTarifaParcial + $totalTaxaPersona + $taxaturisticaAdicional - 7,2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',$segundopago),0,0,'R',false);
+			}
+
+			if ($k == 1) {
+				$pdf->Ln();
+				$pdf->setX(5);
+				$pdf->Cell(200,6,utf8_decode('2º Pago de ').number_format( $pagoTotalParcial,2,',','.').' '.EURO.' antes del dia '.date('d/m/Y',$segundopago),0,0,'R',false);
 			}
 
 
