@@ -50,7 +50,12 @@ switch ($cantidad) {
 }
 */
 
-$resTraerClientes = $serviciosReferencias->nuevoBuscador($busqueda);
+if ($_SESSION['idlocatario_sahilices'] == '') {
+	$resTraerClientes = $serviciosReferencias->nuevoBuscador($busqueda);
+} else {
+	$resTraerClientes = $serviciosReferencias->nuevoBuscadorLocatarios($busqueda,$_SESSION['idlocatario_sahilices']);
+}
+
 
 /* utf8_decode */
 $cad = '';

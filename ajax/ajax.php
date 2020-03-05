@@ -751,14 +751,20 @@ function modificarPagoCliente($serviciosReferencias) {
 
    $usuario = $_SESSION['usua_sahilices'];
 
-   $unicoPagoTaxa = $_POST['pagotaxaunico'];
+   if (isset($_POST['pagotaxaunico'])) {
+      $unicoPagoTaxa = $_POST['pagotaxaunico'];
+   } else {
+      $unicoPagoTaxa = 0;
+   }
+   
 
    $taxa1 = 0;
    $taxa2 = 0;
 
    if ($unicoPagoTaxa == 1) {
       $taxa1 = $taxa;
-   } else {
+   } 
+   if ($unicoPagoTaxa == 2) {
       $taxa2 = $taxa;
    }
 

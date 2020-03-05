@@ -890,7 +890,7 @@ return $res;
 			case 6:
 				$colSort = 'l.sortida';
 			break;
-			case 1:
+			case 2:
 				$colSort = "STR_TO_DATE(l.datalloguer, '%d/%m/%Y')";
 			break;
 		}
@@ -1223,6 +1223,30 @@ concat(' - Locatario: ',l.razonsocial) as razonsocial
 from dbclientes c
 inner join dblocatarios l on c.reflocatarios = l.idlocatario
 where concat(c.cognom,' ',c.nom,' ',c.nif) like '%".$busqueda."%'
+order by trim(c.cognom),trim(c.nom)";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function nuevoBuscadorLocatarios($busqueda, $idlocatario) {
+$sql = "select
+c.idcliente,
+c.cognom,
+c.nom,
+c.nif,
+c.carrer,
+c.codipostal,
+c.ciutat,
+c.pais,
+c.telefon,
+c.email,
+c.comentaris,
+c.telefon2,
+c.email2,
+concat(' - Locatario: ',l.razonsocial) as razonsocial
+from dbclientes c
+inner join dblocatarios l on c.reflocatarios = l.idlocatario
+where concat(c.cognom,' ',c.nom,' ',c.nif) like '%".$busqueda."%' and l.idlocatario = ".$idlocatario."
 order by trim(c.cognom),trim(c.nom)";
 $res = $this->query($sql,0);
 return $res;

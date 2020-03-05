@@ -69,6 +69,8 @@ $entredaR 	= mysql_result($resultado,0,'entradacorta');
 $sortidaR 	= mysql_result($resultado,0,'sortidacorta');
 $totalR		= mysql_result($resultado,0,'total');
 
+//die(var_dump($totalR));
+
 $plural .= $plural.' - Nro: '.$nro;
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
@@ -77,13 +79,11 @@ $tabla 			= "dblloguers";
 $lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','persset','maxtaxa','refestados');
 $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa','Estat');
 
-if ($_SESSION['idlocatario_sahilices'] == '') {
-	$resVar1 = $serviciosReferencias->traerClientes();
-	$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2,13),' ',mysql_result($resultado,0,'refclientes'));
-} else {
-	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
-	$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2),' ',mysql_result($resultado,0,'refclientes'));
-}
+
+$resVar1 = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
+$cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2,13),' ',mysql_result($resultado,0,'refclientes'));
+
+$apyn = mysql_result($resVar1, 0,'cognom').' '.mysql_result($resVar1, 0,'nom').' '.mysql_result($resVar1, 0,'nif');
 
 
 
@@ -174,11 +174,17 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 	<link rel="stylesheet" type="text/css" href="../../css/default.css"/>
 	<link rel="stylesheet" type="text/css" href="../../css/default.date.css"/>
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.contDisponibilidad table tbody tr td { border: 1px solid #444; }
 		.contDisponibilidad table thead tr th { border: 1px solid #222 !important; }
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		.modal-dialog2 {
 		  width: 100%;
 		  height: 100%;
@@ -203,6 +209,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 		.dropdown-menu .inner {
 			margin-left:25px !important;
 		}
+		#refclientesaux { width: 400px; }
 
 	</style>
 
@@ -283,9 +290,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 											<div class="form-line">
 												<label for="refclientes" class="control-label" style="text-align:left">Client</label>
-												<select tabindex="1" class="form-control show-tick" data-live-search="true" id="refclientes" name="refclientes" required>
-														<?php echo $cadRef1; ?>
-												</select>
+												<input tabindex="1" id="refclientesaux" name="refclientesaux" value="<?php echo $apyn; ?>" required>
+												<input type="hidden" id="refclientes" name="refclientes" value='0'/>
 											</div>
 										</div>
 
@@ -399,7 +405,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 									<div class="row">
 
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;font-size:16px;">
-											<label for="total" class="control-label" style="text-align:left; color:red;">Total</label>
+											<label for="total" class="control-label" style="text-align:left; color:red;">Total Importe Estadia</label>
 											<div class="input-group">
 			                           <span class="input-group-addon">€</span>
 			                           <div class="form-line">
@@ -450,7 +456,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 								<div class="row">
 									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 margTop" style="display:block;">
 										<div class="row">
-											<label class="form-label">Total a Pagar</label>
+											<label class="form-label" style="font-size: 18px; font-weight: bold;">Total a Pagar Final</label>
 											<div class="form-line">
 												<input style="width:200px;border: 0;" value="0" type="text" class="form-control" id="totalapagarcliente" name="totalapagarcliente" required />
 											</div>
@@ -723,9 +729,49 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 <script src="../../js/picker.js"></script>
 <script src="../../js/picker.date.js"></script>
 
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+
 <script>
 	var indice = 1;
 	$(document).ready(function(){
+
+		var options = {
+
+			url: "../../json/jsbuscarclientes.php",
+
+			getValue: function(element) {
+				return element.cognom + ' ' + element.nom + ' ' + element.locatario;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#refclientesaux").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#refclientesaux").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#refclientesaux").getSelectedItemData().id;
+					//alert(value);
+					$("#refclientes").val(value);
+
+				}
+			}
+		};
+
+
+		$("#refclientesaux").easyAutocomplete(options);
 
 		$('#entradaR').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
 		$('#sortidaR').inputmask('dd/mm/yyyy', { placeholder: '__/__/<?php echo date('Y'); ?>' });
@@ -1118,7 +1164,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('#total').val(0);
+					
 					$('.lblTaxaPaga1').html('');
 					$('.lblTaxaPaga2').html('');
 					$('#pagotaxacliente').val(0);
@@ -1129,7 +1175,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				//una vez finalizado correctamente
 				success: function(data){
 
-					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.tasapersona));
+					$('#totalapagarcliente').val( parseFloat(data.datos.total) + parseFloat(data.pagos.tasapersona) + parseFloat(data.pagos.taxa));
 					$('#faltapagarcliente').val(data.datos.falta);
 
 					$('#fechapagocliente2').datepicker({ dateFormat: 'dd/mm/yy' });
@@ -1145,8 +1191,8 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 							$('.btnFacturas').append('<button type="button" class="btn bg-deep-orange waves-effect rptFactura" id="' + data.pagos.idpago2 + '"><i class="material-icons">receipt</i>IMPRIMIMR FACTURA 2do PAGO</button>');
 						}
 
-						$('#valorpagocliente1').val(data.pagos.pago1);
-						$('#valorpagocliente2').val(data.pagos.pago2);
+						$('#valorpagocliente1').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2) + parseFloat(data.datos.taxaturistica));
+						$('#valorpagocliente2').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2));
 						$('#pagotaxacliente').val(data.pagos.taxa);
 						if (data.pagos.primerpago != 0) {
 							$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));
@@ -1183,10 +1229,11 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						}
 
 					} else {
-						$('#valorpagocliente1').val((data.datos.taxapersona + data.datos.tarifa) / 2);
-						$('#valorpagocliente2').val((data.datos.taxapersona + data.datos.tarifa) / 2);
+						$('#valorpagocliente1').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2) + parseFloat(data.datos.taxaturistica));
+						$('#valorpagocliente2').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2));
 						$('#pagotaxacliente').val(data.datos.taxaturistica);
 						$( "#fechapagocliente2" ).val(formato(data.datos.fechasegundopago));
+						$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));
 						$( "#cargarpago1" ).val(0);
 						$( "#cargarpago2" ).val(0);
 						$( "#formapago1" ).val(1);
@@ -1237,7 +1284,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 			});
 		}
 
-		devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());
+		/*devolverTarifa($('#refubicaciones').val(), $('#entradaR').val(), $('#sortidaR').val(), $('#numpertax').val());*/
 
 		var $demoMaskedInput = $('.demo-masked-input');
 

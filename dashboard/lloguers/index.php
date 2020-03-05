@@ -61,11 +61,11 @@ $lblCambio	 	= array('refclientes','refubicaciones','datalloguer','numpertax','p
 $lblreemplazo	= array('Client','Ubicaciones','Data Contracte','N° Pers Taxa','Pers Total','Max Taxa','Estat');
 
 if ($_SESSION['idlocatario_sahilices'] == '') {
-	$resVar1 = $serviciosReferencias->traerClientes();
+	$resVar1 = $serviciosReferencias->traerClientesPorId(3);
 	$cadRef1		= '<option value="">-- Seleccionar --</option>';
 	$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2,13),' ');
 } else {
-	$resVar1 = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
+	$resVar1 = $serviciosReferencias->traerClientesPorId(3);
 	$cadRef1		= '<option value="">-- Seleccionar --</option>';
 	$cadRef1 	.= $serviciosFunciones->devolverSelectBox($resVar1,array(1,2),' ');
 }
@@ -1605,8 +1605,8 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 							$('.btnFacturas').append('<button type="button" class="btn bg-deep-orange waves-effect rptFactura" id="' + data.pagos.idpago2 + '"><i class="material-icons">receipt</i>IMPRIMIMR FACTURA 2do PAGO</button>');
 						}
 
-						$('#valorpagocliente1').val(data.pagos.pago1);
-						$('#valorpagocliente2').val(data.pagos.pago2);
+						$('#valorpagocliente1').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2) + parseFloat(data.datos.taxaturistica));
+						$('#valorpagocliente2').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2));
 						$('#pagotaxacliente').val(data.pagos.taxa);
 						if (data.pagos.primerpago != 0) {
 							$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));
@@ -1643,8 +1643,8 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 						}
 
 					} else {
-						$('#valorpagocliente1').val((data.datos.taxapersona + data.datos.tarifa) / 2);
-						$('#valorpagocliente2').val((data.datos.taxapersona + data.datos.tarifa) / 2);
+						$('#valorpagocliente1').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2) + parseFloat(data.datos.taxaturistica));
+						$('#valorpagocliente2').val(parseFloat((parseFloat(data.datos.total) + parseFloat(data.datos.taxapersona)) / 2));
 						$('#pagotaxacliente').val(data.datos.taxaturistica);
 						$( "#fechapagocliente2" ).val(formato(data.datos.fechasegundopago));
 						$( "#fechapagocliente1" ).val(formato(data.pagos.primerpago));

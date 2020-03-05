@@ -232,6 +232,7 @@ $cad = '';
 $id = 0;
 	while ($row = mysql_fetch_array($resAjax)) {
 		//$id = $row[$indiceID];
+		// utf8_encode
 
 		for ($i=$empieza;$i<=$termina;$i++) {
 			array_push($arAux, ($row[$i]));
