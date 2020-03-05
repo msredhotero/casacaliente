@@ -94,6 +94,7 @@ $datalloguer	=	strtotime(mysql_result($resLloguer,0,'datalloguerdate'));
 $fechaInicio	=	strtotime(mysql_result($resLloguer,0,'entrada'));
 $fechaFin		=	strtotime(mysql_result($resLloguer,0,'sortida'));
 $idlocatario   = mysql_result($resLloguer,0,'idlocatario');
+$nrolloguer = mysql_result($resLloguer,0,'nrolloguer');
 
 //die(var_dump($datalloguer));
 $segundopago = strtotime ( '-30 day' ,  ( $fechaFin ) ) ;
@@ -219,7 +220,7 @@ switch ($idioma) {
 			$pdf->SetFont('Arial','B',14);
 			$pdf->Ln();
 			$pdf->SetX(5);
-			$pdf->Cell(130,5,utf8_decode('CONTRATO Nº: ').$id,0,0,'L',false);
+			$pdf->Cell(130,5,utf8_decode('CONTRATO Nº: ').$nrolloguer,0,0,'L',false);
 
 			$pdf->SetFont('Arial','',11);
 			$pdf->SetTextColor(0,0,0);
