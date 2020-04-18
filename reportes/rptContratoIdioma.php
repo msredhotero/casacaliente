@@ -285,9 +285,9 @@ switch ($idioma) {
 				$pdf->Cell(40,5,$detalleLloguer[$j]['dias'.$detalleLloguer[$j]['periodo']],0,0,'C',false);
 				$pdf->Cell(40,5,round($detalleLloguer[$j]['precio'],2).' '.EURO,0,0,'C',false);
 				$pdf->Cell(40,5,mysql_result($resLloguer,0,'numpertax'),0,0,'C',false);
-				$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]).' '.EURO,0,0,'C',false);
+				$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2).' '.EURO,0,0,'C',false);
 
-				$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]);
+				$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2);
 			}
 
 			$pdf->SetFont('Arial','',10);
@@ -733,9 +733,9 @@ switch ($idioma) {
 			$pdf->Cell(40,5,$detalleLloguer[$j]['dias'.$detalleLloguer[$j]['periodo']],0,0,'C',false);
 			$pdf->Cell(40,5,round($detalleLloguer[$j]['precio'],2).' '.EURO,0,0,'C',false);
 			$pdf->Cell(40,5,mysql_result($resLloguer,0,'numpertax'),0,0,'C',false);
-			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]).' '.EURO,0,0,'C',false);
+			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2).' '.EURO,0,0,'C',false);
 
-			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]);
+			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2);
 		}
 
 		$pdf->SetFont('Arial','',10);
@@ -1170,9 +1170,9 @@ switch ($idioma) {
 			$pdf->Cell(40,5,$detalleLloguer[$j]['dias'.$detalleLloguer[$j]['periodo']],0,0,'C',false);
 			$pdf->Cell(40,5,round($detalleLloguer[$j]['precio'],2).' '.EURO,0,0,'C',false);
 			$pdf->Cell(40,5,mysql_result($resLloguer,0,'numpertax'),0,0,'C',false);
-			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]).' '.EURO,0,0,'C',false);
+			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2).' '.EURO,0,0,'C',false);
 
-			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]);
+			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2);
 		}
 
 		$pdf->SetFont('Arial','',10);
@@ -1605,9 +1605,9 @@ switch ($idioma) {
 			$pdf->Cell(40,5,$detalleLloguer[$j]['dias'.$detalleLloguer[$j]['periodo']],0,0,'C',false);
 			$pdf->Cell(40,5,round($detalleLloguer[$j]['precio'],2).' '.EURO,0,0,'C',false);
 			$pdf->Cell(40,5,mysql_result($resLloguer,0,'numpertax'),0,0,'C',false);
-			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]).' '.EURO,0,0,'C',false);
+			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2).' '.EURO,0,0,'C',false);
 
-			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]);
+			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2);
 		}
 
 		$pdf->SetFont('Arial','',10);
@@ -2021,9 +2021,9 @@ switch ($idioma) {
 			$pdf->Cell(40,5,$detalleLloguer[$j]['dias'.$detalleLloguer[$j]['periodo']],0,0,'C',false);
 			$pdf->Cell(40,5,round($detalleLloguer[$j]['precio'],2).' '.EURO,0,0,'C',false);
 			$pdf->Cell(40,5,mysql_result($resLloguer,0,'numpertax'),0,0,'C',false);
-			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]).' '.EURO,0,0,'C',false);
+			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2).' '.EURO,0,0,'C',false);
 
-			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]);
+			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2);
 		}
 
 		$pdf->SetFont('Arial','',10);
@@ -2438,9 +2438,9 @@ switch ($idioma) {
 			$pdf->Cell(40,5,$detalleLloguer[$j]['dias'.$detalleLloguer[$j]['periodo']],0,0,'C',false);
 			$pdf->Cell(40,5,round($detalleLloguer[$j]['precio'],2).' '.EURO,0,0,'C',false);
 			$pdf->Cell(40,5,mysql_result($resLloguer,0,'numpertax'),0,0,'C',false);
-			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]).' '.EURO,0,0,'C',false);
+			$pdf->Cell(40,5,round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2).' '.EURO,0,0,'C',false);
 
-			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']]);
+			$totalTarifaParcial += round($detalleLloguer[$j][$detalleLloguer[$j]['periodo']],2);
 		}
 
 		$pdf->SetFont('Arial','',10);

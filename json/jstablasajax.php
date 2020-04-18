@@ -93,11 +93,11 @@ switch ($tabla) {
 	case 'clientes':
 
 		if ($_SESSION['idlocatario_sahilices'] == '') {
-			$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
+			$resAjax = $serviciosReferencias->traerClientesajax($length, $start, ($busqueda),$colSort,$colSortDir);
 			$res = $serviciosReferencias->traerClientes();
 			$termina = 13;
 		} else {
-			$resAjax = $serviciosReferencias->traerClientesLocatarioajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir, $_SESSION['idlocatario_sahilices']);
+			$resAjax = $serviciosReferencias->traerClientesLocatarioajax($length, $start, ($busqueda),$colSort,$colSortDir, $_SESSION['idlocatario_sahilices']);
 			$res = $serviciosReferencias->traerClientesLocatario($_SESSION['idlocatario_sahilices']);
 			$termina = 12;
 		}
@@ -235,7 +235,7 @@ $id = 0;
 		// utf8_encode
 
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_encode($row[$i]));
 		}
 
 		if (($tabla == 'lloguers') || ($tabla == 'clientes')) {

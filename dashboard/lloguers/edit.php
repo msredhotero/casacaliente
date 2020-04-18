@@ -1164,7 +1164,7 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					
+
 					$('.lblTaxaPaga1').html('');
 					$('.lblTaxaPaga2').html('');
 					$('#pagotaxacliente').val(0);
@@ -1950,15 +1950,9 @@ $cadFormaPago = $serviciosFunciones->devolverSelectBox($resFormaPago,array(1),''
 						$('.frmAjaxGrilla').html(data.aux.vista);
 						$('#personas').val(2);
 						$('#menores').val(0);
-						$('.datepicker').bootstrapMaterialDatePicker({
-				        format: 'DD/MM/YYYY',
-						  minDate: data.aux.desde,
-						  maxDate: data.aux.hasta,
-						  lang : 'ca',
-				        clearButton: true,
-				        weekStart: 1,
-				        time: false
-				   	});
+						$('#entrada').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+						$('#sortida').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+						$('#entrada').attr('readonly',false);
 					} else {
 						swal("Error!", data, "warning");
 

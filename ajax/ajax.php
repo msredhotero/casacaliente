@@ -220,10 +220,69 @@ break;
 case 'traerAniosPagos':
    traerAniosPagos($serviciosReferencias);
 break;
+
+case 'devolverValorTemporalAdicionales':
+   devolverValorTemporalAdicionales($serviciosReferencias);
+break;
 /* Fin */
 
 }
 /* Fin */
+
+function devolverValorTemporalAdicionales($serviciosReferencias) {
+
+
+   $resV['taxapersona'] = 0;
+   $resV['taxaturistica'] = 0;
+
+   $taxapersona = 0;
+   $taxaturistica = 0;
+
+
+   $personas = $_POST['personas'];
+   $menores = $_POST['menores'];
+   $entrada = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['entrada'])));
+   $sortida = date('Y-m-d', strtotime(str_replace('/', '-', $_POST['sortida'])));
+
+   $resTaxa = $serviciosReferencias->traerTaxa();
+
+   $taxaPer = mysql_result($resTaxa,0,1);
+   $taxaTur = mysql_result($resTaxa,0,2);
+   $taxaMax = mysql_result($resTaxa,0,3);
+
+   $dias = $serviciosReferencias->s_datediff('d', $entrada, $sortida, false);
+
+   $totalTaxaPersona = 0;
+   $totalTaxaTuristica = 1 * $dias * $taxaTur;
+
+   if ($totalTaxaTuristica > $taxaMax) {
+      $totalTaxaTuristica  = $personas * $taxaMax;
+   } else {
+      $totalTaxaTuristica = $personas * $dias * $taxaTur;
+   }
+
+   $totalTarifa = 0;
+
+   // si es menos de una semana
+   if ($dias < 7) {
+      $totalTaxaPersona = ($personas + $menores) * 1 * $taxaPer;
+   } else {
+      $totalTaxaPersona = ($personas + $menores) * $dias / 7 * $taxaPer;
+   }
+
+
+   $taxaturistica = $totalTaxaTuristica;
+
+   if ($totalTaxaPersona > $taxapersona) {
+		$taxapersona = $totalTaxaPersona;
+	}
+
+   $resV['taxapersona'] += round($taxapersona,2);
+   $resV['taxaturistica'] += round($taxaturistica,2);
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function traerAniosPagos($serviciosReferencias) {
    $idlocatario = $_POST['idlocatario'];
@@ -756,14 +815,14 @@ function modificarPagoCliente($serviciosReferencias) {
    } else {
       $unicoPagoTaxa = 0;
    }
-   
+
 
    $taxa1 = 0;
    $taxa2 = 0;
 
    if ($unicoPagoTaxa == 1) {
       $taxa1 = $taxa;
-   } 
+   }
    if ($unicoPagoTaxa == 2) {
       $taxa2 = $taxa;
    }

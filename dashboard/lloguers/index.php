@@ -562,11 +562,22 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 							<div class="row">
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;font-size:16px;">
-									<label for="total" class="control-label" style="text-align:left; color:red;">Total</label>
+									<label for="total" class="control-label" style="text-align:left; color:red;">Total Apartament</label>
 									<div class="input-group">
 	                           <span class="input-group-addon">€</span>
 	                           <div class="form-line">
 	                              <input type="text" class="form-control" id="total" name="total" value="" >
+	                           </div>
+	                           <span class="input-group-addon">.00</span>
+	                        </div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;font-size:16px;">
+									<label for="total" class="control-label" style="text-align:left; color:red;">Total Apartament + Persones</label>
+									<div class="input-group">
+	                           <span class="input-group-addon">€</span>
+	                           <div class="form-line">
+	                              <input type="text" class="form-control" id="totalmaspersones" name="totalmaspersones" value="" >
 	                           </div>
 	                           <span class="input-group-addon">.00</span>
 	                        </div>
@@ -1354,84 +1365,8 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 		});
 
 
-
 		$('#entradapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
 		$('#sortidapersonas1').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
-
-		/*
-		$('#entrada').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-
-		$('#sortida').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-
-
-		$('#entradapersonas1').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-
-		$('#sortidapersonas1').pickadate({
-			format: 'dd/mm/yyyy',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 2,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-			editable: true
-		});
-		*/
 
 		$( "#fechapago1" ).datepicker({ dateFormat: 'dd/mm/yy' });
 		$( "#fechapago1" ).val('<?php echo date('d/m/Y', strtotime($date.' + 5 days')); ?>');
@@ -1471,16 +1406,7 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 		$('#valorpagocliente1').number(true,2,'.','');
 		$('#valorpagocliente2').number(true,2,'.','');
 
-
 		$('#datalloguer').val('<?php echo date('d/m/Y'); ?>');
-		/*
-		$('#entrada').val('<?php //echo date('d/m/Y'); ?>');
-		$('#sortida').val('<?php //echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
-
-		$('#entradapersonas1').val('<?php //echo date('d/m/Y'); ?>');
-		$('#sortidapersonas1').val('<?php //echo date('d/m/Y', strtotime($date.' + 7 days')); ?>');
-		*/
-
 
 		$('#numpertax').val(2);
 		$('#persset').val(2);
@@ -1511,6 +1437,38 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 
 		function formato(texto){
 			return texto.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+		}
+
+
+		function devolverValorTemporalAdicionales(personas,menores,entrada,sortida) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'devolverValorTemporalAdicionales',
+					personas: personas,
+					menores: menores,
+					entrada: entrada,
+					sortida: sortida
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					$('#totalmaspersones').val(parseFloat($('#totalmaspersones').val()) + parseFloat(data.taxapersona) + parseFloat(data.taxaturistica) );
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
 		}
 
 		function devolverTarifaArray(id) {
@@ -1668,6 +1626,9 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 			});
 		}
 
+		var totalIndiceTaxaPersona = 0;
+		var totalIndiceTaxaTuristica = 0;
+
 		function devolverTarifa(refubicaciones, entrada, sortida, personas) {
 
 			$.ajax({
@@ -1686,11 +1647,19 @@ $nroContratoFicticio = $serviciosReferencias->generarNroLloguer();
 				beforeSend: function(){
 					$('.frmNuevoPrincipal #total').val(0);
 					$('.frmAjaxModificar #total').val(0);
+					totalIndiceTaxaPersona = 0;
+					totalIndiceTaxaTuristica = 0;
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 					$('.frmNuevoPrincipal #total').val(data);
 					$('.frmAjaxModificar #total').val(data);
+					$('#totalmaspersones').val(data);
+
+					for (var i=1; i<= $('#indice').val(); i++) {
+						//console.log('intento ' + i);
+						devolverValorTemporalAdicionales($('#personas'+i).val(),$('#menores'+i).val(),$('#entradapersonas'+i).val(),$('#sortidapersonas'+i).val());
+					}
 
 				},
 				//si ha ocurrido un error
