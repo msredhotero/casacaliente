@@ -235,7 +235,7 @@ $id = 0;
 		// utf8_encode
 
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, utf8_encode($row[$i]));
+			array_push($arAux, ($row[$i]));
 		}
 
 		if (($tabla == 'lloguers') || ($tabla == 'clientes')) {
